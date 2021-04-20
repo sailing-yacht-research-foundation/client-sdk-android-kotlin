@@ -1,0 +1,3 @@
+include ':SYRFLocationLibrary'
+include ':app'
+rootProject.name = "TestApp"
