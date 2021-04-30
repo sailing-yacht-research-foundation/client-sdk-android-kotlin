@@ -1,0 +1,25 @@
+ext {
+  /**
+   * Parses the input file and returns a list of subprojects.
+   *
+   * <p>Expected file format:
+   * <ul>
+   *   <li>Empty lines are ignored.
+   *   <li>Lines that start with # are ignored(considered comments).
+   *   <li>Other lines are considered project paths with initial ":" removed.
+   * </ul>
+   */
+  discoverSubprojects = {File subprojectsFile ->
+    return subprojectsFile.readLines().collect {it.trim()}.findAll { !it.empty && !it.startsWith('#')}
+  }
+
+  /** Recursively renames build scripts to ${project.name}.gradle. */
+  renameBuildScripts = {ProjectDescriptor project ->
+    project.buildFileName = project.parent ? "${project.name}.gradle" : 'build.gradle'
+
+    project.children.each {
+      renameBuildScripts(it)
+    }
+
+  }
+}

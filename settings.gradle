@@ -1,3 +1,9 @@
-include ':SYRFLocationLibrary'
-include ':app'
-rootProject.name = "TestApp"
+rootProject.name = 'com.syrf-clientsdk'
+
+apply from: 'gradle/projectSettings.gradle'
+
+discoverSubprojects(file('subprojects.cfg')).each {
+    include ":$it"
+}
+
+renameBuildScripts(rootProject)
