@@ -1,3 +1,4 @@
+include ':syrf-authentication'
 rootProject.name = 'com.syrf-clientsdk'
 
 apply from: 'gradle/projectSettings.gradle'
