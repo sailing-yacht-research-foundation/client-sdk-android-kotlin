@@ -20,6 +20,7 @@ interface SYRFLocationInterface {
     fun onStop(context: Context)
 }
 
+
 object SYRFLocation: SYRFLocationInterface {
     private var locationTrackingService: SYRFLocationTrackingService? = null
     private var config: SYRFLocationConfig? = null
@@ -28,6 +29,12 @@ object SYRFLocation: SYRFLocationInterface {
 
     private var LocationServiceBound = false
 
+    /**
+     * Configure the Location Service. The method should be called before any class usage
+     *
+     * @param config Configuration object
+     * @param context The context. Should be the activity
+     */
     override fun configure(config: SYRFLocationConfig, context: Activity) {
         this.config = config
 

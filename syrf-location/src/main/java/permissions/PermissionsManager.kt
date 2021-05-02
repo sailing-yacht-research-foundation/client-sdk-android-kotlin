@@ -34,6 +34,11 @@ class PermissionsManager(val context: Activity) {
         // It's not our expect permission
 //        if (requestCode != expectRequestCode) return
 
+        if (permissions.isEmpty()) {
+            exceptionCallback()
+            return
+        }
+
         for (permission in permissions) {
             if (!isPermissionGranted(permission)) {
                 exceptionCallback()

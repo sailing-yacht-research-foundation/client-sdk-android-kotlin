@@ -24,7 +24,6 @@ import utils.Constants.NOTIFICATION_ID
 import utils.CurrentPositionUpdateCallback
 import java.util.concurrent.TimeUnit
 
-
 open class SYRFLocationTrackingService: Service() {
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
