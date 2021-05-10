@@ -1,0 +1,61 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:////PointingToDeclaration/syrf-location/[root]/index.html
+$dokka.location://toText/android.location.Location?#/PointingToDeclaration/syrf-location/[root]/to-text.html
+$dokka.location:/SYRFLocation///PointingToDeclaration/syrf-location/[root]/-s-y-r-f-location/index.html
+$dokka.location:/SYRFLocation/configure/#config.SYRFLocationConfig#android.app.Activity/PointingToDeclaration/syrf-location/[root]/-s-y-r-f-location/configure.html
+$dokka.location:/SYRFLocation/getCurrentPosition/#android.app.Activity#kotlin.Function2[android.location.Location?,kotlin.Throwable?,kotlin.Unit]/PointingToDeclaration/syrf-location/[root]/-s-y-r-f-location/get-current-position.html
+$dokka.location:/SYRFLocation/onRequestPermissionsResult/#kotlin.Int#kotlin.Array[kotlin.String]#kotlin.IntArray#android.app.Activity/PointingToDeclaration/syrf-location/[root]/-s-y-r-f-location/on-request-permissions-result.html
+$dokka.location:/SYRFLocation/onStop/#android.content.Context/PointingToDeclaration/syrf-location/[root]/-s-y-r-f-location/on-stop.html
+$dokka.location:/SYRFLocation/subscribeToLocationUpdates/#android.app.Activity/PointingToDeclaration/syrf-location/[root]/-s-y-r-f-location/subscribe-to-location-updates.html
+$dokka.location:/SYRFLocation/unsubscribeToLocationUpdates/#/PointingToDeclaration/syrf-location/[root]/-s-y-r-f-location/unsubscribe-to-location-updates.html
+$dokka.location:/SYRFLocationInterface///PointingToDeclaration/syrf-location/[root]/-s-y-r-f-location-interface/index.html
+$dokka.location:/SYRFLocationInterface/configure/#config.SYRFLocationConfig#android.app.Activity/PointingToDeclaration/syrf-location/[root]/-s-y-r-f-location-interface/configure.html
+$dokka.location:/SYRFLocationInterface/getCurrentPosition/#android.app.Activity#kotlin.Function2[android.location.Location?,kotlin.Throwable?,kotlin.Unit]/PointingToDeclaration/syrf-location/[root]/-s-y-r-f-location-interface/get-current-position.html
+$dokka.location:/SYRFLocationInterface/onRequestPermissionsResult/#kotlin.Int#kotlin.Array[kotlin.String]#kotlin.IntArray#android.app.Activity/PointingToDeclaration/syrf-location/[root]/-s-y-r-f-location-interface/on-request-permissions-result.html
+$dokka.location:/SYRFLocationInterface/onStop/#android.content.Context/PointingToDeclaration/syrf-location/[root]/-s-y-r-f-location-interface/on-stop.html
+$dokka.location:/SYRFLocationInterface/subscribeToLocationUpdates/#android.app.Activity/PointingToDeclaration/syrf-location/[root]/-s-y-r-f-location-interface/subscribe-to-location-updates.html
+$dokka.location:/SYRFLocationInterface/unsubscribeToLocationUpdates/#/PointingToDeclaration/syrf-location/[root]/-s-y-r-f-location-interface/unsubscribe-to-location-updates.html
+$dokka.location:com.syrf.location.services////PointingToDeclaration/syrf-location/com.syrf.location.services/index.html
+$dokka.location:com.syrf.location.services/SYRFLocationTrackingService.LocalBinder///PointingToDeclaration/syrf-location/com.syrf.location.services/-s-y-r-f-location-tracking-service/-local-binder/index.html
+$dokka.location:com.syrf.location.services/SYRFLocationTrackingService.LocalBinder/LocalBinder/#/PointingToDeclaration/syrf-location/com.syrf.location.services/-s-y-r-f-location-tracking-service/-local-binder/-local-binder.html
+$dokka.location:com.syrf.location.services/SYRFLocationTrackingService///PointingToDeclaration/syrf-location/com.syrf.location.services/-s-y-r-f-location-tracking-service/index.html
+$dokka.location:com.syrf.location.services/SYRFLocationTrackingService/SYRFLocationTrackingService/#/PointingToDeclaration/syrf-location/com.syrf.location.services/-s-y-r-f-location-tracking-service/-s-y-r-f-location-tracking-service.html
+$dokka.location:com.syrf.location.services/SYRFLocationTrackingService/getCurrentPosition/#android.content.Context#kotlin.Function2[android.location.Location?,kotlin.Throwable?,kotlin.Unit]/PointingToDeclaration/syrf-location/com.syrf.location.services/-s-y-r-f-location-tracking-service/get-current-position.html
+$dokka.location:com.syrf.location.services/SYRFLocationTrackingService/onBind/#android.content.Intent?/PointingToDeclaration/syrf-location/com.syrf.location.services/-s-y-r-f-location-tracking-service/on-bind.html
+$dokka.location:com.syrf.location.services/SYRFLocationTrackingService/onCreate/#/PointingToDeclaration/syrf-location/com.syrf.location.services/-s-y-r-f-location-tracking-service/on-create.html
+$dokka.location:com.syrf.location.services/SYRFLocationTrackingService/onRebind/#android.content.Intent?/PointingToDeclaration/syrf-location/com.syrf.location.services/-s-y-r-f-location-tracking-service/on-rebind.html
+$dokka.location:com.syrf.location.services/SYRFLocationTrackingService/onStartCommand/#android.content.Intent?#kotlin.Int#kotlin.Int/PointingToDeclaration/syrf-location/com.syrf.location.services/-s-y-r-f-location-tracking-service/on-start-command.html
+$dokka.location:com.syrf.location.services/SYRFLocationTrackingService/onUnbind/#android.content.Intent?/PointingToDeclaration/syrf-location/com.syrf.location.services/-s-y-r-f-location-tracking-service/on-unbind.html
+$dokka.location:com.syrf.location.services/SYRFLocationTrackingService/subscribeToLocationUpdates/#android.content.Context/PointingToDeclaration/syrf-location/com.syrf.location.services/-s-y-r-f-location-tracking-service/subscribe-to-location-updates.html
+$dokka.location:com.syrf.location.services/SYRFLocationTrackingService/unsubscribeToLocationUpdates/#/PointingToDeclaration/syrf-location/com.syrf.location.services/-s-y-r-f-location-tracking-service/unsubscribe-to-location-updates.html
+$dokka.location:config////PointingToDeclaration/syrf-location/config/index.html
+$dokka.location:config/SYRFLocationConfig.Builder///PointingToDeclaration/syrf-location/config/-s-y-r-f-location-config/-builder/index.html
+$dokka.location:config/SYRFLocationConfig.Builder/Builder/#kotlin.Number?#kotlin.Number?/PointingToDeclaration/syrf-location/config/-s-y-r-f-location-config/-builder/-builder.html
+$dokka.location:config/SYRFLocationConfig.Builder/maximumLocationAccuracy/#/PointingToDeclaration/syrf-location/config/-s-y-r-f-location-config/-builder/maximum-location-accuracy.html
+$dokka.location:config/SYRFLocationConfig.Builder/maximumLocationAccuracy/#kotlin.Number/PointingToDeclaration/syrf-location/config/-s-y-r-f-location-config/-builder/maximum-location-accuracy.html
+$dokka.location:config/SYRFLocationConfig.Builder/set/#/PointingToDeclaration/syrf-location/config/-s-y-r-f-location-config/-builder/set.html
+$dokka.location:config/SYRFLocationConfig.Builder/updateInterval/#/PointingToDeclaration/syrf-location/config/-s-y-r-f-location-config/-builder/update-interval.html
+$dokka.location:config/SYRFLocationConfig.Builder/updateInterval/#kotlin.Number/PointingToDeclaration/syrf-location/config/-s-y-r-f-location-config/-builder/update-interval.html
+$dokka.location:config/SYRFLocationConfig///PointingToDeclaration/syrf-location/config/-s-y-r-f-location-config/index.html
+$dokka.location:config/SYRFLocationConfig/maximumLocationAccuracy/#/PointingToDeclaration/syrf-location/config/-s-y-r-f-location-config/maximum-location-accuracy.html
+$dokka.location:config/SYRFLocationConfig/updateInterval/#/PointingToDeclaration/syrf-location/config/-s-y-r-f-location-config/update-interval.html
+$dokka.location:permissions////PointingToDeclaration/syrf-location/permissions/index.html
+$dokka.location:permissions/PermissionsManager///PointingToDeclaration/syrf-location/permissions/-permissions-manager/index.html
+$dokka.location:permissions/PermissionsManager/PermissionsManager/#android.app.Activity/PointingToDeclaration/syrf-location/permissions/-permissions-manager/-permissions-manager.html
+$dokka.location:permissions/PermissionsManager/context/#/PointingToDeclaration/syrf-location/permissions/-permissions-manager/context.html
+$dokka.location:permissions/PermissionsManager/handleResults/#kotlin.Array[kotlin.String]#kotlin.Function0[kotlin.Unit]#kotlin.Function0[kotlin.Unit]/PointingToDeclaration/syrf-location/permissions/-permissions-manager/handle-results.html
+$dokka.location:permissions/PermissionsManager/isPermissionGranted/#kotlin.String/PointingToDeclaration/syrf-location/permissions/-permissions-manager/is-permission-granted.html
+$dokka.location:permissions/PermissionsManager/showPermissionReasonAndRequest/#kotlin.String#kotlin.String#kotlin.Array[kotlin.String]#kotlin.Int/PointingToDeclaration/syrf-location/permissions/-permissions-manager/show-permission-reason-and-request.html
+$dokka.location:utils////PointingToDeclaration/syrf-location/utils/index.html
+$dokka.location:utils/Constants///PointingToDeclaration/syrf-location/utils/-constants/index.html
+$dokka.location:utils/Constants/ACTION_LOCATION_BROADCAST/#/PointingToDeclaration/syrf-location/utils/-constants/-a-c-t-i-o-n_-l-o-c-a-t-i-o-n_-b-r-o-a-d-c-a-s-t.html
+$dokka.location:utils/Constants/EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION/#/PointingToDeclaration/syrf-location/utils/-constants/-e-x-t-r-a_-c-a-n-c-e-l_-l-o-c-a-t-i-o-n_-t-r-a-c-k-i-n-g_-f-r-o-m_-n-o-t-i-f-i-c-a-t-i-o-n.html
+$dokka.location:utils/Constants/EXTRA_LOCATION/#/PointingToDeclaration/syrf-location/utils/-constants/-e-x-t-r-a_-l-o-c-a-t-i-o-n.html
+$dokka.location:utils/Constants/NOTIFICATION_CHANNEL_ID/#/PointingToDeclaration/syrf-location/utils/-constants/-n-o-t-i-f-i-c-a-t-i-o-n_-c-h-a-n-n-e-l_-i-d.html
+$dokka.location:utils/Constants/NOTIFICATION_ID/#/PointingToDeclaration/syrf-location/utils/-constants/-n-o-t-i-f-i-c-a-t-i-o-n_-i-d.html
+com.syrf.location.services
+config
+permissions
+utils
+

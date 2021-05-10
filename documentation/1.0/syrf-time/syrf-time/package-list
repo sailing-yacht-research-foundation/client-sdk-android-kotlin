@@ -1,0 +1,19 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:////PointingToDeclaration/syrf-time/[root]/index.html
+$dokka.location:/SYRFTime///PointingToDeclaration/syrf-time/[root]/-s-y-r-f-time/index.html
+$dokka.location:/SYRFTime/configure/#config.SYRFTimeConfig#android.content.Context/PointingToDeclaration/syrf-time/[root]/-s-y-r-f-time/configure.html
+$dokka.location:/SYRFTime/getCurrentTimeMS/#/PointingToDeclaration/syrf-time/[root]/-s-y-r-f-time/get-current-time-m-s.html
+$dokka.location:/SYRFTimeInterface///PointingToDeclaration/syrf-time/[root]/-s-y-r-f-time-interface/index.html
+$dokka.location:/SYRFTimeInterface/configure/#config.SYRFTimeConfig#android.content.Context/PointingToDeclaration/syrf-time/[root]/-s-y-r-f-time-interface/configure.html
+$dokka.location:/SYRFTimeInterface/getCurrentTimeMS/#/PointingToDeclaration/syrf-time/[root]/-s-y-r-f-time-interface/get-current-time-m-s.html
+$dokka.location:config////PointingToDeclaration/syrf-time/config/index.html
+$dokka.location:config/SYRFTimeConfig.Builder///PointingToDeclaration/syrf-time/config/-s-y-r-f-time-config/-builder/index.html
+$dokka.location:config/SYRFTimeConfig.Builder/Builder/#kotlin.collections.List[kotlin.String]?/PointingToDeclaration/syrf-time/config/-s-y-r-f-time-config/-builder/-builder.html
+$dokka.location:config/SYRFTimeConfig.Builder/ntpHosts/#/PointingToDeclaration/syrf-time/config/-s-y-r-f-time-config/-builder/ntp-hosts.html
+$dokka.location:config/SYRFTimeConfig.Builder/ntpHosts/#kotlin.collections.List[kotlin.String]/PointingToDeclaration/syrf-time/config/-s-y-r-f-time-config/-builder/ntp-hosts.html
+$dokka.location:config/SYRFTimeConfig.Builder/set/#/PointingToDeclaration/syrf-time/config/-s-y-r-f-time-config/-builder/set.html
+$dokka.location:config/SYRFTimeConfig///PointingToDeclaration/syrf-time/config/-s-y-r-f-time-config/index.html
+$dokka.location:config/SYRFTimeConfig/ntpHosts/#/PointingToDeclaration/syrf-time/config/-s-y-r-f-time-config/ntp-hosts.html
+config
+

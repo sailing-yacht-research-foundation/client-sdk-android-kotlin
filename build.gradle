@@ -11,6 +11,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
+        classpath("org.jetbrains.dokka:versioning-plugin:1.4.32")
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module syrf-location.gradle files
@@ -33,5 +34,5 @@ task clean(type: Delete) {
 }
 
 tasks.dokkaHtmlMultiModule.configure {
-    outputDirectory.set(file("documentation/html"))
+    outputDirectory.set(file("documentation/1.0"))
 }
