@@ -5,9 +5,12 @@ import android.content.*
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.syrf.testapp.databinding.ActivityMainBinding
+import com.syrf.testapp.services.TimeService
 import config.SYRFLocationConfig
-import kotlinx.android.synthetic.main.activity_main.*
+import config.SYRFTimeConfig
 import utils.Constants.ACTION_LOCATION_BROADCAST
 import utils.Constants.EXTRA_LOCATION
 
@@ -15,10 +18,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var locationBroadcastReceiver: LocationBroadcastReceiver
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         locationBroadcastReceiver = LocationBroadcastReceiver()
 
@@ -39,6 +45,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 .maximumLocationAccuracy(100)
                 .set()
         SYRFLocation.configure(config, this)
+
+        val timeConfig = SYRFTimeConfig.Builder()
+            .set()
+
+        SYRFTime.configure(timeConfig, this)
+
         setupBtn()
     }
 
@@ -88,22 +100,22 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
 
     private fun updateButtonState(trackingLocation: Boolean) {
-        if (trackingLocation) {
-            subscribe_to_position_update_btn.text = getString(R.string.stop_location_updates_button_text)
+        binding.subscribeToPositionUpdateBtn.text = if (trackingLocation) {
+            getString(R.string.stop_location_updates_button_text)
         } else {
-            subscribe_to_position_update_btn.text = getString(R.string.start_location_updates_button_text)
+            getString(R.string.start_location_updates_button_text)
         }
     }
 
     private fun setupBtn() {
-        get_current_position_btn.setOnClickListener() {
+        binding.getCurrentPositionBtn.setOnClickListener() {
             SYRFLocation.getCurrentPosition(this) { location, error ->
                 if (location != null) {
-                    logResultsToScreen("location: ${location.toText()}")
+                    logResultsToScreen("${TimeService.currentTime()} - ${location.toText()}")
                 }
             }
         }
-        subscribe_to_position_update_btn.setOnClickListener() {
+        binding.subscribeToPositionUpdateBtn.setOnClickListener() {
             val enabled = sharedPreferences.getBoolean(
                 SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false)
             if (enabled) {
@@ -116,8 +128,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun logResultsToScreen(output: String) {
-        val outputWithPreviousLogs = "$output\n${output_text_view.text}"
-        output_text_view.text = outputWithPreviousLogs
+        val outputWithPreviousLogs = "$output\n${binding.outputTextView.text}"
+        binding.outputTextView.text = outputWithPreviousLogs
     }
 
     private inner class LocationBroadcastReceiver : BroadcastReceiver() {
@@ -128,7 +140,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             )
 
             if (location != null) {
-                logResultsToScreen("location: ${location.toText()}")
+                logResultsToScreen("${TimeService.currentTime()} - ${location.toText()}")
             }
         }
     }
