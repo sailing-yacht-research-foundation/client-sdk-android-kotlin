@@ -1,0 +1,7 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:////PointingToDeclaration/syrf-authentication/[root]/index.html
+$dokka.location:/SYRFAuthentication///PointingToDeclaration/syrf-authentication/[root]/-s-y-r-f-authentication/index.html
+$dokka.location:/SYRFAuthentication/SYRFAuthentication/#/PointingToDeclaration/syrf-authentication/[root]/-s-y-r-f-authentication/-s-y-r-f-authentication.html
+
+
