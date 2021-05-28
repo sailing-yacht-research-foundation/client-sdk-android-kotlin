@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.syrf.testapp.databinding.ActivityMainBinding
+import com.syrf.testapp.services.GeospatialService
 import com.syrf.testapp.services.TimeService
 import config.SYRFLocationConfig
 import config.SYRFTimeConfig
@@ -114,6 +115,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     logResultsToScreen("${TimeService.currentTime()} - ${location.toText()}")
                 }
             }
+            GeospatialService.test();
         }
         binding.subscribeToPositionUpdateBtn.setOnClickListener() {
             val enabled = sharedPreferences.getBoolean(

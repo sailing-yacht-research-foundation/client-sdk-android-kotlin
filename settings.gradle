@@ -1,3 +1,4 @@
+include ':syrf-geospatial'
 include ':syrf-time'
 include ':syrf-authentication'
 rootProject.name = 'com.syrf-clientsdk'
