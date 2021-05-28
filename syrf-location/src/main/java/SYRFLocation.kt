@@ -11,8 +11,10 @@ import utils.CurrentPositionUpdateCallback
 import java.lang.Exception
 
 interface SYRFLocationInterface {
+    fun configure(context: Activity)
     fun configure(config: SYRFLocationConfig, context: Activity)
     fun getCurrentPosition(context: Activity, callback: CurrentPositionUpdateCallback)
+    fun getLocationConfig() : SYRFLocationConfig
     fun subscribeToLocationUpdates(context: Activity)
     fun unsubscribeToLocationUpdates()
     fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray,
@@ -23,11 +25,20 @@ interface SYRFLocationInterface {
 
 object SYRFLocation: SYRFLocationInterface {
     private var locationTrackingService: SYRFLocationTrackingService? = null
-    private var config: SYRFLocationConfig? = null
+    private lateinit var config: SYRFLocationConfig
     private var successOnPermissionsRequest: () -> Unit = {}
     private var failOnPermissionsRequest: () -> Unit = {}
 
     private var LocationServiceBound = false
+
+    /**
+     * Configure the Location Service using default config.
+     * The method should be called before any class usage
+     * @param context The context. Should be the activity
+     */
+    override fun configure(context: Activity) {
+        this.configure(SYRFLocationConfig.DEFAULT, context)
+    }
 
     /**
      * Configure the Location Service. The method should be called before any class usage
@@ -42,6 +53,11 @@ object SYRFLocation: SYRFLocationInterface {
         context.bindService(serviceIntent, locationServiceConnection, Context.BIND_AUTO_CREATE)
 
         LocationServiceBound = true
+    }
+
+    override fun getLocationConfig(): SYRFLocationConfig {
+        checkConfig()
+        return config
     }
 
     override fun getCurrentPosition(context: Activity, callback: CurrentPositionUpdateCallback) {
@@ -118,7 +134,7 @@ object SYRFLocation: SYRFLocationInterface {
 
     @Throws(Exception::class)
     private fun checkConfig() {
-        if (config === null) {
+        if (!this::config.isInitialized) {
             throw Exception("Config should be set before library use")
         }
     }
