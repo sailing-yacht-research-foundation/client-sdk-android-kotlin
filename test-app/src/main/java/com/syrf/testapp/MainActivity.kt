@@ -1,11 +1,11 @@
 package com.syrf.testapp
 
 import SYRFLocation
+import SYRFTime
 import android.content.*
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.syrf.testapp.databinding.ActivityMainBinding
 import com.syrf.testapp.services.GeospatialService
@@ -42,8 +42,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
 
         val config = SYRFLocationConfig.Builder()
-                .updateInterval(30)
-                .maximumLocationAccuracy(100)
+                .updateInterval(1)
+                .maximumLocationAccuracy(SYRFLocationConfig.PRIORITY_HIGH_ACCURACY)
                 .set()
         SYRFLocation.configure(config, this)
 
