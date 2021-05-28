@@ -59,9 +59,11 @@ open class SYRFLocationTrackingService: Service() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         locationRequest = LocationRequest.create().apply {
-            interval = TimeUnit.SECONDS.toMillis(60)
-            fastestInterval = TimeUnit.SECONDS.toMillis(30)
-            maxWaitTime = TimeUnit.MINUTES.toMillis(2)
+            val config = SYRFLocation.getLocationConfig()
+
+            interval = TimeUnit.SECONDS.toMillis(config.updateInterval)
+            fastestInterval = TimeUnit.SECONDS.toMillis(config.updateInterval / 2)
+            maxWaitTime = TimeUnit.SECONDS.toMillis(config.updateInterval * 2)
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
             locationCallback = object : LocationCallback() {
