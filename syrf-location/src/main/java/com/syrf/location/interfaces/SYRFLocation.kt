@@ -1,3 +1,5 @@
+package com.syrf.location.interfaces
+
 import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
@@ -38,7 +40,10 @@ object SYRFLocation: SYRFLocationInterface {
      * @param context The context. Should be the activity
      */
     override fun configure(context: Activity) {
-        this.configure(SYRFLocationConfig.DEFAULT, context)
+        configure(
+            SYRFLocationConfig.DEFAULT,
+            context
+        )
     }
 
     /**
@@ -48,10 +53,11 @@ object SYRFLocation: SYRFLocationInterface {
      * @param context The context. Should be the activity
      */
     override fun configure(config: SYRFLocationConfig, context: Activity) {
-        this.config = config
+        SYRFLocation.config = config
 
         val serviceIntent = Intent(context, SYRFLocationTrackingService::class.java)
-        context.bindService(serviceIntent, locationServiceConnection, Context.BIND_AUTO_CREATE)
+        context.bindService(serviceIntent,
+            locationServiceConnection, Context.BIND_AUTO_CREATE)
 
         isLocationServiceBound = true
     }
@@ -64,18 +70,28 @@ object SYRFLocation: SYRFLocationInterface {
     override fun getCurrentPosition(context: Activity, callback: CurrentPositionUpdateCallback) {
         checkConfig()
         successOnPermissionsRequest = { locationTrackingService?.getCurrentPosition(context, callback) }
-        if (areLocationPermissionsGranted(context)) {
+        if (areLocationPermissionsGranted(
+                context
+            )
+        ) {
             successOnPermissionsRequest()
         } else {
-            showPermissionReasonAndRequest(context)
+            showPermissionReasonAndRequest(
+                context
+            )
         }
     }
 
     override fun subscribeToLocationUpdates(context: Activity) {
-        if (areLocationPermissionsGranted(context)) {
+        if (areLocationPermissionsGranted(
+                context
+            )
+        ) {
             locationTrackingService?.subscribeToLocationUpdates(context)
         } else {
-            showPermissionReasonAndRequest(context)
+            showPermissionReasonAndRequest(
+                context
+            )
         }
     }
 
@@ -90,7 +106,10 @@ object SYRFLocation: SYRFLocationInterface {
         context: Activity
     ) {
         val permissionsManager = PermissionsManager(context)
-        permissionsManager.handleResults(permissions, successOnPermissionsRequest, failOnPermissionsRequest)
+        permissionsManager.handleResults(permissions,
+            successOnPermissionsRequest,
+            failOnPermissionsRequest
+        )
     }
 
     override fun onStop(context: Context) {

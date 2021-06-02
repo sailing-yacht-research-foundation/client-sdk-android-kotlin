@@ -15,12 +15,13 @@ import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.syrf.location.R
+import com.syrf.location.interfaces.SYRFLocation
 import toText
 import com.syrf.location.utils.Constants.ACTION_LOCATION_BROADCAST
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION
 import com.syrf.location.utils.Constants.EXTRA_LOCATION
 import com.syrf.location.utils.Constants.NOTIFICATION_CHANNEL_ID
-import com.syrf.location.utils.Constants.NOTIFICATION_ID
+import com.syrf.location.utils.Constants.LOCATION_NOTIFICATION_ID
 import com.syrf.location.utils.CurrentPositionUpdateCallback
 import java.util.concurrent.TimeUnit
 
@@ -63,8 +64,7 @@ open class SYRFLocationTrackingService: Service() {
 
             interval = TimeUnit.SECONDS.toMillis(config.updateInterval)
             fastestInterval = TimeUnit.SECONDS.toMillis(config.updateInterval / 2)
-            maxWaitTime = TimeUnit.SECONDS.toMillis(config.updateInterval * 2)
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            priority = config.maximumLocationAccuracy
 
             locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
@@ -77,7 +77,7 @@ open class SYRFLocationTrackingService: Service() {
 
                     if (serviceRunningInForeground) {
                         notificationManager.notify(
-                            NOTIFICATION_ID,
+                            LOCATION_NOTIFICATION_ID,
                             generateNotification(currentLocation)
                         )
                     }
@@ -93,7 +93,7 @@ open class SYRFLocationTrackingService: Service() {
     }
 
     override fun onRebind(intent: Intent?) {
-        // MainActivity (client) returns to the foreground and rebinds to service, so the service
+        // LocationActivity (client) returns to the foreground and rebinds to service, so the service
         // can become a background services.
         stopForeground(true)
         serviceRunningInForeground = false
@@ -102,7 +102,7 @@ open class SYRFLocationTrackingService: Service() {
 
     override fun onUnbind(intent: Intent?): Boolean {
         val notification = generateNotification(currentLocation)
-        startForeground(NOTIFICATION_ID, notification)
+        startForeground(LOCATION_NOTIFICATION_ID, notification)
         serviceRunningInForeground = true
         return true
     }

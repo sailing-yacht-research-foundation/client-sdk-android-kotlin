@@ -7,26 +7,28 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/btn_show_location"
+        android:id="@+id/subscribe_to_accelero_data_update_btn"
         android:layout_width="300dp"
         android:layout_height="54dp"
         android:layout_marginTop="30dp"
-        android:text="@string/location"
-        app:layout_constraintBottom_toTopOf="@id/btn_show_accelero_sensor"
+        android:text="@string/subscribe_to_accelerometer_updates"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btn_show_accelero_sensor"
-        android:layout_width="300dp"
-        android:layout_height="54dp"
-        android:layout_marginTop="30dp"
-        android:text="@string/accelerometer_sensor"
+    <TextView
+        android:id="@+id/output_text_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/background_border"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_show_location" />
+        app:layout_constraintTop_toBottomOf="@+id/subscribe_to_accelero_data_update_btn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
