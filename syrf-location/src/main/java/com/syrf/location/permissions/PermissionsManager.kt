@@ -1,4 +1,4 @@
-package permissions
+package com.syrf.location.permissions
 
 import android.app.Activity
 import android.app.AlertDialog

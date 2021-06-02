@@ -5,10 +5,11 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import com.syrf.location.services.SYRFLocationTrackingService
-import config.SYRFLocationConfig
-import permissions.PermissionsManager
-import utils.CurrentPositionUpdateCallback
+import com.syrf.location.configs.SYRFLocationConfig
+import com.syrf.location.permissions.PermissionsManager
+import com.syrf.location.utils.CurrentPositionUpdateCallback
 import java.lang.Exception
+import kotlin.jvm.Throws
 
 interface SYRFLocationInterface {
     fun configure(context: Activity)
@@ -29,7 +30,7 @@ object SYRFLocation: SYRFLocationInterface {
     private var successOnPermissionsRequest: () -> Unit = {}
     private var failOnPermissionsRequest: () -> Unit = {}
 
-    private var LocationServiceBound = false
+    private var isLocationServiceBound = false
 
     /**
      * Configure the Location Service using default config.
@@ -52,7 +53,7 @@ object SYRFLocation: SYRFLocationInterface {
         val serviceIntent = Intent(context, SYRFLocationTrackingService::class.java)
         context.bindService(serviceIntent, locationServiceConnection, Context.BIND_AUTO_CREATE)
 
-        LocationServiceBound = true
+        isLocationServiceBound = true
     }
 
     override fun getLocationConfig(): SYRFLocationConfig {
@@ -93,9 +94,9 @@ object SYRFLocation: SYRFLocationInterface {
     }
 
     override fun onStop(context: Context) {
-        if (LocationServiceBound) {
+        if (isLocationServiceBound) {
             context.unbindService(locationServiceConnection)
-            LocationServiceBound = false
+            isLocationServiceBound = false
         }
     }
 
@@ -109,7 +110,7 @@ object SYRFLocation: SYRFLocationInterface {
 
         override fun onServiceDisconnected(name: ComponentName) {
             locationTrackingService = null
-            LocationServiceBound = false
+            isLocationServiceBound = false
         }
     }
 

@@ -16,12 +16,12 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.syrf.location.R
 import toText
-import utils.Constants.ACTION_LOCATION_BROADCAST
-import utils.Constants.EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION
-import utils.Constants.EXTRA_LOCATION
-import utils.Constants.NOTIFICATION_CHANNEL_ID
-import utils.Constants.NOTIFICATION_ID
-import utils.CurrentPositionUpdateCallback
+import com.syrf.location.utils.Constants.ACTION_LOCATION_BROADCAST
+import com.syrf.location.utils.Constants.EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION
+import com.syrf.location.utils.Constants.EXTRA_LOCATION
+import com.syrf.location.utils.Constants.NOTIFICATION_CHANNEL_ID
+import com.syrf.location.utils.Constants.NOTIFICATION_ID
+import com.syrf.location.utils.CurrentPositionUpdateCallback
 import java.util.concurrent.TimeUnit
 
 open class SYRFLocationTrackingService: Service() {

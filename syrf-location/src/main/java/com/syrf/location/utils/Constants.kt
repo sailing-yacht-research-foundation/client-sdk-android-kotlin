@@ -1,4 +1,4 @@
-package utils
+package com.syrf.location.utils
 
 object Constants {
 

@@ -6,7 +6,7 @@ import org.junit.Test
 
 import org.junit.Before
 import org.mockito.Mockito.mock
-import permissions.PermissionsManager
+import com.syrf.location.permissions.PermissionsManager
 
 /**
  * Example local unit test, which will execute on the development machine (host).

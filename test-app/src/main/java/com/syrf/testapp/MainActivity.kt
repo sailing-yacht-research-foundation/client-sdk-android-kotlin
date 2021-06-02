@@ -9,10 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.syrf.testapp.databinding.ActivityMainBinding
 import com.syrf.testapp.services.TimeService
-import config.SYRFLocationConfig
-import config.SYRFTimeConfig
-import utils.Constants.ACTION_LOCATION_BROADCAST
-import utils.Constants.EXTRA_LOCATION
+import com.syrf.location.configs.SYRFLocationConfig
+import com.syrf.time.configs.SYRFTimeConfig
+import com.syrf.location.utils.Constants.ACTION_LOCATION_BROADCAST
+import com.syrf.location.utils.Constants.EXTRA_LOCATION
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
