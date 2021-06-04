@@ -16,4 +16,9 @@ data class SYRFSensorsAcceleroData constructor(
     val y: Float,
     val z: Float,
     val timestamp: Long
-): Parcelable
+) : Parcelable {
+
+    fun toText(): String {
+        return "(x-axis: $x, y-axis: $y, z-axis: $z)"
+    }
+}

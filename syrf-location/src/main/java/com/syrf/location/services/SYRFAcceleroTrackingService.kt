@@ -19,6 +19,11 @@ import com.syrf.location.utils.Constants.ACCELERO_NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.ACCELERO_NOTIFICATION_ID
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_ACCELERO_SENSOR_TRACKING_FROM_NOTIFICATION
 
+/**
+ * The service using to request accelerometer sensor data update. It running in two modes:
+ * background: when the activity that bind it is running, in this mode whe do not show notification
+ * foreground: when the activity that bind it is destroyed, in this mode whe need to show a notification
+ */
 open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
 
     private var currentSensorAcceleroData: SYRFSensorsAcceleroData? = null
@@ -33,6 +38,8 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
 
     override fun onCreate() {
         super.onCreate()
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
         // Get accelerometer sensor from the sensor manager.
         // The getDefaultSensor() method returns null if the sensor is not available on the device.
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -100,7 +107,7 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
 
         if (serviceRunningInForeground) {
             notificationManager.notify(
-                Constants.LOCATION_NOTIFICATION_ID,
+                ACCELERO_NOTIFICATION_ID,
                 generateNotification(sensorAcceleroData)
             )
         }
@@ -110,14 +117,14 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
         context: Context,
         noAccelerometerSensorCallback: () -> Unit
     ) {
-        val sensorAccelerometer = sensorAccelerometer ?: run{
+        val notNullSensorAccelerometer = sensorAccelerometer ?: run{
             noAccelerometerSensorCallback.invoke()
             return
         }
 
         startService(Intent(context, SYRFAcceleroTrackingService::class.java))
         sensorManager.registerListener(
-            this, sensorAccelerometer,
+            this, notNullSensorAccelerometer,
             SensorManager.SENSOR_DELAY_NORMAL
         )
     }
@@ -129,7 +136,7 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
 
     private fun generateNotification(sensorData: SYRFSensorsAcceleroData?): Notification? {
 
-        val mainNotificationText = sensorData?.toString() ?: return null
+        val mainNotificationText = sensorData?.toText() ?: return null
 
         val titleText = getString(R.string.app_name)
 
@@ -150,7 +157,7 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
 
         val launchActivityIntent = Intent(this, this.javaClass)
 
-        val cancelIntent = Intent(applicationContext, ACCELERO_NOTIFICATION_CHANNEL_ID::class.java)
+        val cancelIntent = Intent(applicationContext, SYRFAcceleroTrackingService::class.java)
         cancelIntent.putExtra(EXTRA_CANCEL_ACCELERO_SENSOR_TRACKING_FROM_NOTIFICATION, true)
 
         val servicePendingIntent = PendingIntent.getService(

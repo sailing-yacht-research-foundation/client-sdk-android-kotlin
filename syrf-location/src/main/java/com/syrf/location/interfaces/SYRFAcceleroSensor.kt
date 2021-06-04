@@ -11,6 +11,10 @@ import com.syrf.location.services.SYRFAcceleroTrackingService
 import java.lang.Exception
 import kotlin.jvm.Throws
 
+/**
+ * The interface class that exported to the client. You can use methods from this interface
+ * to get update of accelerometer sensor. Note that need to call configure method before using it
+ */
 interface SYRFAcceleroSensorInterface {
     fun configure(context: Activity)
     fun configure(config: SYRFAccelerometerConfig, context: Activity)
@@ -20,13 +24,18 @@ interface SYRFAcceleroSensorInterface {
     fun onStop(context: Context)
 }
 
+/**
+ * The singleton, implementation of [SYRFAcceleroSensorInterface] class. This will bind a service
+ *  called [SYRFAcceleroTrackingService] and start and stop request accelerometer sensor data update
+ *  using this service
+ */
 object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
     private var acceleroTrackingService: SYRFAcceleroTrackingService? = null
     private lateinit var config: SYRFAccelerometerConfig
     private var isServiceBound = false
 
     /**
-     * Configure the Accelero Service using default config.
+     * Configure the Accelerometer Service using default config.
      * The method should be called before any class usage
      * @param context The context. Should be the activity
      */
@@ -38,7 +47,7 @@ object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
     }
 
     /**
-     * Configure the Accelero Service. The method should be called before any class usage
+     * Configure the Accelerometer Service. The method should be called before any class usage
      *
      * @param config Configuration object
      * @param context The context. Should be the activity
@@ -77,7 +86,6 @@ object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
 
     override fun onStop(context: Context) {
         if (isServiceBound) {
-            acceleroTrackingService?.unsubscribeToAcceleroSensorUpdates()
             context.unbindService(acceleroServiceConnection)
             isServiceBound = false
         }
@@ -96,7 +104,6 @@ object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
             isServiceBound = false
         }
     }
-
 
     @Throws(Exception::class)
     private fun checkConfig() {

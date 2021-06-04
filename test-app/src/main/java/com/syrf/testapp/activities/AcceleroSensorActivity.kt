@@ -113,7 +113,7 @@ class AcceleroSensorActivity : AppCompatActivity() {
             )
 
             if (data != null) {
-                logResultsToScreen("${TimeService.currentTime()} - ${data.toString()}")
+                logResultsToScreen("${TimeService.currentTime()} - ${data.toText()}")
             }
         }
     }

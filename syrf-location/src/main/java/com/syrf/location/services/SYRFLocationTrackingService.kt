@@ -173,7 +173,7 @@ open class SYRFLocationTrackingService: Service() {
 
         val launchActivityIntent = Intent(this, this.javaClass)
 
-        val cancelIntent = Intent(applicationContext, NOTIFICATION_CHANNEL_ID::class.java)
+        val cancelIntent = Intent(applicationContext, SYRFLocationTrackingService::class.java)
         cancelIntent.putExtra(EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION, true)
 
         val servicePendingIntent = PendingIntent.getService(
