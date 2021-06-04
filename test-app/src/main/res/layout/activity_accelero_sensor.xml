@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activities.AcceleroSensorActivity">
 
     <Button
         android:id="@+id/subscribe_to_accelero_data_update_btn"

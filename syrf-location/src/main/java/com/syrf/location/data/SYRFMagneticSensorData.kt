@@ -19,6 +19,6 @@ data class SYRFMagneticSensorData constructor(
 ) : Parcelable {
 
     fun toText(): String {
-        return "(x-axis: $x, y-axis: $y, z-axis: $z)"
+        return "(x-axis: $x μT, y-axis: $y μT, z-axis: $z μT)"
     }
 }

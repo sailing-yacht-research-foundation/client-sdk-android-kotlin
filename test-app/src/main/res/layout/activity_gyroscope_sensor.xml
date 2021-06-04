@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MagneticSensorActivity">
+    tools:context=".activities.GyroscopeSensorActivity">
 
     <Button
-        android:id="@+id/subscribe_to_magnetic_data_update_btn"
+        android:id="@+id/subscribe_to_gyroscope_data_update_btn"
         android:layout_width="300dp"
         android:layout_height="54dp"
         android:layout_marginTop="30dp"
-        android:text="@string/subscribe_to_magnetic_updates"
+        android:text="@string/subscribe_to_gyroscope_updates"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -29,6 +29,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subscribe_to_magnetic_data_update_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/subscribe_to_gyroscope_data_update_btn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

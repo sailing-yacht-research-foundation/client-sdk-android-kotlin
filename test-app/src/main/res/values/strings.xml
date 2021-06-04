@@ -12,8 +12,12 @@
     <string name="subscribe_to_magnetic_updates">Subscribe to magnetic updates</string>
     <string name="unsubscribe_to_magnetic_updates">Unsubscribe to magnetic updates</string>
 
+    <string name="subscribe_to_gyroscope_updates">Subscribe to gyroscope updates</string>
+    <string name="unsubscribe_to_gyroscope_updates">Unsubscribe to gyroscope updates</string>
+
     <string name="location">Location</string>
     <string name="accelerometer_sensor">Accelerometer Sensor</string>
     <string name="magnetic_sensor">Magnetic Sensor</string>
+    <string name="gyroscope_sensor">Gyroscope Sensor</string>
 
 </resources>

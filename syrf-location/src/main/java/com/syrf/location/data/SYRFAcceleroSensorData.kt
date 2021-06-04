@@ -19,6 +19,6 @@ data class SYRFAcceleroSensorData constructor(
 ) : Parcelable {
 
     fun toText(): String {
-        return "(x-axis: $x, y-axis: $y, z-axis: $z)"
+        return "(x-axis: $x m/s2, y-axis: $y m/s2, z-axis: $z) m/s2"
     }
 }
