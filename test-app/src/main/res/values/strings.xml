@@ -9,7 +9,11 @@
     <string name="subscribe_to_accelerometer_updates">Subscribe to accelero updates</string>
     <string name="unsubscribe_to_accelerometer_updates">Unsubscribe to accelero updates</string>
 
+    <string name="subscribe_to_magnetic_updates">Subscribe to magnetic updates</string>
+    <string name="unsubscribe_to_magnetic_updates">Unsubscribe to magnetic updates</string>
+
     <string name="location">Location</string>
     <string name="accelerometer_sensor">Accelerometer Sensor</string>
+    <string name="magnetic_sensor">Magnetic Sensor</string>
 
 </resources>

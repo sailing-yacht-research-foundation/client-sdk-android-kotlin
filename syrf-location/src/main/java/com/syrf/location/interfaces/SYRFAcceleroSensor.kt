@@ -13,20 +13,20 @@ import kotlin.jvm.Throws
 
 /**
  * The interface class that exported to the client. You can use methods from this interface
- * to get update of accelerometer sensor. Note that need to call configure method before using it
+ * to get update of Accelerometer sensor. Note that need to call configure method before using it
  */
 interface SYRFAcceleroSensorInterface {
     fun configure(context: Activity)
     fun configure(config: SYRFAccelerometerConfig, context: Activity)
     fun getConfig(): SYRFAccelerometerConfig
-    fun subscribeToLocationUpdates(context: Activity, noAccelerometerSensorCallback: () -> Unit)
-    fun unsubscribeToLocationUpdates()
+    fun subscribeToSensorDataUpdates(context: Activity, noAccelerometerSensorCallback: () -> Unit)
+    fun unsubscribeToSensorDataUpdates()
     fun onStop(context: Context)
 }
 
 /**
  * The singleton, implementation of [SYRFAcceleroSensorInterface] class. This will bind a service
- *  called [SYRFAcceleroTrackingService] and start and stop request accelerometer sensor data update
+ *  called [SYRFAcceleroTrackingService] and start and stop request Accelerometer sensor data update
  *  using this service
  */
 object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
@@ -70,18 +70,18 @@ object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
     }
 
 
-    override fun subscribeToLocationUpdates(
+    override fun subscribeToSensorDataUpdates(
         context: Activity,
         noAccelerometerSensorCallback: () -> Unit
     ) {
-        acceleroTrackingService?.subscribeToAcceleroSensorUpdates(
+        acceleroTrackingService?.subscribeToSensorDataUpdates(
             context,
             noAccelerometerSensorCallback
         )
     }
 
-    override fun unsubscribeToLocationUpdates() {
-        acceleroTrackingService?.unsubscribeToAcceleroSensorUpdates()
+    override fun unsubscribeToSensorDataUpdates() {
+        acceleroTrackingService?.unsubscribeToSensorDataUpdates()
     }
 
     override fun onStop(context: Context) {

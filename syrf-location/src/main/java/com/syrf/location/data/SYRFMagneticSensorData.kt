@@ -4,14 +4,14 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 /**
- * Represents a data return from accelerometer.
- * @property x The acceleration on the x-axis in G's.
- * @property y The acceleration on the y-axis in G's
- * @property z The acceleration on the z-axis in G's
+ * Represents a data return from Magnetic sensor.
+ * @property x The geomagnetic field strength along the x-axis in μT
+ * @property y The geomagnetic field strength along the y-axis in μT
+ * @property z The geomagnetic field strength along the z-axis in μT
  * @property timestamp The timestamp at which the accelerometer data was determined
  */
 @Parcelize
-data class SYRFSensorsAcceleroData constructor(
+data class SYRFMagneticSensorData constructor(
     val x: Float,
     val y: Float,
     val z: Float,

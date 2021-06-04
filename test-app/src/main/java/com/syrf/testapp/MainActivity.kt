@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.syrf.testapp.activities.AcceleroSensorActivity
 import com.syrf.testapp.activities.LocationActivity
+import com.syrf.testapp.activities.MagneticSensorActivity
 import com.syrf.testapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(){
@@ -26,6 +27,10 @@ class MainActivity : AppCompatActivity(){
 
         binding.btnShowAcceleroSensor.setOnClickListener {
             AcceleroSensorActivity.start(this)
+        }
+
+        binding.btnShowMagneticSensor.setOnClickListener {
+            MagneticSensorActivity.start(this)
         }
 
     }

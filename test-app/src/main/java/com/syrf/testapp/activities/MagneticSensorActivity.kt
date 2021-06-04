@@ -7,33 +7,33 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.syrf.location.configs.SYRFAccelerometerConfig
-import com.syrf.location.data.SYRFAcceleroSensorData
+import com.syrf.location.configs.SYRFMagneticConfig
+import com.syrf.location.data.SYRFMagneticSensorData
+import com.syrf.location.interfaces.SYRFMagneticSensor
+import com.syrf.location.utils.Constants.ACTION_MAGNETIC_SENSOR_BROADCAST
 import com.syrf.testapp.services.TimeService
-import com.syrf.location.interfaces.SYRFAcceleroSensor
-import com.syrf.location.utils.Constants.ACTION_ACCELERO_SENSOR_BROADCAST
 import com.syrf.time.configs.SYRFTimeConfig
-import com.syrf.location.utils.Constants.EXTRA_ACCELERO_SENSOR_DATA
+import com.syrf.location.utils.Constants.EXTRA_MAGNETIC_SENSOR_DATA
 import com.syrf.testapp.R
-import com.syrf.testapp.databinding.ActivityAcceleroSensorBinding
+import com.syrf.testapp.databinding.ActivityMagneticSensorBinding
 
-class AcceleroSensorActivity : AppCompatActivity() {
+class MagneticSensorActivity : AppCompatActivity() {
 
-    private val acceleroSensorBroadcastReceiver = AcceleroSensorBroadcastReceiver()
-    private lateinit var binding: ActivityAcceleroSensorBinding
+    private val magneticSensorBroadcastReceiver = MagneticSensorBroadcastReceiver()
+    private lateinit var binding: ActivityMagneticSensorBinding
     private var isUpdateEnabled = false
 
     companion object {
 
         fun start(activity: Activity) {
-            val intent = Intent(activity, AcceleroSensorActivity::class.java)
+            val intent = Intent(activity, MagneticSensorActivity::class.java)
             activity.startActivity(intent)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAcceleroSensorBinding.inflate(layoutInflater)
+        binding = ActivityMagneticSensorBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
@@ -43,10 +43,11 @@ class AcceleroSensorActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        val config = SYRFAccelerometerConfig.Builder()
+        val config = SYRFMagneticConfig.Builder()
             .sensorDelay(SensorManager.SENSOR_DELAY_NORMAL)
+            .usingForegroundService(false)
             .set()
-        SYRFAcceleroSensor.configure(config, this)
+        SYRFMagneticSensor.configure(config, this)
 
         val timeConfig = SYRFTimeConfig.Builder()
             .set()
@@ -57,34 +58,34 @@ class AcceleroSensorActivity : AppCompatActivity() {
         super.onPause()
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(
-            acceleroSensorBroadcastReceiver
+            magneticSensorBroadcastReceiver
         )
     }
 
     override fun onResume() {
         super.onResume()
         LocalBroadcastManager.getInstance(this).registerReceiver(
-            acceleroSensorBroadcastReceiver,
+            magneticSensorBroadcastReceiver,
             IntentFilter(
-                ACTION_ACCELERO_SENSOR_BROADCAST
+                ACTION_MAGNETIC_SENSOR_BROADCAST
             )
         )
     }
 
     override fun onStop() {
-        SYRFAcceleroSensor.onStop(this)
+        SYRFMagneticSensor.onStop(this)
         super.onStop()
     }
 
     private fun setupBtn() {
-        binding.subscribeToAcceleroDataUpdateBtn.setOnClickListener() {
+        binding.subscribeToMagneticDataUpdateBtn.setOnClickListener() {
             isUpdateEnabled = !isUpdateEnabled
             if (isUpdateEnabled) {
-                SYRFAcceleroSensor.subscribeToSensorDataUpdates(this) {
-                    logResultsToScreen("Device has no accelerometer sensor")
+                SYRFMagneticSensor.subscribeToSensorDataUpdates(this) {
+                    logResultsToScreen("Device has no magnetic sensor")
                 }
             } else {
-                SYRFAcceleroSensor.unsubscribeToSensorDataUpdates()
+                SYRFMagneticSensor.unsubscribeToSensorDataUpdates()
             }
             updateButtonState()
         }
@@ -92,10 +93,10 @@ class AcceleroSensorActivity : AppCompatActivity() {
     }
 
     private fun updateButtonState() {
-        binding.subscribeToAcceleroDataUpdateBtn.text = if (isUpdateEnabled) {
-            getString(R.string.unsubscribe_to_accelerometer_updates)
+        binding.subscribeToMagneticDataUpdateBtn.text = if (isUpdateEnabled) {
+            getString(R.string.unsubscribe_to_magnetic_updates)
         } else {
-            getString(R.string.subscribe_to_accelerometer_updates)
+            getString(R.string.subscribe_to_magnetic_updates)
         }
     }
 
@@ -104,11 +105,11 @@ class AcceleroSensorActivity : AppCompatActivity() {
         binding.outputTextView.text = outputWithPreviousLogs
     }
 
-    private inner class AcceleroSensorBroadcastReceiver : BroadcastReceiver() {
+    private inner class MagneticSensorBroadcastReceiver : BroadcastReceiver() {
 
         override fun onReceive(context: Context, intent: Intent) {
-            val data = intent.getParcelableExtra<SYRFAcceleroSensorData>(
-                EXTRA_ACCELERO_SENSOR_DATA
+            val data = intent.getParcelableExtra<SYRFMagneticSensorData>(
+                EXTRA_MAGNETIC_SENSOR_DATA
             )
 
             if (data != null) {

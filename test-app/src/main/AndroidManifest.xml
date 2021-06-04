@@ -25,6 +25,10 @@
         <activity
             android:label="@string/accelerometer_sensor"
             android:name=".activities.AcceleroSensorActivity" />
+
+        <activity
+            android:label="@string/magnetic_sensor"
+            android:name=".activities.MagneticSensorActivity" />
     </application>
 
 </manifest>
