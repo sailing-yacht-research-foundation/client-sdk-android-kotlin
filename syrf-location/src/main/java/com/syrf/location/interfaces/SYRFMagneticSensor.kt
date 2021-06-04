@@ -26,8 +26,8 @@ interface SYRFMagneticSensorInterface {
 
 /**
  * The singleton, implementation of [SYRFMagneticSensorInterface] class. This will bind a service
- *  called [SYRFMagneticTrackingService] and start and stop request Magnetic sensor data update
- *  using this service
+ * called [SYRFMagneticTrackingService] and start and stop request Magnetic sensor data update
+ * using this service
  */
 object SYRFMagneticSensor : SYRFMagneticSensorInterface {
     private var magneticTrackingService: SYRFMagneticTrackingService? = null
@@ -40,10 +40,7 @@ object SYRFMagneticSensor : SYRFMagneticSensorInterface {
      * @param context The context. Should be the activity
      */
     override fun configure(context: Activity) {
-        configure(
-            SYRFMagneticConfig.DEFAULT,
-            context
-        )
+        this.configure(SYRFMagneticConfig.DEFAULT, context)
     }
 
     /**

@@ -26,8 +26,8 @@ interface SYRFAcceleroSensorInterface {
 
 /**
  * The singleton, implementation of [SYRFAcceleroSensorInterface] class. This will bind a service
- *  called [SYRFAcceleroTrackingService] and start and stop request Accelerometer sensor data update
- *  using this service
+ * called [SYRFAcceleroTrackingService] and start and stop request Accelerometer sensor data update
+ * using this service
  */
 object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
     private var acceleroTrackingService: SYRFAcceleroTrackingService? = null
@@ -40,10 +40,7 @@ object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
      * @param context The context. Should be the activity
      */
     override fun configure(context: Activity) {
-        configure(
-            SYRFAccelerometerConfig.DEFAULT,
-            context
-        )
+        this.configure(SYRFAccelerometerConfig.DEFAULT, context)
     }
 
     /**

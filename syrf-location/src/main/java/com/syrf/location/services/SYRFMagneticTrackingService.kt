@@ -23,7 +23,8 @@ import com.syrf.location.utils.Constants.MAGNETIC_NOTIFICATION_ID
 /**
  * The service using to request magnetic sensor data update. It running in two modes:
  * background: when the activity that bind it is running, in this mode whe do not show notification
- * foreground: when the activity that bind it is destroyed, in this mode whe need to show a notification
+ * foreground: when the activity that bind it is destroyed and flag usingForegroundService set
+ * to true in config, in this mode whe need to show a notification
  */
 open class SYRFMagneticTrackingService : Service(), SensorEventListener {
 
