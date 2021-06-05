@@ -1,4 +1,4 @@
-package config
+package com.syrf.location.configs
 
 import com.google.android.gms.location.LocationRequest
 

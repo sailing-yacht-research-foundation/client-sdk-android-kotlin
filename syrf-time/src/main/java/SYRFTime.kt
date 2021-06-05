@@ -1,7 +1,7 @@
 import android.content.Context
 import com.lyft.kronos.AndroidClockFactory
 import com.lyft.kronos.KronosClock
-import config.SYRFTimeConfig
+import com.syrf.time.configs.SYRFTimeConfig
 import java.lang.Exception
 
 interface SYRFTimeInterface {

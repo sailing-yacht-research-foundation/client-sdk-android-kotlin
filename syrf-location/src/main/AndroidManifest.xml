@@ -11,6 +11,21 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location" />
+
+        <service
+            android:name=".services.SYRFAcceleroTrackingService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <service
+            android:name=".services.SYRFMagneticTrackingService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <service
+            android:name=".services.SYRFGyroscopeTrackingService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

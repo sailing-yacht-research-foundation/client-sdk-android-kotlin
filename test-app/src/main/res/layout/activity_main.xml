@@ -7,41 +7,48 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/get_current_position_btn"
+        android:id="@+id/btn_show_location"
         android:layout_width="300dp"
         android:layout_height="54dp"
         android:layout_marginTop="30dp"
-        android:text="@string/get_current_position"
+        android:text="@string/location"
+        app:layout_constraintBottom_toTopOf="@id/btn_show_accelero_sensor"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <Button
-        android:id="@+id/subscribe_to_position_update_btn"
+        android:id="@+id/btn_show_accelero_sensor"
         android:layout_width="300dp"
         android:layout_height="54dp"
         android:layout_marginTop="30dp"
-        android:text="@string/subscribe_to_position_updates"
+        android:text="@string/accelerometer_sensor"
+        app:layout_constraintBottom_toTopOf="@+id/btn_show_magnetic_sensor"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.469"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/get_current_position_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_show_location" />
 
+    <Button
+        android:id="@+id/btn_show_magnetic_sensor"
+        android:layout_width="300dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/magnetic_sensor"
+        app:layout_constraintBottom_toTopOf="@+id/btn_show_gyroscope_sensor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_show_accelero_sensor" />
 
-    <TextView
-        android:id="@+id/output_text_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:padding="8dp"
+    <Button
+        android:id="@+id/btn_show_gyroscope_sensor"
+        android:layout_width="300dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/gyroscope_sensor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/background_border"
-        app:layout_constraintTop_toBottomOf="@+id/subscribe_to_position_update_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_show_magnetic_sensor" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

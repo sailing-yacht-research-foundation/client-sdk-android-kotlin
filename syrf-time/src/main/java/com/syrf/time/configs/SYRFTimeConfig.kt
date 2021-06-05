@@ -1,4 +1,4 @@
-package config
+package com.syrf.time.configs
 
 class SYRFTimeConfig private constructor(
     val ntpHosts: List<String>?,
