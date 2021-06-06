@@ -12,9 +12,9 @@ object SYRFGeospatial: SYRFGeospatialInterface {
     }
 
     fun test() {
-        testGeometry(10F, 10F);
+        testGeospatial();
 
     }
-
-    external fun testGeometry(lat: Float, ltd: Float): Void
+    
+    private external fun testGeospatial()
 }
