@@ -50,4 +50,5 @@ dependencies {
 
     implementation project(':syrf-location')
     implementation project(':syrf-time')
+    implementation project(':syrf-geospatial')
 }
