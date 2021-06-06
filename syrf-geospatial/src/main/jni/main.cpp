@@ -2,8 +2,9 @@
 //
 
 #include <jni.h>
-#inclde
 
-extern "C" JNIEXPORT void JNICALL
-Java_SYRFGeospatial_testGeospatial(JNIEnv *env, jobject obj) {
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_syrf_geospatial_interfaces_SYRFGeospatial_testGeospatial(JNIEnv *env, jobject thiz) {
+    // TODO: implement testGeospatial()
 }

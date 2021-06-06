@@ -1,3 +1,5 @@
+package com.syrf.geospatial.interfaces
+
 interface SYRFGeospatialInterface {
     fun configure()
 }
@@ -13,7 +15,6 @@ object SYRFGeospatial: SYRFGeospatialInterface {
 
     fun test() {
         testGeospatial();
-
     }
     
     private external fun testGeospatial()
