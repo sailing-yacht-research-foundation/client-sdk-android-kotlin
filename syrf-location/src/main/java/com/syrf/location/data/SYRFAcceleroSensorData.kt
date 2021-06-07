@@ -21,4 +21,7 @@ data class SYRFAcceleroSensorData constructor(
     fun toText(): String {
         return "(x-axis: $x m/s2, y-axis: $y m/s2, z-axis: $z) m/s2"
     }
+
+    val values: FloatArray
+        get() = floatArrayOf(x, y, z)
 }

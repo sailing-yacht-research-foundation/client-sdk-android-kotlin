@@ -8,7 +8,7 @@ import kotlinx.android.parcel.Parcelize
  * @property x The rate of rotation around the x-axis in rad/s
  * @property y The rate of rotation around the y-axis in rad/s
  * @property z The rate of rotation around the z-axis in rad/s
- * @property timestamp The timestamp at which the accelerometer data was determined
+ * @property timestamp The timestamp at which the gyroscope data was determined
  */
 @Parcelize
 data class SYRFGyroscopeSensorData constructor(
@@ -21,4 +21,7 @@ data class SYRFGyroscopeSensorData constructor(
     fun toText(): String {
         return "(x-axis: $x rad/s, y-axis: $y rad/s, z-axis: $z rad/s)"
     }
+
+    val values: FloatArray
+        get() = floatArrayOf(x, y, z)
 }
