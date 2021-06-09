@@ -1,6 +1,7 @@
 include ':syrf-geospatial'
 include ':syrf-time'
 include ':syrf-authentication'
+include ':syrf-core'
 rootProject.name = 'com.syrf-clientsdk'
 
 apply from: 'gradle/projectSettings.gradle'
@@ -10,4 +11,3 @@ discoverSubprojects(file('subprojects.cfg')).each {
 }
 
 renameBuildScripts(rootProject)
-include ':syrf-core'

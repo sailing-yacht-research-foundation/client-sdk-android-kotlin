@@ -35,6 +35,10 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    packagingOptions {
+        pickFirst '**/*.so'
+    }
 }
 
 dependencies {
@@ -51,4 +55,5 @@ dependencies {
     implementation project(':syrf-location')
     implementation project(':syrf-time')
     implementation project(':syrf-geospatial')
+    implementation project(':syrf-core')
 }
