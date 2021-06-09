@@ -6,7 +6,7 @@ interface SYRFGeospatialInterface {
 
 object SYRFGeospatial: SYRFGeospatialInterface {
     init {
-        System.loadLibrary("main");
+        System.loadLibrary("geospatial");
     }
 
     override fun configure() {
