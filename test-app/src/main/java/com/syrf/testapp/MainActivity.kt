@@ -2,6 +2,7 @@ package com.syrf.testapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.syrf.testapp.activities.*
 import com.syrf.core.interfaces.SYRFCore
 import com.syrf.testapp.activities.AcceleroSensorActivity
 import com.syrf.testapp.activities.GyroscopeSensorActivity
@@ -39,5 +40,8 @@ class MainActivity : AppCompatActivity(){
             GyroscopeSensorActivity.start(this)
         }
 
+        binding.btnShowFirstSample.setOnClickListener {
+            FirstSampleActivity.start(this)
+        }
     }
 }
