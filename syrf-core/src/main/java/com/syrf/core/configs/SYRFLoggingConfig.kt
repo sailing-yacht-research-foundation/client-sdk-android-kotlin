@@ -7,8 +7,10 @@ import com.syrf.core.interfaces.SYRFLogging
  * The class help you config params for [SYRFLogging]
  * @property debugPriority: priority for logging when application is running in debug mode
  * @property releasePriority: priority for logging when application is running in release mode
- * debugLevel and releaseLevel should be one of [NONE], [VERBOSE], [DEBUG], [INFO],
- * [WARN], [ERROR], [ASSERT]
+ * debugPriority and releasePriority used for determining what log type can be written in logcat
+ * and should be one of [VERBOSE], [DEBUG], [INFO],[WARN], [ERROR], [ASSERT], [NONE]
+ * @property maxLogLength: max log length per line, if message longer than this value
+ * it will be split into chunks
  */
 class SYRFLoggingConfig private constructor(
     val debugPriority: Int,
@@ -24,6 +26,7 @@ class SYRFLoggingConfig private constructor(
         const val ASSERT = Log.ASSERT
         const val NONE = Log.ASSERT + 1
 
+        const val SYRF_LOGGING_TAG = "SYRFLogging"
         private const val MAX_LOG_LENGTH = 4000
 
         val DEFAULT: SYRFLoggingConfig =

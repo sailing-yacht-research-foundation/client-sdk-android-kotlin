@@ -1,17 +1,19 @@
-package com.syrf.core.timbertrees
+package com.syrf.core.trees
 
 import android.os.Build
-import android.util.Log
 import android.util.Log.*
 import com.syrf.core.configs.SYRFLoggingConfig
-import com.syrf.core.interfaces.SYRFLogging
 import timber.log.Timber
 import kotlin.math.min
 
+/**
+ * Base class that extend from [Timber.Tree] class and implement the log method
+ * @property config: The variable will be used for logging config
+ */
 abstract class SYRFBaseTree(val config: SYRFLoggingConfig): Timber.Tree() {
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        // Workaround for devices that doesn't show lower priority logs
+        // For devices that doesn't show lower priorities logs we set priority higher
         var newPriority = priority
         if (Build.MANUFACTURER == "HUAWEI" || Build.MANUFACTURER == "samsung") {
             if (priority == VERBOSE || priority == DEBUG || priority == INFO) {
