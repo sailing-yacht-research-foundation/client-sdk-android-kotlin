@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.syrf.core.interfaces.SYRFTimber
 
 class PermissionsManager(val context: Activity) {
 
@@ -36,19 +37,21 @@ class PermissionsManager(val context: Activity) {
 
         if (permissions.isEmpty()) {
             exceptionCallback()
+            SYRFTimber.e("Permissions denied")
             return
         }
 
         for (permission in permissions) {
             if (!isPermissionGranted(permission)) {
                 exceptionCallback()
+                SYRFTimber.e("Permission: $permission denied")
                 return
             }
 //        }
         }
 
         successCallback()
-
+        SYRFTimber.d("Permissions granted")
 
 //        if (isUserCheckNeverAskAgain(context, )) {
 //            // NeverAskAgain case - Never Ask Again has been checked
