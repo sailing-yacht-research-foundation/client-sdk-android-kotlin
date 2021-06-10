@@ -14,6 +14,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.OnTokenCanceledListener
+import com.syrf.core.interfaces.SYRFTimber
 import com.syrf.location.R
 import com.syrf.location.interfaces.SYRFLocation
 import toText
@@ -46,6 +47,7 @@ open class SYRFLocationTrackingService: Service() {
         if (cancelLocationTrackingFromNotification == true) {
             unsubscribeToLocationUpdates()
             stopSelf()
+            SYRFTimber.v("Stop by notification")
         }
 
         // Tells the system not to recreate the service after it's been killed.
@@ -106,7 +108,6 @@ open class SYRFLocationTrackingService: Service() {
         serviceRunningInForeground = true
         return true
     }
-
 
     @SuppressLint("MissingPermission")
     fun getCurrentPosition(context: Context, callback: CurrentPositionUpdateCallback) {

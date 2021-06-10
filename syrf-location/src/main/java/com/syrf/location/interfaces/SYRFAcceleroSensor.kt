@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import com.syrf.core.interfaces.SYRFTimber
 import com.syrf.location.configs.SYRFAccelerometerConfig
 import com.syrf.location.services.SYRFAcceleroTrackingService
+import com.syrf.location.services.SYRFLocationTrackingService
 import java.lang.Exception
 import kotlin.jvm.Throws
 
@@ -59,6 +61,8 @@ object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
         )
 
         isServiceBound = true
+
+        SYRFTimber.i("SYRFAcceleroSensor configured")
     }
 
     override fun getConfig(): SYRFAccelerometerConfig {
@@ -105,6 +109,7 @@ object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
     @Throws(Exception::class)
     private fun checkConfig() {
         if (!this::config.isInitialized) {
+            SYRFTimber.e("Config should be set before library use")
             throw Exception("Config should be set before library use")
         }
     }
