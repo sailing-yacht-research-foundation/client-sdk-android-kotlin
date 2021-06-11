@@ -4,7 +4,6 @@ plugins {
     id 'com.github.dcendents.android-maven'
     id("org.jetbrains.dokka")
     id 'kotlin-parcelize'
-    id 'maven-publish'
 }
 
 group = 'sailing-yacht-research-foundation'
@@ -59,22 +58,6 @@ tasks.dokkaHtmlPartial.configure {
     dokkaSourceSets {
         configureEach {
             includes.from("syrf-location.md")
-        }
-    }
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            // Creates a Maven publication called "release".
-            release(MavenPublication) {
-                // Applies the component for the release build variant.
-                from components.release
-                // You can then customize attributes of the publication as shown below.
-                groupId = 'com.syrf.location'
-                artifactId = 'location'
-                version = '1.0.0'
-            }
         }
     }
 }

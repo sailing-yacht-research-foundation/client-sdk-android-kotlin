@@ -1,9 +1,11 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'com.github.dcendents.android-maven'
     id("org.jetbrains.dokka")
-    id 'maven-publish'
 }
+
+group = 'sailing-yacht-research-foundation-time'
 
 android {
     compileSdkVersion 30
@@ -51,22 +53,6 @@ tasks.dokkaHtmlPartial.configure {
     dokkaSourceSets {
         configureEach {
             includes.from("syrf-time.md")
-        }
-    }
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            // Creates a Maven publication called "release".
-            release(MavenPublication) {
-                // Applies the component for the release build variant.
-                from components.release
-                // You can then customize attributes of the publication as shown below.
-                groupId = 'com.syrf.time'
-                artifactId = 'time'
-                version = '1.0.0'
-            }
         }
     }
 }
