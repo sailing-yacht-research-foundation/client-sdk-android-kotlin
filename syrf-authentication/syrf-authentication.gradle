@@ -3,7 +3,6 @@ plugins {
     id 'kotlin-android'
     id 'com.github.dcendents.android-maven'
     id("org.jetbrains.dokka")
-    id 'maven-publish'
 }
 
 group = 'sailing-yacht-research-foundation'
