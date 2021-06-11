@@ -19,7 +19,6 @@ import com.syrf.location.utils.Constants
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_MAGNETIC_SENSOR_TRACKING_FROM_NOTIFICATION
 import com.syrf.location.utils.Constants.MAGNETIC_NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.MAGNETIC_NOTIFICATION_ID
-import com.syrf.time.SYRFTime
 
 /**
  * The service using to request magnetic sensor data update. It running in two modes:
@@ -111,7 +110,7 @@ open class SYRFMagneticTrackingService : Service(), SensorEventListener {
                 x = geomegneticValues[0],
                 y = geomegneticValues[1],
                 z = geomegneticValues[2],
-                timestamp = SYRFTime.getCurrentTimeMS()
+                timestamp = System.currentTimeMillis()
             )
 
         currentSensorData = sensorSensorData

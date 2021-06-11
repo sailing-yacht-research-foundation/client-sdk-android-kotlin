@@ -19,7 +19,6 @@ import com.syrf.location.utils.Constants
 import com.syrf.location.utils.Constants.ACCELERO_NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.ACCELERO_NOTIFICATION_ID
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_ACCELERO_SENSOR_TRACKING_FROM_NOTIFICATION
-import com.syrf.time.SYRFTime
 
 /**
  * The service using to request accelerometer sensor data update. It running in two modes:
@@ -97,7 +96,7 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
                 x = axisValues[0],
                 y = axisValues[1],
                 z = axisValues[2],
-                timestamp = SYRFTime.getCurrentTimeMS()
+                timestamp = System.currentTimeMillis()
             )
 
         currentSensorData = sensorAcceleroData
