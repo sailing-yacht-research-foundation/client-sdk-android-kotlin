@@ -19,6 +19,7 @@ import com.syrf.location.utils.Constants
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_GYROSCOPE_SENSOR_TRACKING_FROM_NOTIFICATION
 import com.syrf.location.utils.Constants.GYROSCOPE_NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.GYROSCOPE_NOTIFICATION_ID
+import com.syrf.time.SYRFTime
 
 /**
  * The service using to request Gyroscope sensor data update. It running in two modes:

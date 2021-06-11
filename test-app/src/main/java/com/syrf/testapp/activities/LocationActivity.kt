@@ -1,6 +1,5 @@
 package com.syrf.testapp.activities
 
-import SYRFTime
 import android.app.Activity
 import android.content.*
 import android.location.Location
@@ -17,6 +16,7 @@ import com.syrf.testapp.R
 import com.syrf.testapp.SharedPreferenceUtil
 import com.syrf.testapp.databinding.ActivityLocationBinding
 import com.syrf.testapp.toText
+import com.syrf.time.SYRFTime
 
 class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 

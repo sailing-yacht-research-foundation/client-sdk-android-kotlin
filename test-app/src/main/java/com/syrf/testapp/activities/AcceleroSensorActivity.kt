@@ -1,6 +1,5 @@
 package com.syrf.testapp.activities
 
-import SYRFTime
 import android.app.Activity
 import android.content.*
 import android.hardware.SensorManager
@@ -16,6 +15,7 @@ import com.syrf.time.configs.SYRFTimeConfig
 import com.syrf.location.utils.Constants.EXTRA_ACCELERO_SENSOR_DATA
 import com.syrf.testapp.R
 import com.syrf.testapp.databinding.ActivityAcceleroSensorBinding
+import com.syrf.time.SYRFTime
 
 class AcceleroSensorActivity : AppCompatActivity() {
 

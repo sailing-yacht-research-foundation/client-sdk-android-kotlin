@@ -15,11 +15,11 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.syrf.location.R
 import com.syrf.location.data.SYRFAcceleroSensorData
 import com.syrf.location.interfaces.SYRFAcceleroSensor
-import com.syrf.location.interfaces.SYRFMagneticSensor
 import com.syrf.location.utils.Constants
 import com.syrf.location.utils.Constants.ACCELERO_NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.ACCELERO_NOTIFICATION_ID
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_ACCELERO_SENSOR_TRACKING_FROM_NOTIFICATION
+import com.syrf.time.SYRFTime
 
 /**
  * The service using to request accelerometer sensor data update. It running in two modes:

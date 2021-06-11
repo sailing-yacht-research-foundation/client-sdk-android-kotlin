@@ -22,3 +22,4 @@
 
 #noinspection ShrinkerUnresolvedReference
 -keep class com.google.android.gms.location.** { *; }
+-keep class com.syrf.location.** { *; }
