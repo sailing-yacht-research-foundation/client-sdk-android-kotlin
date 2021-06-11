@@ -5,7 +5,7 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
-group = 'sailing-yacht-research-foundation-time'
+group = 'sailing-yacht-research-foundation'
 
 android {
     compileSdkVersion 30

@@ -15,7 +15,7 @@ import com.syrf.time.configs.SYRFTimeConfig
 import com.syrf.location.utils.Constants.EXTRA_GYROSCOPE_SENSOR_DATA
 import com.syrf.testapp.R
 import com.syrf.testapp.databinding.ActivityGyroscopeSensorBinding
-import com.syrf.time.SYRFTime
+import com.syrf.time.interfaces.SYRFTime
 
 class GyroscopeSensorActivity : AppCompatActivity() {
 

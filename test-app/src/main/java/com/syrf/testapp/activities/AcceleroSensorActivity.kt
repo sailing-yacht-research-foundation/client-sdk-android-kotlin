@@ -15,7 +15,7 @@ import com.syrf.time.configs.SYRFTimeConfig
 import com.syrf.location.utils.Constants.EXTRA_ACCELERO_SENSOR_DATA
 import com.syrf.testapp.R
 import com.syrf.testapp.databinding.ActivityAcceleroSensorBinding
-import com.syrf.time.SYRFTime
+import com.syrf.time.interfaces.SYRFTime
 
 class AcceleroSensorActivity : AppCompatActivity() {
 

@@ -16,7 +16,7 @@ import com.syrf.testapp.R
 import com.syrf.testapp.SharedPreferenceUtil
 import com.syrf.testapp.databinding.ActivityLocationBinding
 import com.syrf.testapp.toText
-import com.syrf.time.SYRFTime
+import com.syrf.time.interfaces.SYRFTime
 
 class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 

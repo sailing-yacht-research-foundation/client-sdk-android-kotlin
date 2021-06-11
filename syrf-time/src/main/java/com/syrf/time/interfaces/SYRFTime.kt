@@ -1,4 +1,4 @@
-package com.syrf.time
+package com.syrf.time.interfaces
 
 import android.content.Context
 import com.lyft.kronos.AndroidClockFactory

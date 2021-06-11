@@ -25,8 +25,8 @@ import com.syrf.location.utils.Constants.EXTRA_ACCELERO_SENSOR_DATA
 import com.syrf.location.utils.Constants.EXTRA_MAGNETIC_SENSOR_DATA
 import com.syrf.testapp.R
 import com.syrf.testapp.databinding.ActivityFirstSampleBinding
-import com.syrf.time.SYRFTime
 import com.syrf.time.configs.SYRFTimeConfig
+import com.syrf.time.interfaces.SYRFTime
 import kotlin.math.abs
 
 /**
