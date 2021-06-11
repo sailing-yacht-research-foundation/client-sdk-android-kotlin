@@ -60,9 +60,10 @@ dependencies {
 
     // Import as distribution modules. Used when in distribution testing only
     // Do not forget to rebuild project and change version accordingly when enable it
-//    implementation 'com.github.sailing-yacht-research-foundation.client-sdk-android-kotlin:syrf-location:0.4.2'
-//    implementation 'com.github.sailing-yacht-research-foundation.client-sdk-android-kotlin:syrf-time:0.4.2'
-//    implementation 'com.github.sailing-yacht-research-foundation.client-sdk-android-kotlin:syrf-core:0.4.2'
-//    implementation 'com.github.sailing-yacht-research-foundation.client-sdk-android-kotlin:syrf-authentication:0.4.2'
-//    implementation 'com.github.sailing-yacht-research-foundation.client-sdk-android-kotlin:syrf-geospatial:0.4.2'
+//    implementation 'com.github.sailing-yacht-research-foundation.client-sdk-android-kotlin:syrf-location:0.4.3'
+//    implementation 'com.github.sailing-yacht-research-foundation.client-sdk-android-kotlin:syrf-time:0.4.3'
+//    implementation "com.lyft.kronos:kronos-android:0.0.1-alpha11"
+//    implementation 'com.github.sailing-yacht-research-foundation.client-sdk-android-kotlin:syrf-core:0.4.3'
+//    implementation 'com.github.sailing-yacht-research-foundation.client-sdk-android-kotlin:syrf-authentication:0.4.3'
+//    implementation 'com.github.sailing-yacht-research-foundation.client-sdk-android-kotlin:syrf-geospatial:0.4.3'
 }
