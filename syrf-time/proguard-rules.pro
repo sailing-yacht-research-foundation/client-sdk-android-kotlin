@@ -21,10 +21,3 @@
 #-renamesourcefileattribute SourceFile
 -keep class com.syrf.time.** { *; }
 -keep class com.lyft.kronos.** { *; }
--dontwarn com.lyft.kronos.internal.**
--keepclasseswithmembernames class * {
-    @com.lyft.kronos.* <fields>;
-}
--keepclasseswithmembernames class * {
-    @com.lyft.kronos.* <methods>;
-}
