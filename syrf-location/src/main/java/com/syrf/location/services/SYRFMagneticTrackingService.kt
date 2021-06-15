@@ -110,7 +110,7 @@ open class SYRFMagneticTrackingService : Service(), SensorEventListener {
                 x = geomegneticValues[0],
                 y = geomegneticValues[1],
                 z = geomegneticValues[2],
-                timestamp = SYRFTime.getCurrentTimeMS()
+                timestamp = System.currentTimeMillis()
             )
 
         currentSensorData = sensorSensorData
