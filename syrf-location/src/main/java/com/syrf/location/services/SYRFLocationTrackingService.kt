@@ -13,7 +13,6 @@ import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationTokenSource
-import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.syrf.core.interfaces.SYRFTimber
 import com.syrf.location.R
 import com.syrf.location.interfaces.SYRFLocation
@@ -24,9 +23,10 @@ import com.syrf.location.utils.Constants.EXTRA_LOCATION
 import com.syrf.location.utils.Constants.NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.LOCATION_NOTIFICATION_ID
 import com.syrf.location.utils.CurrentPositionUpdateCallback
+import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
-open class SYRFLocationTrackingService: Service() {
+open class SYRFLocationTrackingService : Service() {
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
@@ -115,9 +115,9 @@ open class SYRFLocationTrackingService: Service() {
 
         val cts = CancellationTokenSource()
         val cancellationToken = cts.token
-        cancellationToken.onCanceledRequested(OnTokenCanceledListener {
-            // TODO:
-        })
+        cancellationToken.onCanceledRequested {
+            // TODO: Add handler
+        }
 
         fusedLocationProviderClient.getCurrentLocation(
             LocationRequest.PRIORITY_HIGH_ACCURACY,
@@ -134,7 +134,7 @@ open class SYRFLocationTrackingService: Service() {
                 locationRequest, locationCallback, Looper.getMainLooper()
             )
         } catch (unlikely: SecurityException) {
-            // TODO: add catch message
+            SYRFTimber.e(unlikely)
         }
     }
 
@@ -145,11 +145,13 @@ open class SYRFLocationTrackingService: Service() {
                 if (task.isSuccessful) {
                     stopSelf()
                 } else {
-                    // TODO: add failed message
+                    val exception = task.exception
+                        ?: Exception("Unknown error when unsubscribe location update")
+                    SYRFTimber.e(exception)
                 }
             }
         } catch (unlikely: SecurityException) {
-            // TODO: add catch message
+            SYRFTimber.e(unlikely)
         }
     }
 
@@ -192,27 +194,27 @@ open class SYRFLocationTrackingService: Service() {
         )
 
         val notificationCompatBuilder =
-                NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
 
         return notificationCompatBuilder
-                .setStyle(bigTextStyle)
-                .setContentTitle(titleText)
-                .setContentText(mainNotificationText)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setOngoing(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .addAction(
-                    0,
-                    getString(R.string.launch_activity),
-                    activityPendingIntent
-                )
-                .addAction(
-                    0,
-                    getString(R.string.stop_location_updates_button_text),
-                    servicePendingIntent
-                )
-                .build()
+            .setStyle(bigTextStyle)
+            .setContentTitle(titleText)
+            .setContentText(mainNotificationText)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setOngoing(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .addAction(
+                0,
+                getString(R.string.launch_activity),
+                activityPendingIntent
+            )
+            .addAction(
+                0,
+                getString(R.string.stop_location_updates_button_text),
+                servicePendingIntent
+            )
+            .build()
     }
 
     inner class LocalBinder : Binder() {

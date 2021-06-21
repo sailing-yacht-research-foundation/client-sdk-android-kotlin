@@ -18,10 +18,16 @@ data class SYRFGyroscopeSensorData constructor(
     val timestamp: Long
 ) : Parcelable {
 
+    /**
+     * Convert gyroscope data to text
+     */
     fun toText(): String {
         return "(x-axis: $x rad/s, y-axis: $y rad/s, z-axis: $z rad/s)"
     }
 
+    /**
+     * The gyroscope data in float array
+     */
     val values: FloatArray
         get() = floatArrayOf(x, y, z)
 }
