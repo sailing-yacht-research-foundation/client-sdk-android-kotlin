@@ -1,10 +1,11 @@
 package com.syrf.location.configs
 
 import android.hardware.SensorManager
+import com.syrf.core.configs.SYRFLoggingConfig
 
 /**
  * The class help you config params of Accelerometer sensor request
- * @property sensorDelay: rate of sensor request frequency. Should be one of
+ * @property sensorDelay The rate of sensor request frequency. Should be one of
  * [SensorManager.SENSOR_DELAY_FASTEST],
  * [SensorManager.SENSOR_DELAY_GAME],
  * [SensorManager.SENSOR_DELAY_UI],
@@ -15,9 +16,17 @@ class SYRFAccelerometerConfig private constructor(
 ) {
 
     companion object {
-        val DEFAULT: SYRFAccelerometerConfig = SYRFAccelerometerConfig(sensorDelay = SensorManager.SENSOR_DELAY_NORMAL)
+        /**
+         * Provide a default config for using in cases client init the SDK
+         * without config or missing some properties in config
+         */
+        val DEFAULT: SYRFAccelerometerConfig =
+            SYRFAccelerometerConfig(sensorDelay = SensorManager.SENSOR_DELAY_NORMAL)
     }
 
+    /**
+     * Builder class that help to create an instance of [SYRFAccelerometerConfig]
+     */
     data class Builder(
         var sensorDelay: Int? = null,
     ) {

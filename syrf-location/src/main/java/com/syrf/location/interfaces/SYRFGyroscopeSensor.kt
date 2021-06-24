@@ -13,7 +13,8 @@ import kotlin.jvm.Throws
 
 /**
  * The interface class that exported to the client. You can use methods from this interface
- * to get update of Gyroscope sensor. Note that need to call configure method before using it
+ * to get update of Gyroscope sensor. Note that need to call configure method before using
+ * any another methods
  */
 interface SYRFGyroscopeSensorInterface {
     fun configure(context: Activity)
@@ -25,7 +26,7 @@ interface SYRFGyroscopeSensorInterface {
 }
 
 /**
- * The singleton, implementation of [SYRFGyroscopeSensorInterface] class. This will bind a service
+ * The singleton, implementation of [SYRFGyroscopeSensorInterface]. This will bind a service
  * called [SYRFGyroscopeTrackingService] and start and stop request Gyroscope sensor data update
  * using this service
  */
@@ -45,7 +46,6 @@ object SYRFGyroscopeSensor : SYRFGyroscopeSensorInterface {
 
     /**
      * Configure the Gyroscope Service. The method should be called before any class usage
-     *
      * @param config Configuration object
      * @param context The context. Should be the activity
      */
@@ -61,12 +61,20 @@ object SYRFGyroscopeSensor : SYRFGyroscopeSensorInterface {
         isServiceBound = true
     }
 
+    /**
+     * Check for initialization of config and return initialized value
+     */
     override fun getConfig(): SYRFGyroscopeConfig {
         checkConfig()
         return config
     }
 
-
+    /**
+     * Subscribe to sensor data update
+     * @param context The context. Should be the activity
+     * @param noGyroscopeSensorCallback The callback will be executed when the
+     * Gyroscope sensor is not available on the device
+     */
     override fun subscribeToSensorDataUpdates(
         context: Activity,
         noGyroscopeSensorCallback: () -> Unit
@@ -77,10 +85,17 @@ object SYRFGyroscopeSensor : SYRFGyroscopeSensorInterface {
         )
     }
 
+    /**
+     * Unsubscribe to sensor data update
+     */
     override fun unsubscribeToSensorDataUpdates() {
         gyroscopeTrackingService?.unsubscribeToSensorDataUpdates()
     }
 
+    /**
+     * Should be called in onStop method of the activity that subscribed to data update
+     * @param context The context. Should be the activity
+     */
     override fun onStop(context: Context) {
         if (isServiceBound) {
             context.unbindService(gyroscopeServiceConnection)
@@ -88,7 +103,9 @@ object SYRFGyroscopeSensor : SYRFGyroscopeSensorInterface {
         }
     }
 
-    // Monitors connection to the while-in-use service.
+    /**
+     * Monitors connection to the while-in-use service.
+     */
     private val gyroscopeServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -102,6 +119,10 @@ object SYRFGyroscopeSensor : SYRFGyroscopeSensorInterface {
         }
     }
 
+    /**
+     * Check for config and throw an exception if it is not initialized
+     * @throws Exception
+     */
     @Throws(Exception::class)
     private fun checkConfig() {
         if (!this::config.isInitialized) {

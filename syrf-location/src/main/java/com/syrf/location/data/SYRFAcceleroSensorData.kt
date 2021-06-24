@@ -18,10 +18,16 @@ data class SYRFAcceleroSensorData constructor(
     val timestamp: Long
 ) : Parcelable {
 
+    /**
+     * Convert acceleration data to text
+     */
     fun toText(): String {
         return "(x-axis: $x m/s2, y-axis: $y m/s2, z-axis: $z) m/s2"
     }
 
+    /**
+     * The acceleration data in float array
+     */
     val values: FloatArray
         get() = floatArrayOf(x, y, z)
 }

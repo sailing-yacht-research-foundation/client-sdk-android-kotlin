@@ -6,34 +6,62 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.syrf.core.interfaces.SYRFTimber
+import com.syrf.location.configs.SYRFPermissionRequestConfig
 
+/**
+ * The helping class make easier to work with runtime permission
+ * @property context The context that handle permission. Should be activity
+ */
 class PermissionsManager(val context: Activity) {
 
+    /**
+     * Determine whether a particular permission has been granted.
+     * @param permission The permission name
+     */
     fun isPermissionGranted(permission: String): Boolean =
         ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
 
-    fun showPermissionReasonAndRequest(title: String, message: String, permissions: Array<String>, requestCode: Int) {
+    /**
+     * Show a "in app" dialog that provide the reason why we need permissions
+     * before actually requesting those permissions using system dialogs.
+     * @param config Contains params for title, message, positive and negative buttons
+     * @param permissions The array of permissions
+     * @param requestCode The code will be used for permission requesting
+     */
+    fun showPermissionReasonAndRequest(
+        config: SYRFPermissionRequestConfig,
+        permissions: Array<String>,
+        requestCode: Int
+    ) {
         val alertDialogBuilder = AlertDialog.Builder(context)
-        alertDialogBuilder.setTitle(title)
-        alertDialogBuilder.setMessage(message)
+        alertDialogBuilder.setTitle(config.title)
+        alertDialogBuilder.setMessage(config.message)
         alertDialogBuilder.setCancelable(false)
 
-        alertDialogBuilder.setPositiveButton("yes") {
-                dialog, which ->  run {
-            ActivityCompat.requestPermissions(context, permissions, requestCode)
-            dialog.dismiss() }
+        alertDialogBuilder.setPositiveButton(config.okButton) { dialog, _ ->
+            run {
+                ActivityCompat.requestPermissions(context, permissions, requestCode)
+                dialog.dismiss()
+            }
         }
 
-        alertDialogBuilder.setNegativeButton("no") {
-                dialog, which ->
+        alertDialogBuilder.setNegativeButton(config.cancelButton) { dialog, _ ->
             dialog.dismiss()
         }
         alertDialogBuilder.show()
     }
 
-    fun handleResults(permissions: Array<out String>, successCallback: () -> Unit, exceptionCallback: () -> Unit) {
-        // It's not our expect permission
-//        if (requestCode != expectRequestCode) return
+    /**
+     * Handle the result from requesting permissions
+     * @param permissions The requested permissions.
+     * @param successCallback The callback will be called when all permissions are granted
+     * @param exceptionCallback The callback will be called when one of permissions is not granted
+     */
+    fun handleResults(
+        permissions: Array<out String>,
+        successCallback: () -> Unit,
+        exceptionCallback: () -> Unit
+    ) {
 
         if (permissions.isEmpty()) {
             exceptionCallback()
@@ -44,29 +72,24 @@ class PermissionsManager(val context: Activity) {
         for (permission in permissions) {
             if (!isPermissionGranted(permission)) {
                 exceptionCallback()
+                if (isUserCheckNeverAskAgain(permission)) {
+                    SYRFTimber.i("User checked never ask again for $permission")
+                }
                 SYRFTimber.e("Permission: $permission denied")
                 return
             }
-//        }
         }
 
         successCallback()
         SYRFTimber.d("Permissions granted")
-
-//        if (isUserCheckNeverAskAgain(context, )) {
-//            // NeverAskAgain case - Never Ask Again has been checked
-//            // TODO: Do something and return
-//            return
-//        }
-
-        // Failure case: Not getting permission
-        // Do something here
     }
 
-    private fun isUserCheckNeverAskAgain(context: Activity, permission: String) =
-            !ActivityCompat.shouldShowRequestPermissionRationale(
-                    context,
-                    permission
-            )
-
+    /**
+     *  Determine whether user checked never ask again button in system's permission request dialog.
+     */
+    private fun isUserCheckNeverAskAgain(permission: String) =
+        !ActivityCompat.shouldShowRequestPermissionRationale(
+            context,
+            permission
+        )
 }

@@ -5,4 +5,11 @@
     <string name="stop_updates_button_text">Stop updates</string>
     <string name="no_location_text">No current location</string>
     <string name="preference_file_key">com.syrf.location.PREFERENCE_FILE_KEY</string>
+
+    <!--Request permission dialog-->
+    <string name="label_request_permission_title">Permissions</string>
+    <string name="msg_request_permission_message">Need the access to the location</string>
+    <string name="action_ok">OK</string>
+    <string name="action_cancel">Cancel</string>
+
 </resources>
