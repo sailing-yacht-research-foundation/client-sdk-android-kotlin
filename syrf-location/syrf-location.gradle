@@ -8,6 +8,14 @@ plugins {
 
 group = 'sailing-yacht-research-foundation'
 
+ext {
+    PUBLISH_GROUP_ID = 'io.syrf'
+    PUBLISH_VERSION = '1.0.1'
+    PUBLISH_ARTIFACT_ID = 'syrf-location'
+}
+
+apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
