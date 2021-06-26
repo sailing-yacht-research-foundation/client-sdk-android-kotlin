@@ -11,7 +11,7 @@ import com.google.android.gms.location.LocationRequest
 class SYRFLocationConfig private constructor(
     val updateInterval: Long,
     val maximumLocationAccuracy: Int,
-    val permissionRequestConfig: SYRFPermissionRequestConfig
+    val permissionRequestConfig: SYRFPermissionRequestConfig? = null
 ) {
 
     companion object {
@@ -30,7 +30,6 @@ class SYRFLocationConfig private constructor(
             SYRFLocationConfig(
                 DEFAULT_UPDATE_INTERVAL,
                 PRIORITY_HIGH_ACCURACY,
-                SYRFPermissionRequestConfig.DEFAULT
             )
     }
 
@@ -52,7 +51,7 @@ class SYRFLocationConfig private constructor(
         fun set() = SYRFLocationConfig(
             updateInterval ?: DEFAULT.updateInterval,
             maximumLocationAccuracy ?: DEFAULT.maximumLocationAccuracy,
-            permissionRequestConfig ?: DEFAULT.permissionRequestConfig
+            permissionRequestConfig
         )
     }
 }

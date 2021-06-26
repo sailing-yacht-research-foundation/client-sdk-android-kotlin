@@ -8,6 +8,7 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import com.syrf.location.services.SYRFLocationTrackingService
 import com.syrf.location.configs.SYRFLocationConfig
+import com.syrf.location.configs.SYRFPermissionRequestConfig
 import com.syrf.location.permissions.PermissionsManager
 import com.syrf.location.utils.CurrentPositionUpdateCallback
 import java.lang.Exception
@@ -186,7 +187,7 @@ object SYRFLocation : SYRFLocationInterface {
     private fun showPermissionReasonAndRequest(context: Activity) {
         val permissionsManager = PermissionsManager(context)
         permissionsManager.showPermissionReasonAndRequest(
-            config.permissionRequestConfig,
+            config.permissionRequestConfig ?: SYRFPermissionRequestConfig.getDefault(context),
             arrayOf(
                 android.Manifest.permission.ACCESS_FINE_LOCATION,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION

@@ -1,5 +1,6 @@
 package com.syrf.location.configs
 
+import android.content.Context
 import androidx.annotation.StringRes
 import com.syrf.location.R
 
@@ -11,10 +12,10 @@ import com.syrf.location.R
  * @property cancelButton The title of negative button in  permission request dialog
  */
 class SYRFPermissionRequestConfig private constructor(
-    @StringRes val title: Int,
-    @StringRes val message: Int,
-    @StringRes val okButton: Int,
-    @StringRes val cancelButton: Int,
+    val title: String,
+    val message: String,
+    val okButton: String,
+    val cancelButton: String,
 ) {
 
     companion object {
@@ -22,12 +23,12 @@ class SYRFPermissionRequestConfig private constructor(
          * Provide a default config for using in cases client init the SDK
          * without config or missing some properties in config
          */
-        val DEFAULT: SYRFPermissionRequestConfig =
+        fun getDefault(context: Context): SYRFPermissionRequestConfig =
             SYRFPermissionRequestConfig(
-                title = R.string.label_request_permission_title,
-                message = R.string.msg_request_permission_message,
-                okButton = R.string.action_ok,
-                cancelButton = R.string.action_cancel
+                title = context.getString(R.string.label_request_permission_title),
+                message = context.getString(R.string.msg_request_permission_message),
+                okButton = context.getString(R.string.action_ok),
+                cancelButton = context.getString(R.string.action_cancel)
             )
     }
 
@@ -35,20 +36,23 @@ class SYRFPermissionRequestConfig private constructor(
      * Builder class that help to create an instance of [SYRFPermissionRequestConfig]
      */
     data class Builder(
-        @StringRes var title: Int? = null,
-        @StringRes var message: Int? = null,
-        @StringRes var okButton: Int? = null,
-        @StringRes var cancelButton: Int? = null,
+        var title: String? = null,
+        var message: String? = null,
+        var okButton: String? = null,
+        var cancelButton: String? = null,
     ) {
-        fun title(@StringRes title: Int) = apply { this.title = title }
-        fun message(@StringRes message: Int) = apply { this.message = message }
-        fun okButton(@StringRes okButton: Int) = apply { this.okButton = okButton }
-        fun cancelButton(@StringRes cancelButton: Int) = apply { this.cancelButton = cancelButton }
-        fun set() = SYRFPermissionRequestConfig(
-            title ?: DEFAULT.title,
-            message ?: DEFAULT.message,
-            okButton ?: DEFAULT.okButton,
-            cancelButton ?: DEFAULT.cancelButton
-        )
+        fun title(title: String) = apply { this.title = title }
+        fun message(message: String) = apply { this.message = message }
+        fun okButton(okButton: String) = apply { this.okButton = okButton }
+        fun cancelButton(cancelButton: String) = apply { this.cancelButton = cancelButton }
+        fun set(context: Context): SYRFPermissionRequestConfig {
+
+            return SYRFPermissionRequestConfig(
+                title ?: context.getString(R.string.label_request_permission_title),
+                message ?: context.getString(R.string.msg_request_permission_message),
+                okButton ?: context.getString(R.string.action_ok),
+                cancelButton ?: context.getString(R.string.action_cancel)
+            )
+        }
     }
 }
