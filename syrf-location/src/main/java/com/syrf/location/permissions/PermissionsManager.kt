@@ -25,13 +25,13 @@ class PermissionsManager(val context: Activity) {
      * Show a "in app" dialog that provide the reason why we need permissions
      * before actually requesting those permissions using system dialogs.
      * @param config Contains params for title, message, positive and negative buttons
-     * @param permissions The array of permissions
-     * @param requestCode The code will be used for permission requesting
+     * @param onPositionClick The callback will be called when user click positive button
+     * @param onNegativeClick The callback will be called when user click negative button
      */
     fun showPermissionReasonAndRequest(
         config: SYRFPermissionRequestConfig,
-        permissions: Array<String>,
-        requestCode: Int
+        onPositionClick: () -> Unit,
+        onNegativeClick: () -> Unit,
     ) {
         val alertDialogBuilder = AlertDialog.Builder(context)
         alertDialogBuilder.setTitle(config.title)
@@ -39,13 +39,12 @@ class PermissionsManager(val context: Activity) {
         alertDialogBuilder.setCancelable(false)
 
         alertDialogBuilder.setPositiveButton(config.okButton) { dialog, _ ->
-            run {
-                ActivityCompat.requestPermissions(context, permissions, requestCode)
-                dialog.dismiss()
-            }
+            onPositionClick.invoke()
+            dialog.dismiss()
         }
 
         alertDialogBuilder.setNegativeButton(config.cancelButton) { dialog, _ ->
+            onNegativeClick.invoke()
             dialog.dismiss()
         }
         alertDialogBuilder.show()

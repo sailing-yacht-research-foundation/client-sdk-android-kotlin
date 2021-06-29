@@ -23,9 +23,11 @@ import com.syrf.location.utils.Constants.EXTRA_LOCATION
 import com.syrf.location.utils.Constants.NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.LOCATION_NOTIFICATION_ID
 import com.syrf.location.utils.CurrentPositionUpdateCallback
+import com.syrf.location.utils.SubscribeToLocationUpdateCallback
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
+@SuppressLint("MissingPermission")
 open class SYRFLocationTrackingService : Service() {
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -109,7 +111,6 @@ open class SYRFLocationTrackingService : Service() {
         return true
     }
 
-    @SuppressLint("MissingPermission")
     fun getCurrentPosition(context: Context, callback: CurrentPositionUpdateCallback) {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
 
@@ -120,28 +121,29 @@ open class SYRFLocationTrackingService : Service() {
         }
 
         fusedLocationProviderClient.getCurrentLocation(
-            LocationRequest.PRIORITY_HIGH_ACCURACY,
+            SYRFLocation.getLocationConfig().maximumLocationAccuracy,
             cancellationToken
         ).addOnSuccessListener { location -> callback.invoke(location, null) }
             .addOnFailureListener { exception -> callback.invoke(null, exception) }
     }
 
-    fun subscribeToLocationUpdates(context: Context) {
+    fun subscribeToLocationUpdates(context: Context, callback: SubscribeToLocationUpdateCallback?) {
         startService(Intent(context, SYRFLocationTrackingService::class.java))
 
-        try {
-            fusedLocationProviderClient.requestLocationUpdates(
-                locationRequest, locationCallback, Looper.getMainLooper()
-            )
-        } catch (unlikely: SecurityException) {
-            SYRFTimber.e(unlikely)
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest, locationCallback, Looper.getMainLooper()
+        ).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                callback?.invoke(Unit, null)
+            } else {
+                callback?.invoke(null, task.exception)
+            }
         }
     }
 
     fun unsubscribeToLocationUpdates() {
-        try {
-            val removeTask = fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-            removeTask.addOnCompleteListener { task ->
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     stopSelf()
                 } else {
@@ -150,9 +152,6 @@ open class SYRFLocationTrackingService : Service() {
                     SYRFTimber.e(exception)
                 }
             }
-        } catch (unlikely: SecurityException) {
-            SYRFTimber.e(unlikely)
-        }
     }
 
     private fun generateNotification(location: Location?): Notification {
