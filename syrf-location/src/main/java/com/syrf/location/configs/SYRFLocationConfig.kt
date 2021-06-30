@@ -6,12 +6,10 @@ import com.google.android.gms.location.LocationRequest
  * The class help you config params of location request
  * @property updateInterval The interval for active location updates, in milliseconds
  * @property maximumLocationAccuracy The priority of the request
- * @property permissionRequestConfig The config for request permission dialog
  */
 class SYRFLocationConfig private constructor(
     val updateInterval: Long,
     val maximumLocationAccuracy: Int,
-    val permissionRequestConfig: SYRFPermissionRequestConfig? = null
 ) {
 
     companion object {
@@ -39,19 +37,14 @@ class SYRFLocationConfig private constructor(
     data class Builder(
         var updateInterval: Long? = null,
         var maximumLocationAccuracy: Int? = null,
-        var permissionRequestConfig: SYRFPermissionRequestConfig? = null
     ) {
         fun updateInterval(updateInterval: Long) = apply { this.updateInterval = updateInterval }
         fun maximumLocationAccuracy(maximumLocationAccuracy: Int) =
             apply { this.maximumLocationAccuracy = maximumLocationAccuracy }
 
-        fun permissionRequestConfig(permissionRequestConfig: SYRFPermissionRequestConfig) =
-            apply { this.permissionRequestConfig = permissionRequestConfig }
-
         fun set() = SYRFLocationConfig(
             updateInterval ?: DEFAULT.updateInterval,
             maximumLocationAccuracy ?: DEFAULT.maximumLocationAccuracy,
-            permissionRequestConfig
         )
     }
 }
