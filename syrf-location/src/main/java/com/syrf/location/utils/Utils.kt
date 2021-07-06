@@ -1,3 +1,5 @@
+package com.syrf.location.utils
+
 import android.location.Location
 
 fun Location?.toText(): String {

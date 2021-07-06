@@ -1,8 +1,8 @@
-package com.syrf.core.trees
+package com.syrf.location.trees
 
 import android.os.Build
 import android.util.Log.*
-import com.syrf.core.configs.SYRFLoggingConfig
+import com.syrf.location.configs.SYRFLoggingConfig
 import timber.log.Timber
 import kotlin.math.min
 
@@ -27,7 +27,7 @@ abstract class SYRFBaseTree(val config: SYRFLoggingConfig): Timber.Tree() {
             return
         }
 
-        // Split by line, then ensure each line can fit into Log's max length
+        // Split by line, then ensure each line can fit into log's max length
         var i = 0
         val length = message.length
         while (i < length) {

@@ -1,7 +1,7 @@
-package com.syrf.core.configs
+package com.syrf.location.configs
 
 import android.util.Log
-import com.syrf.core.interfaces.SYRFLogging
+import com.syrf.location.interfaces.SYRFLogging
 
 /**
  * The class help you config params for [SYRFLogging]

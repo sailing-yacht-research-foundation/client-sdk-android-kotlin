@@ -8,6 +8,8 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import com.syrf.location.configs.SYRFMagneticConfig
 import com.syrf.location.services.SYRFMagneticTrackingService
+import com.syrf.location.utils.NoConfigException
+import com.syrf.location.utils.SDKValidator
 import java.lang.Exception
 import kotlin.jvm.Throws
 
@@ -50,6 +52,8 @@ object SYRFMagneticSensor : SYRFMagneticSensorInterface {
      * @param context The context. Should be the activity
      */
     override fun configure(config: SYRFMagneticConfig, context: Activity) {
+        SDKValidator.checkForApiKey(context)
+
         SYRFMagneticSensor.config = config
 
         val serviceIntent = Intent(context, SYRFMagneticTrackingService::class.java)
@@ -121,12 +125,12 @@ object SYRFMagneticSensor : SYRFMagneticSensorInterface {
 
     /**
      * Check for config and throw an exception if it is not initialized
-     * @throws Exception
+     * @throws NoConfigException
      */
     @Throws(Exception::class)
     private fun checkConfig() {
         if (!this::config.isInitialized) {
-            throw Exception("Config should be set before library use")
+            throw NoConfigException()
         }
     }
 }

@@ -1,7 +1,7 @@
-package com.syrf.core.trees
+package com.syrf.location.trees
 
-import com.syrf.core.configs.SYRFLoggingConfig
-import com.syrf.core.configs.SYRFLoggingConfig.Companion.SYRF_LOGGING_TAG
+import com.syrf.location.configs.SYRFLoggingConfig
+import com.syrf.location.configs.SYRFLoggingConfig.Companion.SYRF_LOGGING_TAG
 
 /**
  * Tree class that extend from [SYRFBaseTree] class for release mode
