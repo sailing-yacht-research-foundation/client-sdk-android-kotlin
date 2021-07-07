@@ -1,7 +1,6 @@
 package com.syrf.location.configs
 
 import android.hardware.SensorManager
-import com.syrf.core.configs.SYRFLoggingConfig
 
 /**
  * The class help you config params of Accelerometer sensor request

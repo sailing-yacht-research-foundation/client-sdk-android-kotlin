@@ -6,10 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import com.syrf.core.interfaces.SYRFTimber
 import com.syrf.location.configs.SYRFAccelerometerConfig
 import com.syrf.location.services.SYRFAcceleroTrackingService
-import com.syrf.location.services.SYRFLocationTrackingService
+import com.syrf.location.utils.NoConfigException
+import com.syrf.location.utils.SDKValidator
 import java.lang.Exception
 import kotlin.jvm.Throws
 
@@ -52,6 +52,8 @@ object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
      * @param context The context. Should be the activity
      */
     override fun configure(config: SYRFAccelerometerConfig, context: Activity) {
+        SDKValidator.checkForApiKey(context)
+
         SYRFAcceleroSensor.config = config
 
         val serviceIntent = Intent(context, SYRFAcceleroTrackingService::class.java)
@@ -125,13 +127,13 @@ object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
 
     /**
      * Check for config and throw an exception if it is not initialized
-     * @throws Exception
+     * @throws NoConfigException
      */
     @Throws(Exception::class)
     private fun checkConfig() {
         if (!this::config.isInitialized) {
             SYRFTimber.e("Config should be set before library use")
-            throw Exception("Config should be set before library use")
+            throw NoConfigException()
         }
     }
 }

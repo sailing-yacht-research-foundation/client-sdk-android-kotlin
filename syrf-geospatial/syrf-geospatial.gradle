@@ -8,7 +8,7 @@ group = 'sailing-yacht-research-foundation'
 
 ext {
     PUBLISH_GROUP_ID = 'io.syrf'
-    PUBLISH_VERSION = '1.0.0'
+    PUBLISH_VERSION = '1.0.1'
     PUBLISH_ARTIFACT_ID = 'syrf-geospatial'
 }
 
@@ -60,4 +60,6 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    implementation project(':syrf-location')
 }

@@ -9,7 +9,7 @@ group = 'sailing-yacht-research-foundation'
 
 ext {
     PUBLISH_GROUP_ID = 'io.syrf'
-    PUBLISH_VERSION = '1.0.0'
+    PUBLISH_VERSION = '1.0.1'
     PUBLISH_ARTIFACT_ID = 'syrf-time'
 }
 
@@ -55,6 +55,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     implementation "com.lyft.kronos:kronos-android:0.0.1-alpha11"
+    implementation project(':syrf-location')
 }
 
 tasks.dokkaHtmlPartial.configure {

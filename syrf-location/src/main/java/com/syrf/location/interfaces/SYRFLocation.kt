@@ -9,10 +9,7 @@ import android.os.IBinder
 import com.syrf.location.services.SYRFLocationTrackingService
 import com.syrf.location.configs.SYRFLocationConfig
 import com.syrf.location.permissions.PermissionsManager
-import com.syrf.location.utils.CurrentPositionUpdateCallback
-import com.syrf.location.utils.MissingLocationException
-import com.syrf.location.utils.NoConfigException
-import com.syrf.location.utils.SubscribeToLocationUpdateCallback
+import com.syrf.location.utils.*
 import java.lang.Exception
 import kotlin.jvm.Throws
 
@@ -60,6 +57,8 @@ object SYRFLocation : SYRFLocationInterface {
      * @param context The context. Should be the activity
      */
     override fun configure(config: SYRFLocationConfig, context: Activity) {
+        SDKValidator.checkForApiKey(context)
+
         SYRFLocation.config = config
 
         val serviceIntent = Intent(context, SYRFLocationTrackingService::class.java)
@@ -160,7 +159,7 @@ object SYRFLocation : SYRFLocationInterface {
 
     /**
      * Check for config and throw an exception if it is not initialized
-     * @throws Exception
+     * @throws NoConfigException
      */
     @Throws(Exception::class)
     private fun checkConfig() {

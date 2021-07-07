@@ -3,6 +3,8 @@ package com.syrf.time.interfaces
 import android.content.Context
 import com.lyft.kronos.AndroidClockFactory
 import com.lyft.kronos.KronosClock
+import com.syrf.location.utils.NoConfigException
+import com.syrf.location.utils.SDKValidator
 import com.syrf.time.configs.SYRFTimeConfig
 import java.lang.Exception
 
@@ -31,18 +33,20 @@ object SYRFTime: SYRFTimeInterface {
      * @param context The context.
      */
     override fun configure(config: SYRFTimeConfig, context: Context) {
+        SDKValidator.checkForApiKey(context)
+
         kronosClock = AndroidClockFactory.createKronosClock(context, ntpHosts = config.ntpHosts)
         kronosClock.syncInBackground()
     }
 
     /**
      * Get the current time that is synced with the NTP servers
-     * @throws Exception
+     * @throws NoConfigException
      */
     override fun getCurrentTimeMS(): Long {
         if (this::kronosClock.isInitialized) {
             return kronosClock.getCurrentTimeMs()
         }
-        throw Exception("The module should be configured before use")
+        throw NoConfigException()
     }
 }

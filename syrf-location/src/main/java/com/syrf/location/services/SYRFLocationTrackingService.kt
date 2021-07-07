@@ -13,10 +13,9 @@ import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationTokenSource
-import com.syrf.core.interfaces.SYRFTimber
+import com.syrf.location.interfaces.SYRFTimber
 import com.syrf.location.R
 import com.syrf.location.interfaces.SYRFLocation
-import toText
 import com.syrf.location.utils.Constants.ACTION_LOCATION_BROADCAST
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION
 import com.syrf.location.utils.Constants.EXTRA_LOCATION
@@ -24,6 +23,7 @@ import com.syrf.location.utils.Constants.NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.LOCATION_NOTIFICATION_ID
 import com.syrf.location.utils.CurrentPositionUpdateCallback
 import com.syrf.location.utils.SubscribeToLocationUpdateCallback
+import com.syrf.location.utils.toText
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
 

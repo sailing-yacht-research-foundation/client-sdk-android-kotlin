@@ -5,7 +5,7 @@ import android.app.AlertDialog
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.syrf.core.interfaces.SYRFTimber
+import com.syrf.location.interfaces.SYRFTimber
 import com.syrf.location.configs.SYRFPermissionRequestConfig
 
 /**

@@ -1,11 +1,14 @@
-package com.syrf.core.interfaces
+package com.syrf.location.interfaces
 
+import android.content.Context
 import android.util.Log
-import com.syrf.core.BuildConfig
-import com.syrf.core.configs.SYRFLoggingConfig
-import com.syrf.core.configs.SYRFLoggingConfig.Companion.SYRF_LOGGING_TAG
-import com.syrf.core.trees.SYRFDebugTree
-import com.syrf.core.trees.SYRFReleaseTree
+import com.syrf.location.BuildConfig
+import com.syrf.location.configs.SYRFLoggingConfig
+import com.syrf.location.configs.SYRFLoggingConfig.Companion.SYRF_LOGGING_TAG
+import com.syrf.location.trees.SYRFDebugTree
+import com.syrf.location.trees.SYRFReleaseTree
+import com.syrf.location.utils.NoConfigException
+import com.syrf.location.utils.SDKValidator
 import timber.log.Timber
 
 /**
@@ -14,8 +17,8 @@ import timber.log.Timber
  * The recommendation is call init in Application's onCreate method.
  */
 interface SYRFLoggingInterface {
-    fun init()
-    fun init(config: SYRFLoggingConfig)
+    fun init(context: Context)
+    fun init(config: SYRFLoggingConfig, context: Context)
     fun getConfig(): SYRFLoggingConfig
 }
 
@@ -29,17 +32,21 @@ object SYRFLogging : SYRFLoggingInterface {
 
     /**
      * Init logging with default config
+     * @param context The context. Should be the activity or application context
      */
-    override fun init() {
-        this.init(SYRFLoggingConfig.DEFAULT)
+    override fun init(context: Context) {
+        init(SYRFLoggingConfig.DEFAULT, context)
     }
 
     /**
      * Init logging with provided config
      * @param config The configuration object
+     * @param context The context. Should be the activity or application context
      */
-    override fun init(config: SYRFLoggingConfig) {
-        this.config = config
+    override fun init(config: SYRFLoggingConfig, context: Context) {
+        SDKValidator.checkForApiKey(context)
+
+        SYRFLogging.config = config
         plantTheTree()
     }
 
@@ -67,12 +74,12 @@ object SYRFLogging : SYRFLoggingInterface {
 
     /**
      * Check for config and throw an exception if it is not initialized
-     * @throws Exception
+     * @throws NoConfigException
      */
     @Throws(Exception::class)
     private fun checkConfig() {
         if (!this::config.isInitialized) {
-            throw Exception("Config should be set before library use")
+            throw NoConfigException()
         }
     }
 }
