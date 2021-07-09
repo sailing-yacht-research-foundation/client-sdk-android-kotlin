@@ -1,17 +1,15 @@
 package com.syrf.geospatial.managers
 
 import android.content.Context
-import com.syrf.core.interfaces.SYRFCore
-import com.syrf.geospatial.utils.readFileDirectlyAsText
-import java.io.File
+import com.syrf.location.interfaces.SYRFCore
 
-class TURFManager (context: Context) {
+class TURFManager(context: Context) {
+
     /**
     Initializer for JavaScript environment
     Loads turf from bundle
     Loads main object and exported methods into jsGeometry
      */
-
     init {
         initTurf(context)
     }

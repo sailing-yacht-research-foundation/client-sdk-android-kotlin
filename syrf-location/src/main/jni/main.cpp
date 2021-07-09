@@ -54,5 +54,5 @@ Java_com_syrf_core_interfaces_SYRFCore_executeJSToGetObject(JNIEnv *env, jobject
     JSStringRelease(statement);
 
 
-    return object
+    return object;
 }
