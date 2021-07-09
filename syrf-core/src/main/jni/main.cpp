@@ -15,6 +15,8 @@ std::string JSStringToStdString(JSStringRef jsString) {
     return utf_string;
 }
 
+
+
 extern "C"
 JNIEXPORT jstring JNICALL
 Java_com_syrf_core_interfaces_SYRFCore_executeJS(JNIEnv *env, jobject thiz, jstring script) {
@@ -32,5 +34,25 @@ Java_com_syrf_core_interfaces_SYRFCore_executeJS(JNIEnv *env, jobject thiz, jstr
     JSStringRelease(statement);
     JSStringRelease(retString);
 
+
     return env->NewStringUTF(hello.c_str());
+}
+
+extern "C"
+JNIEXPORT const OpaqueJSValue * JNICALL
+Java_com_syrf_core_interfaces_SYRFCore_executeJSToGetObject(JNIEnv *env, jobject thiz, jstring script, jstring functionName) {
+    JSContextGroupRef contextGroup = JSContextGroupCreate();
+    JSGlobalContextRef globalContext = JSGlobalContextCreateInGroup(contextGroup, nullptr);
+    JSStringRef statement = JSStringCreateWithUTF8CString(env->GetStringUTFChars(script, nullptr));
+    JSStringRef fName = JSStringCreateWithUTF8CString(env->GetStringUTFChars(functionName, nullptr));
+    auto retValue = const_cast<JSObjectRef>(JSEvaluateScript(globalContext, statement,
+                                                                    nullptr, nullptr, 1, nullptr));
+    JSValueRef object = JSObjectGetProperty(globalContext, retValue, fName, nullptr);
+
+    JSGlobalContextRelease(globalContext);
+    JSContextGroupRelease(contextGroup);
+    JSStringRelease(statement);
+
+
+    return object
 }
