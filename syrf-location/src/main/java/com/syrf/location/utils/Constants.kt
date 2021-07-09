@@ -2,6 +2,7 @@ package com.syrf.location.utils
 
 object Constants {
     private const val PACKAGE_NAME = "com.syrf.location"
+    const val SDK_KEY_NAME = "io.syrf.sdk.API_KEY"
 
     // Location
     const val NOTIFICATION_CHANNEL_ID = "SyrfLocationService"

@@ -9,32 +9,37 @@ import android.os.IBinder
 import com.syrf.location.services.SYRFLocationTrackingService
 import com.syrf.location.configs.SYRFLocationConfig
 import com.syrf.location.permissions.PermissionsManager
-import com.syrf.location.utils.CurrentPositionUpdateCallback
+import com.syrf.location.utils.*
 import java.lang.Exception
 import kotlin.jvm.Throws
 
+/**
+ * The interface class that exported to the client. You can use methods from this interface
+ * to get update of device's location. Note that need to call configure method before using
+ * any another methods
+ */
 interface SYRFLocationInterface {
     fun configure(context: Activity)
     fun configure(config: SYRFLocationConfig, context: Activity)
     fun getCurrentPosition(context: Activity, callback: CurrentPositionUpdateCallback)
     fun getLocationConfig(): SYRFLocationConfig
-    fun subscribeToLocationUpdates(context: Activity)
-    fun unsubscribeToLocationUpdates()
-    fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray,
-        context: Activity
+    fun subscribeToLocationUpdates(
+        context: Activity,
+        callback: SubscribeToLocationUpdateCallback? = null
     )
 
+    fun unsubscribeToLocationUpdates()
     fun onStop(context: Context)
 }
 
-
+/**
+ * The singleton, implementation of [SYRFLocationInterface] class. This will bind a service
+ * called [SYRFLocationTrackingService] and start and stop request location data update
+ * using this service
+ */
 object SYRFLocation : SYRFLocationInterface {
     private var locationTrackingService: SYRFLocationTrackingService? = null
     private lateinit var config: SYRFLocationConfig
-    private var successOnPermissionsRequest: () -> Unit = {}
-    private var failOnPermissionsRequest: () -> Unit = {}
-
     private var isLocationServiceBound = false
 
     /**
@@ -48,11 +53,12 @@ object SYRFLocation : SYRFLocationInterface {
 
     /**
      * Configure the Location Service. The method should be called before any class usage
-     *
      * @param config Configuration object
      * @param context The context. Should be the activity
      */
     override fun configure(config: SYRFLocationConfig, context: Activity) {
+        SDKValidator.checkForApiKey(context)
+
         SYRFLocation.config = config
 
         val serviceIntent = Intent(context, SYRFLocationTrackingService::class.java)
@@ -64,48 +70,56 @@ object SYRFLocation : SYRFLocationInterface {
         isLocationServiceBound = true
     }
 
+    /**
+     * Check for initialization of location config and return initialized value
+     */
     override fun getLocationConfig(): SYRFLocationConfig {
         checkConfig()
         return config
     }
 
+    /**
+     * Get device's current location
+     * @param context The context. Should be the activity
+     * @param callback Callback will get called when request location complete
+     */
     override fun getCurrentPosition(context: Activity, callback: CurrentPositionUpdateCallback) {
         checkConfig()
-        successOnPermissionsRequest =
-            { locationTrackingService?.getCurrentPosition(context, callback) }
         if (areLocationPermissionsGranted(context)) {
-            successOnPermissionsRequest()
+            locationTrackingService?.getCurrentPosition(context, callback)
         } else {
-            showPermissionReasonAndRequest(context)
+            callback.invoke(null, MissingLocationException())
         }
     }
 
-    override fun subscribeToLocationUpdates(context: Activity) {
-        if (areLocationPermissionsGranted(context)) {
-            locationTrackingService?.subscribeToLocationUpdates(context)
-        } else {
-            showPermissionReasonAndRequest(context)
-        }
-    }
-
-    override fun unsubscribeToLocationUpdates() {
-        // TODO("Not yet implemented")
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-        context: Activity
+    /**
+     * Subscribe to device's location update
+     * @param context The context. Should be the activity
+     * @param callback Callback will get called when subscribe location complete
+     */
+    override fun subscribeToLocationUpdates(
+        context: Activity,
+        callback: SubscribeToLocationUpdateCallback?
     ) {
-        val permissionsManager = PermissionsManager(context)
-        permissionsManager.handleResults(
-            permissions,
-            successOnPermissionsRequest,
-            failOnPermissionsRequest
-        )
+        checkConfig()
+        if (areLocationPermissionsGranted(context)) {
+            locationTrackingService?.subscribeToLocationUpdates(context, callback)
+        } else {
+            callback?.invoke(null, MissingLocationException())
+        }
     }
 
+    /**
+     * Unsubscribe to device's location update
+     */
+    override fun unsubscribeToLocationUpdates() {
+        locationTrackingService?.unsubscribeToLocationUpdates()
+    }
+
+    /**
+     * Should be called in onStop method of the activity that subscribed to data update
+     * @param context The context. Should be the activity
+     */
     override fun onStop(context: Context) {
         if (isLocationServiceBound) {
             context.unbindService(locationServiceConnection)
@@ -113,7 +127,9 @@ object SYRFLocation : SYRFLocationInterface {
         }
     }
 
-    // Monitors connection to the while-in-use service.
+    /**
+     * Monitors connection to the while-in-use service.
+     */
     private val locationServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -127,6 +143,10 @@ object SYRFLocation : SYRFLocationInterface {
         }
     }
 
+    /**
+     * Check for location permission granting status.
+     * @param context The context. Should be the activity
+     */
     private fun areLocationPermissionsGranted(context: Activity): Boolean {
         val permissionsManager = PermissionsManager(context)
         val accessFineLocationGranted =
@@ -137,25 +157,14 @@ object SYRFLocation : SYRFLocationInterface {
         return accessFineLocationGranted && accessCoarseLocationGranted;
     }
 
-    private fun showPermissionReasonAndRequest(context: Activity) {
-        val permissionsManager = PermissionsManager(context)
-
-        // TODO: get info from the config object
-        permissionsManager.showPermissionReasonAndRequest(
-            "Permissions",
-            "Need the access to the location",
-            arrayOf(
-                android.Manifest.permission.ACCESS_FINE_LOCATION,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-            ),
-            1
-        )
-    }
-
+    /**
+     * Check for config and throw an exception if it is not initialized
+     * @throws NoConfigException
+     */
     @Throws(Exception::class)
     private fun checkConfig() {
         if (!this::config.isInitialized) {
-            throw Exception("Config should be set before library use")
+            throw NoConfigException()
         }
     }
 }

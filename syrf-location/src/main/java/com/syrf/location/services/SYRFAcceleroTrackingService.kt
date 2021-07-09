@@ -15,7 +15,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.syrf.location.R
 import com.syrf.location.data.SYRFAcceleroSensorData
 import com.syrf.location.interfaces.SYRFAcceleroSensor
-import com.syrf.location.interfaces.SYRFMagneticSensor
 import com.syrf.location.utils.Constants
 import com.syrf.location.utils.Constants.ACCELERO_NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.ACCELERO_NOTIFICATION_ID
@@ -97,7 +96,7 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
                 x = axisValues[0],
                 y = axisValues[1],
                 z = axisValues[2],
-                timestamp = SYRFTime.getCurrentTimeMS()
+                timestamp = System.currentTimeMillis()
             )
 
         currentSensorData = sensorAcceleroData

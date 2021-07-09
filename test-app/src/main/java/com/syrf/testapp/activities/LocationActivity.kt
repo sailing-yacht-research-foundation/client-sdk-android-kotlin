@@ -1,28 +1,48 @@
 package com.syrf.testapp.activities
 
-import SYRFTime
+import android.Manifest
 import android.app.Activity
 import android.content.*
 import android.location.Location
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.syrf.testapp.services.TimeService
 import com.syrf.location.configs.SYRFLocationConfig
+import com.syrf.location.configs.SYRFPermissionRequestConfig
 import com.syrf.location.interfaces.SYRFLocation
+import com.syrf.location.permissions.PermissionsManager
 import com.syrf.time.configs.SYRFTimeConfig
 import com.syrf.location.utils.Constants.ACTION_LOCATION_BROADCAST
 import com.syrf.location.utils.Constants.EXTRA_LOCATION
+import com.syrf.location.utils.MissingLocationException
 import com.syrf.testapp.R
 import com.syrf.testapp.SharedPreferenceUtil
 import com.syrf.testapp.databinding.ActivityLocationBinding
 import com.syrf.testapp.toText
+import com.syrf.time.interfaces.SYRFTime
 
 class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var locationBroadcastReceiver: LocationBroadcastReceiver
     private lateinit var binding: ActivityLocationBinding
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { result: Map<String, Boolean> ->
+            val isAllGranted = result.entries.any { it.value }
+            if (isAllGranted) {
+                successOnPermissionsRequest.invoke()
+            } else {
+                failOnPermissionsRequest.invoke()
+            }
+        }
+
+    private var successOnPermissionsRequest: () -> Unit = {}
+    private var failOnPermissionsRequest: () -> Unit = {}
 
     companion object {
         fun start(activity: Activity) {
@@ -52,9 +72,9 @@ class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferen
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
 
         val config = SYRFLocationConfig.Builder()
-                .updateInterval(1)
-                .maximumLocationAccuracy(SYRFLocationConfig.PRIORITY_HIGH_ACCURACY)
-                .set()
+            .updateInterval(1)
+            .maximumLocationAccuracy(SYRFLocationConfig.PRIORITY_HIGH_ACCURACY)
+            .set()
         SYRFLocation.configure(config, this)
 
         val timeConfig = SYRFTimeConfig.Builder()
@@ -78,7 +98,8 @@ class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferen
         LocalBroadcastManager.getInstance(this).registerReceiver(
             locationBroadcastReceiver,
             IntentFilter(
-                ACTION_LOCATION_BROADCAST)
+                ACTION_LOCATION_BROADCAST
+            )
         )
     }
 
@@ -94,14 +115,15 @@ class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferen
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        SYRFLocation.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         // Updates button states if new while in use location is added to SharedPreferences.
         if (key == SharedPreferenceUtil.KEY_FOREGROUND_ENABLED) {
             sharedPreferences?.getBoolean(
-                SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false)?.let {
+                SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false
+            )?.let {
                 updateButtonState(
                     it
                 )
@@ -118,23 +140,47 @@ class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferen
     }
 
     private fun setupBtn() {
-        binding.getCurrentPositionBtn.setOnClickListener() {
+        binding.getCurrentPositionBtn.setOnClickListener {
             SYRFLocation.getCurrentPosition(this) { location, error ->
                 if (location != null) {
                     logResultsToScreen("${TimeService.currentTime()} - ${location.toText()}")
                 }
             }
         }
-        binding.subscribeToPositionUpdateBtn.setOnClickListener() {
+        binding.subscribeToPositionUpdateBtn.setOnClickListener {
             val enabled = sharedPreferences.getBoolean(
-                SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false)
+                SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false
+            )
             if (enabled) {
                 SYRFLocation.unsubscribeToLocationUpdates()
             } else {
-                SYRFLocation.subscribeToLocationUpdates(this)
+                SYRFLocation.subscribeToLocationUpdates(this) { _, error ->
+                    if (error is MissingLocationException) {
+                        successOnPermissionsRequest = {
+                            SYRFLocation.subscribeToLocationUpdates(this)
+                        }
+                        requestLocationPermission()
+                    }
+                }
             }
             SharedPreferenceUtil.saveLocationTrackingPref(this, !enabled)
         }
+    }
+
+    private fun requestLocationPermission() {
+        val config: SYRFPermissionRequestConfig = SYRFPermissionRequestConfig.getDefault(this)
+        PermissionsManager(this).showPermissionReasonAndRequest(
+            config,
+            onPositionClick = {
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
+            },
+            onNegativeClick = {}
+        )
     }
 
     private fun logResultsToScreen(output: String) {

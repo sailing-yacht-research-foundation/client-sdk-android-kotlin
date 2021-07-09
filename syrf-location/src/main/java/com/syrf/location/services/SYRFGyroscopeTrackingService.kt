@@ -110,7 +110,7 @@ open class SYRFGyroscopeTrackingService : Service(), SensorEventListener {
                 x = gyroscopeValues[0],
                 y = gyroscopeValues[1],
                 z = gyroscopeValues[2],
-                timestamp = SYRFTime.getCurrentTimeMS()
+                timestamp = System.currentTimeMillis()
             )
 
         currentSensorData = sensorSensorData

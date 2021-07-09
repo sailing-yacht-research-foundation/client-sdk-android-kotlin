@@ -18,10 +18,16 @@ data class SYRFMagneticSensorData constructor(
     val timestamp: Long
 ) : Parcelable {
 
+    /**
+     * Convert magnetic data to text
+     */
     fun toText(): String {
         return "(x-axis: $x μT, y-axis: $y μT, z-axis: $z μT)"
     }
 
+    /**
+     * The magnetic data in float array
+     */
     val values: FloatArray
         get() = floatArrayOf(x, y, z)
 }

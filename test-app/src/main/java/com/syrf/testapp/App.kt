@@ -1,8 +1,8 @@
 package com.syrf.testapp
 
 import android.app.Application
-import com.syrf.core.configs.SYRFLoggingConfig
-import com.syrf.core.interfaces.SYRFLogging
+import com.syrf.location.configs.SYRFLoggingConfig
+import com.syrf.location.interfaces.SYRFLogging
 
 class App : Application() {
 
@@ -17,7 +17,7 @@ class App : Application() {
      */
     private fun initSYRFLogging() {
         // Init SYRFLogging with default configuration
-        // SYRFLogging.init()
+        // SYRFLogging.init(this)
 
         // Init SYRFLogging with custom configuration
         val config = SYRFLoggingConfig.Builder()
@@ -25,6 +25,6 @@ class App : Application() {
             .releasePriority(SYRFLoggingConfig.ERROR)
             .maxLogLength(3000)
             .set()
-        SYRFLogging.init(config)
+        SYRFLogging.init(config, this)
     }
 }

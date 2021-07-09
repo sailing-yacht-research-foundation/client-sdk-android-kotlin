@@ -6,16 +6,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import com.syrf.core.interfaces.SYRFTimber
 import com.syrf.location.configs.SYRFAccelerometerConfig
 import com.syrf.location.services.SYRFAcceleroTrackingService
-import com.syrf.location.services.SYRFLocationTrackingService
+import com.syrf.location.utils.NoConfigException
+import com.syrf.location.utils.SDKValidator
 import java.lang.Exception
 import kotlin.jvm.Throws
 
 /**
  * The interface class that exported to the client. You can use methods from this interface
- * to get update of Accelerometer sensor. Note that need to call configure method before using it
+ * to get update of Accelerometer sensor. Note that need to call configure method before using
+ * any another methods
  */
 interface SYRFAcceleroSensorInterface {
     fun configure(context: Activity)
@@ -27,7 +28,7 @@ interface SYRFAcceleroSensorInterface {
 }
 
 /**
- * The singleton, implementation of [SYRFAcceleroSensorInterface] class. This will bind a service
+ * The singleton, implementation of [SYRFAcceleroSensorInterface]. This will bind a service
  * called [SYRFAcceleroTrackingService] and start and stop request Accelerometer sensor data update
  * using this service
  */
@@ -47,11 +48,12 @@ object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
 
     /**
      * Configure the Accelerometer Service. The method should be called before any class usage
-     *
      * @param config Configuration object
      * @param context The context. Should be the activity
      */
     override fun configure(config: SYRFAccelerometerConfig, context: Activity) {
+        SDKValidator.checkForApiKey(context)
+
         SYRFAcceleroSensor.config = config
 
         val serviceIntent = Intent(context, SYRFAcceleroTrackingService::class.java)
@@ -65,12 +67,20 @@ object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
         SYRFTimber.i("SYRFAcceleroSensor configured")
     }
 
+    /**
+     * Check for initialization of config and return initialized value
+     */
     override fun getConfig(): SYRFAccelerometerConfig {
         checkConfig()
         return config
     }
 
-
+    /**
+     * Subscribe to sensor data update
+     * @param context The context. Should be the activity
+     * @param noAccelerometerSensorCallback The callback will be executed when the
+     * Accelerometer sensor is not available on the device
+     */
     override fun subscribeToSensorDataUpdates(
         context: Activity,
         noAccelerometerSensorCallback: () -> Unit
@@ -81,10 +91,17 @@ object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
         )
     }
 
+    /**
+     * Unsubscribe to sensor data update
+     */
     override fun unsubscribeToSensorDataUpdates() {
         acceleroTrackingService?.unsubscribeToSensorDataUpdates()
     }
 
+    /**
+     * Should be called in onStop method of the activity that subscribed to data update
+     * @param context The context. Should be the activity
+     */
     override fun onStop(context: Context) {
         if (isServiceBound) {
             context.unbindService(acceleroServiceConnection)
@@ -92,7 +109,9 @@ object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
         }
     }
 
-    // Monitors connection to the while-in-use service.
+    /**
+     * Monitors connection to the while-in-use service.
+     */
     private val acceleroServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -106,11 +125,15 @@ object SYRFAcceleroSensor : SYRFAcceleroSensorInterface {
         }
     }
 
+    /**
+     * Check for config and throw an exception if it is not initialized
+     * @throws NoConfigException
+     */
     @Throws(Exception::class)
     private fun checkConfig() {
         if (!this::config.isInitialized) {
             SYRFTimber.e("Config should be set before library use")
-            throw Exception("Config should be set before library use")
+            throw NoConfigException()
         }
     }
 }
