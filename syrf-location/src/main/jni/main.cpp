@@ -19,7 +19,7 @@ std::string JSStringToStdString(JSStringRef jsString) {
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_com_syrf_core_interfaces_SYRFCore_executeJS(JNIEnv *env, jobject thiz, jstring script) {
+Java_com_syrf_location_interfaces_SYRFCore_executeJS(JNIEnv *env, jobject thiz, jstring script) {
     JSContextGroupRef contextGroup = JSContextGroupCreate();
     JSGlobalContextRef globalContext = JSGlobalContextCreateInGroup(contextGroup, nullptr);
     JSStringRef statement = JSStringCreateWithUTF8CString(env->GetStringUTFChars(script, nullptr));

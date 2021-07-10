@@ -2,6 +2,8 @@ package com.syrf.testapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.syrf.geospatial.managers.TURFManager
+import com.syrf.location.interfaces.SYRFCore
 import com.syrf.testapp.activities.*
 import com.syrf.testapp.activities.AcceleroSensorActivity
 import com.syrf.testapp.activities.GyroscopeSensorActivity
@@ -20,6 +22,10 @@ class MainActivity : AppCompatActivity(){
         setContentView(view)
 
         setupViews()
+
+        // Test turf
+        SYRFCore.configure(this)
+        TURFManager(this)
     }
 
     private fun setupViews() {
