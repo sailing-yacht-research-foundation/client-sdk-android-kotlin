@@ -24,7 +24,9 @@ class TURFManager(context: Context) {
             }
         SYRFTimber.e(string)
 
-        val result = SYRFCore.executeJavascriptToGetObject(string, "point({1, 2})")
+        val script = "var js_obj = {add: function(a,b) { return (a+b); }, setLocal: function(value) { this.local_val = value; }, getLocal: function() { return this.local_val; }};"
+
+        val result = SYRFCore.executeJavascriptToGetObject(script, "js_obj.add(5,10)")
 
         SYRFTimber.e(result.toString())
 

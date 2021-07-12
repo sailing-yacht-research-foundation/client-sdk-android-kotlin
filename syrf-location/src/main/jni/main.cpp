@@ -8,13 +8,12 @@
 
 std::string JSStringToStdString(JSStringRef jsString) {
     size_t maxBufferSize = JSStringGetMaximumUTF8CStringSize(jsString);
-    char* utf8Buffer = new char[maxBufferSize];
+    char *utf8Buffer = new char[maxBufferSize];
     size_t bytesWritten = JSStringGetUTF8CString(jsString, utf8Buffer, maxBufferSize);
-    std::string utf_string = std::string(utf8Buffer, bytesWritten -1);
-    delete [] utf8Buffer;
+    std::string utf_string = std::string(utf8Buffer, bytesWritten - 1);
+    delete[] utf8Buffer;
     return utf_string;
 }
-
 
 
 extern "C"
@@ -23,7 +22,7 @@ Java_com_syrf_location_interfaces_SYRFCore_executeJS(JNIEnv *env, jobject thiz, 
     JSContextGroupRef contextGroup = JSContextGroupCreate();
     JSGlobalContextRef globalContext = JSGlobalContextCreateInGroup(contextGroup, nullptr);
     JSStringRef statement = JSStringCreateWithUTF8CString(env->GetStringUTFChars(script, nullptr));
-    JSValueRef retValue = JSEvaluateScript(globalContext, statement, nullptr, nullptr, 1,nullptr);
+    JSValueRef retValue = JSEvaluateScript(globalContext, statement, nullptr, nullptr, 1, nullptr);
 
     JSStringRef retString = JSValueToStringCopy(globalContext, retValue, nullptr);
 
@@ -39,20 +38,29 @@ Java_com_syrf_location_interfaces_SYRFCore_executeJS(JNIEnv *env, jobject thiz, 
 }
 
 extern "C"
-JNIEXPORT const OpaqueJSValue * JNICALL
-Java_com_syrf_core_interfaces_SYRFCore_executeJSToGetObject(JNIEnv *env, jobject thiz, jstring script, jstring functionName) {
+JNIEXPORT jobject JNICALL
+Java_com_syrf_location_interfaces_SYRFCore_executeJSToGetObject(JNIEnv *env, jobject thiz,
+                                                                jstring script,
+                                                                jstring functionName) {
     JSContextGroupRef contextGroup = JSContextGroupCreate();
     JSGlobalContextRef globalContext = JSGlobalContextCreateInGroup(contextGroup, nullptr);
     JSStringRef statement = JSStringCreateWithUTF8CString(env->GetStringUTFChars(script, nullptr));
-    JSStringRef fName = JSStringCreateWithUTF8CString(env->GetStringUTFChars(functionName, nullptr));
+    JSStringRef fName = JSStringCreateWithUTF8CString(
+            env->GetStringUTFChars(functionName, nullptr));
     auto retValue = const_cast<JSObjectRef>(JSEvaluateScript(globalContext, statement,
-                                                                    nullptr, nullptr, 1, nullptr));
+                                                             nullptr, nullptr, 0, nullptr));
     JSValueRef object = JSObjectGetProperty(globalContext, retValue, fName, nullptr);
 
     JSGlobalContextRelease(globalContext);
     JSContextGroupRelease(contextGroup);
     JSStringRelease(statement);
 
+    jclass clazz = env->FindClass("com/syrf/location/jnimaps/JNIReturnObject");
+    jmethodID methodId = env->GetMethodID(clazz, "<init>", "()V");
+    jobject out = env->NewObject(clazz, methodId);
 
-    return object;
+    jfieldID fid = env->GetFieldID(clazz, "result", "I");
+    env->SetIntField(out, fid, (jint) object);
+
+    return out;
 }

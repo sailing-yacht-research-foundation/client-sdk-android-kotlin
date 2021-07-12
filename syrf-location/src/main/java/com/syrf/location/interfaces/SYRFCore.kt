@@ -1,16 +1,9 @@
 package com.syrf.location.interfaces
 
 import android.app.Activity
-import android.content.Context
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
-import com.syrf.location.utils.Constants.SDK_KEY_NAME
-import com.syrf.location.utils.InvalidApiKeyException
-import com.syrf.location.utils.NoApiKeyException
+import com.syrf.location.jnimaps.JNIReturnObject
 import com.syrf.location.utils.NoConfigException
 import com.syrf.location.utils.SDKValidator
-import java.lang.Exception
-import kotlin.jvm.Throws
 
 /**
  * The interface that exported to the client.
@@ -21,7 +14,7 @@ interface SYRFCoreInterface {
 
     fun executeJavascript(script: String): String
 
-    fun executeJavascriptToGetObject(script: String, functionName: String): Any
+    fun executeJavascriptToGetObject(script: String, functionName: String): JNIReturnObject
 
 }
 
@@ -59,7 +52,7 @@ object SYRFCore : SYRFCoreInterface {
         return executeJS(script)
     }
 
-    override fun executeJavascriptToGetObject(script: String, functionName: String): Any {
+    override fun executeJavascriptToGetObject(script: String, functionName: String): JNIReturnObject {
         checkConfig()
         return executeJSToGetObject(script, functionName)
     }
@@ -86,5 +79,6 @@ object SYRFCore : SYRFCoreInterface {
      * @param script The script will be executed
      * @param functionName The javascript function name
      */
-    private external fun executeJSToGetObject(script: String, functionName: String): Any
+    private external fun executeJSToGetObject(script: String, functionName: String): JNIReturnObject
+
 }
