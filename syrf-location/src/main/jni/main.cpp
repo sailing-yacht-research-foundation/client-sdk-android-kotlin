@@ -44,23 +44,25 @@ Java_com_syrf_location_interfaces_SYRFCore_executeJSToGetObject(JNIEnv *env, job
                                                                 jstring functionName) {
     JSContextGroupRef contextGroup = JSContextGroupCreate();
     JSGlobalContextRef globalContext = JSGlobalContextCreateInGroup(contextGroup, nullptr);
-    JSStringRef statement = JSStringCreateWithUTF8CString(env->GetStringUTFChars(script, nullptr));
+    const char *cString = env->GetStringUTFChars(script, 0);
+    JSStringRef statement = JSStringCreateWithUTF8CString(cString);
+    JSValueRef exception = nullptr;
     JSStringRef fName = JSStringCreateWithUTF8CString(
             env->GetStringUTFChars(functionName, nullptr));
-    auto retValue = const_cast<JSObjectRef>(JSEvaluateScript(globalContext, statement,
-                                                             nullptr, nullptr, 0, nullptr));
-    JSValueRef object = JSObjectGetProperty(globalContext, retValue, fName, nullptr);
+    JSEvaluateScript(globalContext, statement,nullptr, nullptr, 1, &exception);
+    JSValueRef retValue = JSEvaluateScript(globalContext, fName,nullptr, nullptr, 1, &exception);
+
+    JSStringRef retString = JSValueToStringCopy(globalContext, retValue, nullptr);
+
+    std::string hello = JSStringToStdString(retString);
+
+    if (exception){
+        // TODO: handle the exception
+    }
 
     JSGlobalContextRelease(globalContext);
     JSContextGroupRelease(contextGroup);
     JSStringRelease(statement);
 
-    jclass clazz = env->FindClass("com/syrf/location/jnimaps/JNIReturnObject");
-    jmethodID methodId = env->GetMethodID(clazz, "<init>", "()V");
-    jobject out = env->NewObject(clazz, methodId);
-
-    jfieldID fid = env->GetFieldID(clazz, "result", "I");
-    env->SetIntField(out, fid, (jint) object);
-
-    return out;
+    return env->NewStringUTF(hello.c_str());
 }
