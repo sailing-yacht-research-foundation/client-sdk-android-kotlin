@@ -15,6 +15,7 @@ import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.syrf.location.interfaces.SYRFTimber
 import com.syrf.location.R
+import com.syrf.location.data.SYRFLocationData
 import com.syrf.location.interfaces.SYRFLocation
 import com.syrf.location.utils.Constants.ACTION_LOCATION_BROADCAST
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION
@@ -73,18 +74,20 @@ open class SYRFLocationTrackingService : Service() {
             locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
                     super.onLocationResult(locationResult)
-                    currentLocation = locationResult.lastLocation
+                    val location = locationResult.lastLocation
 
                     val intent = Intent(ACTION_LOCATION_BROADCAST)
-                    intent.putExtra(EXTRA_LOCATION, currentLocation)
+                    intent.putExtra(EXTRA_LOCATION, SYRFLocationData(location))
                     LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
                     if (serviceRunningInForeground) {
                         notificationManager.notify(
                             LOCATION_NOTIFICATION_ID,
-                            generateNotification(currentLocation)
+                            generateNotification(location)
                         )
                     }
+
+                    currentLocation = location
                 }
             }
         }
@@ -123,7 +126,7 @@ open class SYRFLocationTrackingService : Service() {
         fusedLocationProviderClient.getCurrentLocation(
             SYRFLocation.getLocationConfig().maximumLocationAccuracy,
             cancellationToken
-        ).addOnSuccessListener { location -> callback.invoke(location, null) }
+        ).addOnSuccessListener { location -> callback.invoke(SYRFLocationData(location), null) }
             .addOnFailureListener { exception -> callback.invoke(null, exception) }
     }
 

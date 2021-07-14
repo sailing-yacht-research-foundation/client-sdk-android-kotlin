@@ -11,6 +11,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.syrf.testapp.services.TimeService
 import com.syrf.location.configs.SYRFLocationConfig
 import com.syrf.location.configs.SYRFPermissionRequestConfig
+import com.syrf.location.data.SYRFLocationData
 import com.syrf.location.interfaces.SYRFLocation
 import com.syrf.location.permissions.PermissionsManager
 import com.syrf.time.configs.SYRFTimeConfig
@@ -191,7 +192,7 @@ class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferen
     private inner class LocationBroadcastReceiver : BroadcastReceiver() {
 
         override fun onReceive(context: Context, intent: Intent) {
-            val location = intent.getParcelableExtra<Location>(
+            val location = intent.getParcelableExtra<SYRFLocationData>(
                 EXTRA_LOCATION
             )
 
