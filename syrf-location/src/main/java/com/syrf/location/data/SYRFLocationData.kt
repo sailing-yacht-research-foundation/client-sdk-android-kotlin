@@ -59,6 +59,15 @@ class SYRFLocationData constructor(private val location: Location) : Parcelable 
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             location.verticalAccuracyMeters else 0F
 
+
+    /**
+     * The horizontal direction of travel of this device in degrees east of true north.
+     * It is guaranteed to be in the range (0.0, 360.0]. Reference:
+     * https://stackoverflow.com/questions/4308262/calculate-compass-bearing-heading-to-location-in-android
+     */
+    val trueHeading: Float
+        get() = location.bearing
+
     /**
      * The UTC time of this fix, in milliseconds since January 1, 1970.
      */
