@@ -1,7 +1,6 @@
 package com.syrf.location.interfaces
 
 import android.app.Activity
-import com.syrf.location.jnimaps.JNIReturnObject
 import com.syrf.location.utils.NoConfigException
 import com.syrf.location.utils.SDKValidator
 
@@ -14,8 +13,7 @@ interface SYRFCoreInterface {
 
     fun executeJavascript(script: String): String
 
-    fun executeJavascriptToGetObject(script: String, functionName: String): JNIReturnObject
-
+    fun executeJavascriptFunction(script: String, functionName: String, vararg params: Any): String
 }
 
 /**
@@ -52,9 +50,14 @@ object SYRFCore : SYRFCoreInterface {
         return executeJS(script)
     }
 
-    override fun executeJavascriptToGetObject(script: String, functionName: String): JNIReturnObject {
+    override fun executeJavascriptFunction(
+        script: String,
+        functionName: String,
+        vararg params: Any
+    ): String {
         checkConfig()
-        return executeJSToGetObject(script, functionName)
+        val function = "$functionName(${params.joinToString(separator = ",")})"
+        return executeJSToGetObject(script, function)
     }
 
     /**
@@ -77,8 +80,8 @@ object SYRFCore : SYRFCoreInterface {
     /**
      * The link to native function from library for executing javascript code
      * @param script The script will be executed
-     * @param functionName The javascript function name
+     * @param function The javascript function
      */
-    private external fun executeJSToGetObject(script: String, functionName: String): JNIReturnObject
+    private external fun executeJSToGetObject(script: String, function: String): String
 
 }

@@ -1,15 +1,25 @@
 package com.syrf.geospatial.interfaces
 
 import android.app.Activity
-import com.syrf.location.utils.NoConfigException
+import com.syrf.geospatial.configs.CoreLibrary
+import com.syrf.geospatial.configs.SYRFGeospatialConfig
+import com.syrf.geospatial.data.SYRFPoint
+import com.syrf.geospatial.managers.SYRFGeosManager
+import com.syrf.geospatial.managers.SYRFManager
+import com.syrf.geospatial.managers.SYRFTurfManager
 import com.syrf.location.utils.SDKValidator
+
+interface SYRFGeometryInterface {
+    fun getPoint(latitude: Double, longitude: Double): SYRFPoint
+}
 
 /**
  * The interface that exported to the client.
  * You can use methods for working with Geospatial.
  */
-interface SYRFGeospatialInterface {
+interface SYRFGeospatialInterface : SYRFGeometryInterface {
     fun configure(context: Activity)
+    fun configure(config: SYRFGeospatialConfig, context: Activity)
 }
 
 /**
@@ -18,37 +28,38 @@ interface SYRFGeospatialInterface {
  */
 object SYRFGeospatial : SYRFGeospatialInterface {
 
-    private var isConfigured = false
-
-    /**
-     * Load the native library
-     */
-    init {
-        System.loadLibrary("geospatial");
-    }
+    private lateinit var config: SYRFGeospatialConfig
+    private lateinit var manager: SYRFManager
 
     /**
      * Configure the module. The method should be called before any class usage
      * @param context The context. Should be the activity
      */
     override fun configure(context: Activity) {
+        this.configure(SYRFGeospatialConfig.DEFAULT, context)
+    }
+
+    /**
+     * Configure the module. The method should be called before any class usage
+     * @param context The context. Should be the activity
+     */
+    override fun configure(config: SYRFGeospatialConfig, context: Activity) {
         SDKValidator.checkForApiKey(context)
-        isConfigured = true
-    }
-
-    /**
-     * The function for testing geospatial working purpose
-     * @throws NoConfigException
-     */
-    fun test() {
-        if (!isConfigured) {
-            throw NoConfigException()
+        manager = when (config.coreLibrary) {
+            CoreLibrary.GEO -> SYRFGeosManager
+            CoreLibrary.TURF -> SYRFTurfManager
         }
-        testGeospatial();
+        manager.initialize(context)
+        this.config = config
     }
 
     /**
-     * The link to native function from library for testing
+     * Geospacial helper method for obtaining a point object from a coordinate
+     * @param latitude: The latitude coordinate of the point
+     * @param longitude: The longitude coordinate of the point
      */
-    private external fun testGeospatial()
+    override fun getPoint(latitude: Double, longitude: Double): SYRFPoint {
+        return manager.getPoint(latitude, longitude)
+    }
+
 }

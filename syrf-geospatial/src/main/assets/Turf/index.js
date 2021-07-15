@@ -2,43 +2,51 @@ const turf = require('@turf/turf');
 
 export class Geometry {
 
-    static point(coords) {
-	let result = turf.point(coords);
-	return result;
+    static add(a, b) {
+        return a + b;
+    }
+
+    static round(number) {
+        return turf.round(number);
+    }
+
+    static point(lat, lon) {
+	    const result = turf.point([lat, lon]);
+	    return JSON.stringify(result);
     }
     
     static greatCircle(pointFirst, pointSecond, options) {
-	let result = turf.greatCircle(pointFirst, pointSecond, options);
-	return result;
+	    const result = turf.greatCircle(pointFirst, pointSecond, options);
+	    return result;
     }    
     
     static midpoint(pointFirst, pointSecond) {
-	let result = turf.midpoint(pointFirst, pointSecond);
-	return result;
+	    const result = turf.midpoint(pointFirst, pointSecond);
+	    return result;
     }
     
     static lineString(lines, options) {
-	let result = turf.lineString(lines, options);
-	return result;
+	    const result = turf.lineString(lines, options);
+	    return result;
     }
     
     static distance(pointFirst, pointSecond, options) {
-	let result = turf.distance(pointFirst, pointSecond, options);
-	return result;
+	    const result = turf.distance(pointFirst, pointSecond, options);
+	    return result;
     }
     
     static lineIntersect(lineFirst, lineSecond) {
-	let result = turf.lineIntersect(lineFirst, lineSecond);
-	return result;
+	    const result = turf.lineIntersect(lineFirst, lineSecond);
+	    return result;
     }
     
     static simplify(json, options) {
-	let result = turf.simplify(json, options);
-	return result;
+	    const result = turf.simplify(json, options);
+	    return result;
     }
     
     static pointToLineDistance(point, line) {
-	let result = turf.pointToLineDistance(point, line);
-	return result;
+	    const result = turf.pointToLineDistance(point, line);
+	    return result;
     }
 }

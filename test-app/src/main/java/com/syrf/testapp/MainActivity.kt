@@ -2,8 +2,9 @@ package com.syrf.testapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.syrf.geospatial.managers.TURFManager
+import com.syrf.geospatial.interfaces.SYRFGeospatial
 import com.syrf.location.interfaces.SYRFCore
+import com.syrf.location.interfaces.SYRFTimber
 import com.syrf.testapp.activities.*
 import com.syrf.testapp.activities.AcceleroSensorActivity
 import com.syrf.testapp.activities.GyroscopeSensorActivity
@@ -25,7 +26,9 @@ class MainActivity : AppCompatActivity(){
 
         // Test turf
         SYRFCore.configure(this)
-        TURFManager(this)
+        SYRFGeospatial.configure(this)
+        val point = SYRFGeospatial.getPoint(100.5, 21.2)
+        SYRFTimber.e(point.toString())
     }
 
     private fun setupViews() {

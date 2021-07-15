@@ -38,17 +38,17 @@ Java_com_syrf_location_interfaces_SYRFCore_executeJS(JNIEnv *env, jobject thiz, 
 }
 
 extern "C"
-JNIEXPORT jobject JNICALL
+JNIEXPORT jstring JNICALL
 Java_com_syrf_location_interfaces_SYRFCore_executeJSToGetObject(JNIEnv *env, jobject thiz,
                                                                 jstring script,
-                                                                jstring functionName) {
+                                                                jstring function) {
     JSContextGroupRef contextGroup = JSContextGroupCreate();
     JSGlobalContextRef globalContext = JSGlobalContextCreateInGroup(contextGroup, nullptr);
     const char *cString = env->GetStringUTFChars(script, 0);
     JSStringRef statement = JSStringCreateWithUTF8CString(cString);
     JSValueRef exception = nullptr;
     JSStringRef fName = JSStringCreateWithUTF8CString(
-            env->GetStringUTFChars(functionName, nullptr));
+            env->GetStringUTFChars(function, nullptr));
     JSEvaluateScript(globalContext, statement,nullptr, nullptr, 1, &exception);
     JSValueRef retValue = JSEvaluateScript(globalContext, fName,nullptr, nullptr, 1, &exception);
 
