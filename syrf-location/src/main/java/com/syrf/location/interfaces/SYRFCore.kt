@@ -13,7 +13,7 @@ interface SYRFCoreInterface {
 
     fun executeJavascript(script: String): String
 
-    fun executeJavascriptFunction(script: String, functionName: String, vararg params: Any): String
+    fun executeJavascriptFunction(script: String, functionName: String, vararg params: Any?): String
 }
 
 /**
@@ -53,7 +53,7 @@ object SYRFCore : SYRFCoreInterface {
     override fun executeJavascriptFunction(
         script: String,
         functionName: String,
-        vararg params: Any
+        vararg params: Any?
     ): String {
         checkConfig()
         val function = "$functionName(${params.joinToString(separator = ",")})"

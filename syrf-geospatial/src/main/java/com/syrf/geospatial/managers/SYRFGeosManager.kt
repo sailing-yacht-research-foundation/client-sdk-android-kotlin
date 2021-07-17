@@ -1,7 +1,9 @@
 package com.syrf.geospatial.managers
 
 import android.content.Context
-import com.syrf.geospatial.data.SYRFPoint
+import com.syrf.geospatial.data.*
+import com.syrf.geospatial.data.SYRFGeometryUnit
+import kotlin.reflect.KClass
 
 object SYRFGeosManager : SYRFManager {
 
@@ -11,6 +13,50 @@ object SYRFGeosManager : SYRFManager {
     }
 
     override fun getPoint(latitude: Double, longitude: Double): SYRFPoint {
+        TODO("Not yet implemented")
+    }
+
+    override fun getGreatCircle(
+        pointFirst: SYRFPoint,
+        pointSecond: SYRFPoint,
+        options: SYRFLineOptions
+    ): SYRFLine {
+        TODO("Not yet implemented")
+    }
+
+    override fun getMidPoint(pointFirst: SYRFPoint, pointSecond: SYRFPoint): SYRFPoint {
+        TODO("Not yet implemented")
+    }
+
+    override fun getLineString(
+        coordinates: Array<DoubleArray>,
+        options: Map<String, String>
+    ): SYRFLine {
+        TODO("Not yet implemented")
+    }
+
+    override fun getDistance(
+        pointFirst: SYRFPoint,
+        pointSecond: SYRFPoint,
+        unit: SYRFGeometryUnit
+    ): Double {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPointToLineDistance(
+        point: SYRFPoint,
+        line: SYRFLine,
+        unit: SYRFGeometryUnit,
+        method: SYRFGeometryMethod
+    ): Double {
+        TODO("Not yet implemented")
+    }
+
+    override fun getLineIntersect(lineFirst: SYRFLine, lineSecond: SYRFLine): Array<SYRFPoint> {
+        TODO("Not yet implemented")
+    }
+
+    override fun simplify(line: SYRFLine, options: SYRFSimplifyOptions): SYRFLine {
         TODO("Not yet implemented")
     }
 

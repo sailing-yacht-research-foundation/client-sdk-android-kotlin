@@ -3,4 +3,4 @@ package com.syrf.geospatial.data
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SYRFPoint(val type: String, val coordinates: DoubleArray): SYRFGeometry()
+data class SYRFLine(val type: String, val coordinates: Array<DoubleArray>): SYRFGeometry()
