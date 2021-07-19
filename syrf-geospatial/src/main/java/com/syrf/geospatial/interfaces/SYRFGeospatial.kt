@@ -7,7 +7,6 @@ import com.syrf.geospatial.data.*
 import com.syrf.geospatial.managers.SYRFGeosManager
 import com.syrf.geospatial.managers.SYRFManager
 import com.syrf.geospatial.managers.SYRFTurfManager
-import com.syrf.geospatial.data.SYRFGeometryUnit
 import com.syrf.location.utils.SDKValidator
 
 interface SYRFGeometryInterface {
@@ -39,11 +38,10 @@ interface SYRFGeometryInterface {
 
     fun getLineIntersect(lineFirst: SYRFLine, lineSecond: SYRFLine): Array<SYRFPoint>
 
-    // Todo: make this method generic so it can help simplification all subclass of SYRFGeometry
     fun simplify(
-        line: SYRFLine,
+        geometry: SYRFGeometry,
         options: SYRFSimplifyOptions = SYRFSimplifyOptions.DEFAULT
-    ): SYRFLine
+    ): SYRFGeometry
 }
 
 /**
@@ -171,11 +169,10 @@ object SYRFGeospatial : SYRFGeospatialInterface {
 
     /**
      * The method for simplification the line
-     * @param line: The first
+     * @param geometry: The geometry
      * @param options: The additional options for the simplify operation
      */
-    override fun simplify(line: SYRFLine, options: SYRFSimplifyOptions): SYRFLine {
-        return manager.simplify(line, options)
+    override fun simplify(geometry: SYRFGeometry, options: SYRFSimplifyOptions): SYRFGeometry {
+        return manager.simplify(geometry, options)
     }
-
 }

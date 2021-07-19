@@ -2,7 +2,6 @@ package com.syrf.testapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.syrf.geospatial.data.SYRFFeature
 import com.syrf.geospatial.data.SYRFLine
 import com.syrf.geospatial.data.SYRFLineOptions
 import com.syrf.geospatial.data.SYRFPoint
@@ -90,8 +89,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         // simplify
-        val simplifiedLine = SYRFGeospatial.simplify(line)
+        val simplifiedLine = SYRFGeospatial.simplify(line) as SYRFLine
         SYRFTimber.e(simplifiedLine.toString())
+        val simplifiedPoint = SYRFGeospatial.simplify(pointFirst) as SYRFPoint
+        SYRFTimber.e(simplifiedPoint.toString())
     }
 
     private fun setupViews() {

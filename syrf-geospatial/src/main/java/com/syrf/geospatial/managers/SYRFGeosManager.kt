@@ -2,11 +2,8 @@ package com.syrf.geospatial.managers
 
 import android.content.Context
 import com.syrf.geospatial.data.*
-import com.syrf.geospatial.data.SYRFGeometryUnit
-import kotlin.reflect.KClass
 
 object SYRFGeosManager : SYRFManager {
-
 
     override fun initialize(context: Context) {
         System.loadLibrary("geospatial");
@@ -56,7 +53,7 @@ object SYRFGeosManager : SYRFManager {
         TODO("Not yet implemented")
     }
 
-    override fun simplify(line: SYRFLine, options: SYRFSimplifyOptions): SYRFLine {
+    override fun simplify(geometry: SYRFGeometry, options: SYRFSimplifyOptions): SYRFGeometry {
         TODO("Not yet implemented")
     }
 

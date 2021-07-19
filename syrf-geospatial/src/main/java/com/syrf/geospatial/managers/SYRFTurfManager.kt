@@ -2,16 +2,15 @@ package com.syrf.geospatial.managers
 
 import android.content.Context
 import com.syrf.geospatial.data.*
-import com.syrf.geospatial.data.SYRFGeometryUnit
 import com.syrf.location.interfaces.SYRFCore
 import com.syrf.location.interfaces.SYRFTimber
-import kotlinx.serialization.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 object SYRFTurfManager : SYRFManager {
 
-    private const val FUNCTION_PREFIX = "Turf.Geometry."
-    private val converter = Json { ignoreUnknownKeys = true }
+    val converter = Json { ignoreUnknownKeys = true }
 
     private lateinit var script: String
 
@@ -133,7 +132,15 @@ object SYRFTurfManager : SYRFManager {
         return featureCollection.features.map { it.geometry }.toTypedArray()
     }
 
-    override fun simplify(line: SYRFLine, options: SYRFSimplifyOptions): SYRFLine {
+    override fun simplify(geometry: SYRFGeometry, options: SYRFSimplifyOptions): SYRFGeometry {
+        return when (geometry) {
+            is SYRFLine -> simplifyLine(geometry, options)
+            is SYRFPoint -> simplifyPoint(geometry, options)
+            else -> throw Exception("not supported geometry")
+        }
+    }
+
+    private fun simplifyLine(line: SYRFLine, options: SYRFSimplifyOptions): SYRFLine {
         val functionName = getFunctionName("simplify")
         val resultString =
             SYRFCore.executeJavascriptFunction(
@@ -145,8 +152,20 @@ object SYRFTurfManager : SYRFManager {
         return converter.decodeFromString(resultString)
     }
 
-    private fun getFunctionName(name: String): String {
-        return "$FUNCTION_PREFIX$name"
+    private fun simplifyPoint(point: SYRFPoint, options: SYRFSimplifyOptions): SYRFPoint {
+        val functionName = getFunctionName("simplify")
+        val resultString =
+            SYRFCore.executeJavascriptFunction(
+                script,
+                functionName,
+                converter.encodeToString(point),
+                converter.encodeToString(options),
+            )
+        return converter.decodeFromString(resultString)
+    }
+
+    fun getFunctionName(name: String): String {
+        return "Turf.Geometry.$name"
     }
 
 }
