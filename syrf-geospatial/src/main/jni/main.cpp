@@ -5,6 +5,6 @@
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_syrf_geospatial_interfaces_SYRFGeospatial_testGeospatial(JNIEnv *env, jobject thiz) {
+Java_com_syrf_geospatial_managers_SYRFGeosManager_testGeospatial(JNIEnv *env, jobject thiz) {
     // TODO: implement testGeospatial()
 }

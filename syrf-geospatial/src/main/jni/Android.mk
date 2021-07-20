@@ -12,3 +12,8 @@ LOCAL_MODULE := geospatial
 LOCAL_SRC_FILES := main.cpp
 LOCAL_SHARED_LIBRARIES := geos
 include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := turf
+LOCAL_SRC_FILES := turf.cpp
+include $(BUILD_SHARED_LIBRARY)

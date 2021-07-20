@@ -88,3 +88,5 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 
+syrf-geospatial/src/main/assets/Turf/node_modules/*
+

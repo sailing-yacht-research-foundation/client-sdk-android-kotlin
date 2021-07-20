@@ -1,12 +1,6 @@
 package com.syrf.location.interfaces
 
 import android.app.Activity
-import android.content.Context
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
-import com.syrf.location.utils.Constants.SDK_KEY_NAME
-import com.syrf.location.utils.InvalidApiKeyException
-import com.syrf.location.utils.NoApiKeyException
 import com.syrf.location.utils.NoConfigException
 import com.syrf.location.utils.SDKValidator
 
@@ -17,7 +11,9 @@ import com.syrf.location.utils.SDKValidator
 interface SYRFCoreInterface {
     fun configure(context: Activity)
 
-    fun executeJavascript(script: String): String
+    fun executeJavascript(script: String)
+
+    fun executeJavascriptFunction(functionName: String, vararg params: Any?): String
 }
 
 /**
@@ -49,16 +45,41 @@ object SYRFCore : SYRFCoreInterface {
      * @param script The script will be executed
      * @throws NoConfigException
      */
-    override fun executeJavascript(script: String): String {
+    override fun executeJavascript(script: String) {
+        checkConfig()
+        executeJS(script)
+    }
+
+    override fun executeJavascriptFunction(
+        functionName: String,
+        vararg params: Any?
+    ): String {
+        checkConfig()
+        val function = "$functionName(${params.joinToString(separator = ",")})"
+        return executeJSToGetObject(function)
+    }
+
+    /**
+     * Check for config and throw an exception if it is not initialized
+     * @throws NoConfigException
+     */
+    @Throws(Exception::class)
+    private fun checkConfig() {
         if (!isConfigured) {
             throw NoConfigException()
         }
-        return executeJS(script)
     }
 
     /**
      * The link to native function from library for executing javascript code
      * @param script The script will be executed
      */
-    private external fun executeJS(script: String): String
+    private external fun executeJS(script: String)
+
+    /**
+     * The link to native function from library for executing javascript code
+     * @param function The javascript function
+     */
+    private external fun executeJSToGetObject(function: String): String
+
 }
