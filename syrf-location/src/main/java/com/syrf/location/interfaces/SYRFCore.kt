@@ -11,9 +11,9 @@ import com.syrf.location.utils.SDKValidator
 interface SYRFCoreInterface {
     fun configure(context: Activity)
 
-    fun executeJavascript(script: String): String
+    fun executeJavascript(script: String)
 
-    fun executeJavascriptFunction(script: String, functionName: String, vararg params: Any?): String
+    fun executeJavascriptFunction(functionName: String, vararg params: Any?): String
 }
 
 /**
@@ -45,19 +45,18 @@ object SYRFCore : SYRFCoreInterface {
      * @param script The script will be executed
      * @throws NoConfigException
      */
-    override fun executeJavascript(script: String): String {
+    override fun executeJavascript(script: String) {
         checkConfig()
-        return executeJS(script)
+        executeJS(script)
     }
 
     override fun executeJavascriptFunction(
-        script: String,
         functionName: String,
         vararg params: Any?
     ): String {
         checkConfig()
         val function = "$functionName(${params.joinToString(separator = ",")})"
-        return executeJSToGetObject(script, function)
+        return executeJSToGetObject(function)
     }
 
     /**
@@ -75,13 +74,12 @@ object SYRFCore : SYRFCoreInterface {
      * The link to native function from library for executing javascript code
      * @param script The script will be executed
      */
-    private external fun executeJS(script: String): String
+    private external fun executeJS(script: String)
 
     /**
      * The link to native function from library for executing javascript code
-     * @param script The script will be executed
      * @param function The javascript function
      */
-    private external fun executeJSToGetObject(script: String, function: String): String
+    private external fun executeJSToGetObject(function: String): String
 
 }

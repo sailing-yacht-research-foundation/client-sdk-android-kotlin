@@ -12,21 +12,20 @@ object SYRFTurfManager : SYRFManager {
 
     val converter = Json { ignoreUnknownKeys = true }
 
-    private lateinit var script: String
-
     override fun initialize(context: Context) {
-        script = context.assets.open("Turf/dist/Turf.bundle.js")
+        val script = context.assets.open("Turf/dist/Turf.bundle.js")
             .bufferedReader()
             .use {
                 it.readText()
             }
+        SYRFCore.executeJavascript(script)
         SYRFTimber.e(script)
     }
 
     override fun getPoint(latitude: Double, longitude: Double): SYRFPoint {
         val functionName = getFunctionName("point")
         val resultString =
-            SYRFCore.executeJavascriptFunction(script, functionName, latitude, longitude)
+            SYRFCore.executeJavascriptFunction(functionName, latitude, longitude)
         val featureObject = converter.decodeFromString<SYRFFeature<SYRFPoint>>(resultString)
         return featureObject.geometry
     }
@@ -39,7 +38,6 @@ object SYRFTurfManager : SYRFManager {
         val functionName = getFunctionName("greatCircle")
         val resultString =
             SYRFCore.executeJavascriptFunction(
-                script,
                 functionName,
                 converter.encodeToString(pointFirst),
                 converter.encodeToString(pointSecond),
@@ -54,7 +52,7 @@ object SYRFTurfManager : SYRFManager {
         val functionName = getFunctionName("midpoint")
         val resultString =
             SYRFCore.executeJavascriptFunction(
-                script, functionName,
+                functionName,
                 converter.encodeToString(pointFirst),
                 converter.encodeToString(pointSecond),
             )
@@ -69,7 +67,6 @@ object SYRFTurfManager : SYRFManager {
         val functionName = getFunctionName("lineString")
         val resultString =
             SYRFCore.executeJavascriptFunction(
-                script,
                 functionName,
                 converter.encodeToString(coordinates),
                 converter.encodeToString(options)
@@ -89,7 +86,7 @@ object SYRFTurfManager : SYRFManager {
         options["units"] = unit.value
         val resultString =
             SYRFCore.executeJavascriptFunction(
-                script, functionName,
+                functionName,
                 converter.encodeToString(pointFirst),
                 converter.encodeToString(pointSecond),
                 converter.encodeToString(options)
@@ -109,7 +106,7 @@ object SYRFTurfManager : SYRFManager {
         options["method"] = method.value
         val resultString =
             SYRFCore.executeJavascriptFunction(
-                script, functionName,
+                functionName,
                 converter.encodeToString(point),
                 converter.encodeToString(line),
                 converter.encodeToString(options)
@@ -121,7 +118,6 @@ object SYRFTurfManager : SYRFManager {
         val functionName = getFunctionName("lineIntersect")
         val resultString =
             SYRFCore.executeJavascriptFunction(
-                script,
                 functionName,
                 converter.encodeToString(lineFirst),
                 converter.encodeToString(lineSecond)
@@ -144,7 +140,6 @@ object SYRFTurfManager : SYRFManager {
         val functionName = getFunctionName("simplify")
         val resultString =
             SYRFCore.executeJavascriptFunction(
-                script,
                 functionName,
                 converter.encodeToString(line),
                 converter.encodeToString(options),
@@ -156,7 +151,6 @@ object SYRFTurfManager : SYRFManager {
         val functionName = getFunctionName("simplify")
         val resultString =
             SYRFCore.executeJavascriptFunction(
-                script,
                 functionName,
                 converter.encodeToString(point),
                 converter.encodeToString(options),

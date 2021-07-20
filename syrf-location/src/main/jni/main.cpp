@@ -15,54 +15,33 @@ std::string JSStringToStdString(JSStringRef jsString) {
     return utf_string;
 }
 
+JSGlobalContextRef globalContext = nullptr;
 
 extern "C"
-JNIEXPORT jstring JNICALL
+JNIEXPORT void JNICALL
 Java_com_syrf_location_interfaces_SYRFCore_executeJS(JNIEnv *env, jobject thiz, jstring script) {
     JSContextGroupRef contextGroup = JSContextGroupCreate();
-    JSGlobalContextRef globalContext = JSGlobalContextCreateInGroup(contextGroup, nullptr);
-    JSStringRef statement = JSStringCreateWithUTF8CString(env->GetStringUTFChars(script, nullptr));
-    JSValueRef retValue = JSEvaluateScript(globalContext, statement, nullptr, nullptr, 1, nullptr);
-
-    JSStringRef retString = JSValueToStringCopy(globalContext, retValue, nullptr);
-
-    std::string hello = JSStringToStdString(retString);
-
-    JSGlobalContextRelease(globalContext);
+    globalContext = JSGlobalContextCreateInGroup(contextGroup, nullptr);
+    const char *cString = env->GetStringUTFChars(script, 0);
+    JSStringRef statement = JSStringCreateWithUTF8CString(cString);
+    JSEvaluateScript(globalContext, statement, nullptr, nullptr, 1, nullptr);
     JSContextGroupRelease(contextGroup);
     JSStringRelease(statement);
-    JSStringRelease(retString);
-
-
-    return env->NewStringUTF(hello.c_str());
 }
 
 extern "C"
 JNIEXPORT jstring JNICALL
 Java_com_syrf_location_interfaces_SYRFCore_executeJSToGetObject(JNIEnv *env, jobject thiz,
-                                                                jstring script,
                                                                 jstring function) {
-    JSContextGroupRef contextGroup = JSContextGroupCreate();
-    JSGlobalContextRef globalContext = JSGlobalContextCreateInGroup(contextGroup, nullptr);
-    const char *cString = env->GetStringUTFChars(script, 0);
-    JSStringRef statement = JSStringCreateWithUTF8CString(cString);
     JSValueRef exception = nullptr;
-    JSStringRef fName = JSStringCreateWithUTF8CString(
-            env->GetStringUTFChars(function, nullptr));
-    JSEvaluateScript(globalContext, statement,nullptr, nullptr, 1, &exception);
-    JSValueRef retValue = JSEvaluateScript(globalContext, fName,nullptr, nullptr, 1, &exception);
-
+    JSStringRef fName = JSStringCreateWithUTF8CString(env->GetStringUTFChars(function, nullptr));
+    JSValueRef retValue = JSEvaluateScript(globalContext, fName, nullptr, nullptr, 1, &exception);
     JSStringRef retString = JSValueToStringCopy(globalContext, retValue, nullptr);
-
     std::string hello = JSStringToStdString(retString);
 
-    if (exception){
+    if (exception) {
         // TODO: handle the exception
     }
-
-    JSGlobalContextRelease(globalContext);
-    JSContextGroupRelease(contextGroup);
-    JSStringRelease(statement);
 
     return env->NewStringUTF(hello.c_str());
 }
