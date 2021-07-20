@@ -1,0 +1,10 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:com.syrf.geospatial.interfaces////PointingToDeclaration/syrf-geospatial/com.syrf.geospatial.interfaces/index.html
+$dokka.location:com.syrf.geospatial.interfaces/SYRFGeospatial///PointingToDeclaration/syrf-geospatial/com.syrf.geospatial.interfaces/-s-y-r-f-geospatial/index.html
+$dokka.location:com.syrf.geospatial.interfaces/SYRFGeospatial/configure/#android.app.Activity/PointingToDeclaration/syrf-geospatial/com.syrf.geospatial.interfaces/-s-y-r-f-geospatial/configure.html
+$dokka.location:com.syrf.geospatial.interfaces/SYRFGeospatial/test/#/PointingToDeclaration/syrf-geospatial/com.syrf.geospatial.interfaces/-s-y-r-f-geospatial/test.html
+$dokka.location:com.syrf.geospatial.interfaces/SYRFGeospatialInterface///PointingToDeclaration/syrf-geospatial/com.syrf.geospatial.interfaces/-s-y-r-f-geospatial-interface/index.html
+$dokka.location:com.syrf.geospatial.interfaces/SYRFGeospatialInterface/configure/#android.app.Activity/PointingToDeclaration/syrf-geospatial/com.syrf.geospatial.interfaces/-s-y-r-f-geospatial-interface/configure.html
+com.syrf.geospatial.interfaces
+
