@@ -1,7 +1,7 @@
 package com.syrf.location.utils
 
-import android.location.Location
+import com.syrf.location.data.SYRFLocationData
 
-typealias CurrentPositionUpdateCallback = (Location?, Throwable?) -> Unit
+typealias CurrentPositionUpdateCallback = (SYRFLocationData?, Throwable?) -> Unit
 
 typealias SubscribeToLocationUpdateCallback = (Unit?, Throwable?) -> Unit

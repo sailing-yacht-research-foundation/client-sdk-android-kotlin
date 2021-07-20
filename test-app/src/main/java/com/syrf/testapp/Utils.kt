@@ -18,11 +18,12 @@ package com.syrf.testapp
 import android.content.Context
 import android.location.Location
 import androidx.core.content.edit
+import com.syrf.location.data.SYRFLocationData
 
 /**
  * Returns the `location` object as a human readable string.
  */
-fun Location?.toText(): String {
+fun SYRFLocationData?.toText(): String {
     return if (this != null) {
         "($latitude, $longitude)"
     } else {
