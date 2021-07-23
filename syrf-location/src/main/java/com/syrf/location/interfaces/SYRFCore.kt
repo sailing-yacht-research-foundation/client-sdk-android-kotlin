@@ -28,7 +28,11 @@ object SYRFCore : SYRFCoreInterface {
      * Load the native library
      */
     init {
-        System.loadLibrary("core")
+        try {
+            System.loadLibrary("core")
+        } catch (e: UnsatisfiedLinkError) {
+            SYRFTimber.e(e)
+        }
     }
 
     /**
