@@ -7,6 +7,7 @@ import com.syrf.geospatial.data.*
 import com.syrf.geospatial.managers.SYRFGeosManager
 import com.syrf.geospatial.managers.SYRFManager
 import com.syrf.geospatial.managers.SYRFTurfManager
+import com.syrf.location.utils.NoConfigException
 import com.syrf.location.utils.SDKValidator
 
 interface SYRFGeometryInterface {
@@ -51,6 +52,7 @@ interface SYRFGeometryInterface {
 interface SYRFGeospatialInterface : SYRFGeometryInterface {
     fun configure(context: Activity)
     fun configure(config: SYRFGeospatialConfig, context: Activity)
+    fun getConfig(): SYRFGeospatialConfig
 }
 
 /**
@@ -82,6 +84,14 @@ object SYRFGeospatial : SYRFGeospatialInterface {
         }
         manager.initialize(context)
         this.config = config
+    }
+
+    /**
+     * Check for initialization of config and return initialized value
+     */
+    override fun getConfig(): SYRFGeospatialConfig {
+        checkConfig()
+        return config
     }
 
     /**
@@ -174,5 +184,16 @@ object SYRFGeospatial : SYRFGeospatialInterface {
      */
     override fun simplify(geometry: SYRFGeometry, options: SYRFSimplifyOptions): SYRFGeometry {
         return manager.simplify(geometry, options)
+    }
+
+    /**
+     * Check for config and throw an exception if it is not initialized
+     * @throws NoConfigException
+     */
+    @Throws(NoConfigException::class)
+    private fun checkConfig() {
+        if (!this::config.isInitialized) {
+            throw NoConfigException()
+        }
     }
 }

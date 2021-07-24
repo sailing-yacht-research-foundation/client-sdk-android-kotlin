@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import com.syrf.location.utils.Constants
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.mock
@@ -18,4 +19,13 @@ fun mockSDKValidator(context: Activity) {
             PackageManager.GET_META_DATA
         )
     ).thenReturn(applicationInfo)
+}
+
+fun mockCheckPermissionResult(context: Activity, permission: String, result: Int) {
+    `when`(
+        ContextCompat.checkSelfPermission(
+            context,
+            permission
+        )
+    ).thenReturn(result)
 }

@@ -3,6 +3,7 @@ package com.syrf.location.permissions
 import android.app.Activity
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
+import com.syrf.location.mockCheckPermissionResult
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -54,10 +55,12 @@ class PermissionsManagerTest {
         resetGlobalState()
         val permissions = PERMISSIONS
         mockCheckPermissionResult(
+            context = context,
             permission = ACCESS_FINE_LOCATION_PERMISSION,
             result = PackageManager.PERMISSION_GRANTED
         )
         mockCheckPermissionResult(
+            context = context,
             permission = ACCESS_COARSE_LOCATION_PERMISSION,
             result = PackageManager.PERMISSION_DENIED
         )
@@ -80,10 +83,12 @@ class PermissionsManagerTest {
         resetGlobalState()
         val permissions = PERMISSIONS
         mockCheckPermissionResult(
+            context = context,
             permission = ACCESS_FINE_LOCATION_PERMISSION,
             result = PackageManager.PERMISSION_GRANTED
         )
         mockCheckPermissionResult(
+            context = context,
             permission = ACCESS_COARSE_LOCATION_PERMISSION,
             result = PackageManager.PERMISSION_GRANTED
         )
@@ -100,14 +105,6 @@ class PermissionsManagerTest {
         Assert.assertTrue(isSuccessCallbackInvoked)
     }
 
-    private fun mockCheckPermissionResult(permission: String, result: Int) {
-        `when`(
-            ContextCompat.checkSelfPermission(
-                context,
-                permission
-            )
-        ).thenReturn(result)
-    }
 
     private fun resetGlobalState() {
         isSuccessCallbackInvoked = false
