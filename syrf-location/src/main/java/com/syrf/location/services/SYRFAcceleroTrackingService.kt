@@ -117,7 +117,7 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
         context: Context,
         noAccelerometerSensorCallback: () -> Unit
     ) {
-        val notNullSensorAccelerometer = sensorAccelerometer ?: run{
+        val notNullSensorAccelerometer = sensorAccelerometer ?: run {
             noAccelerometerSensorCallback.invoke()
             return
         }
