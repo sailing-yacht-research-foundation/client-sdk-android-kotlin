@@ -43,6 +43,10 @@
         <activity
             android:label="@string/first_sample"
             android:name=".activities.FirstSampleActivity" />
+
+        <activity
+            android:label="@string/second_sample"
+            android:name=".activities.SecondSampleActivity" />
     </application>
 
 </manifest>
