@@ -1,10 +1,10 @@
 // Create variables with empty default values
-ext["ossrhUsername"] = ''
-ext["ossrhPassword"] = ''
-ext["sonatypeStagingProfileId"] = ''
-ext["signing.keyId"] = ''
-ext["signing.password"] = ''
-ext["signing.secretKeyRingFile"] = ''
+ext["ossrhUsername"] = 'jweisbaum'
+ext["ossrhPassword"] = 'SailYachtRS2021'
+ext["sonatypeStagingProfileId"] = '27d283eebe1a26'
+ext["signing.keyId"] = '51ED639C'
+ext["signing.password"] = 'SyrfTracker_2021('
+ext["signing.secretKeyRingFile"] = '/Volumes/work/secring.kbx'
 
 File secretPropsFile = project.rootProject.file('local.properties')
 if (secretPropsFile.exists()) {
