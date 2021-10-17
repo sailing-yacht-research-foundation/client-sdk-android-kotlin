@@ -112,8 +112,7 @@ class MainActivity : AppCompatActivity() {
             GyroscopeSensorActivity.start(this)
         }
 
-        binding.btnShowFirstSample.setOnClickListener {
-            FirstSampleActivity.start(this)
+        binding.btnShowFirstSample.setOnClickListener { SecondSampleActivity.start(this)
         }
     }
 }

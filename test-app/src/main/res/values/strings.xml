@@ -20,8 +20,9 @@
     <string name="magnetic_sensor">Magnetic Sensor</string>
     <string name="gyroscope_sensor">Gyroscope Sensor</string>
     <string name="first_sample">First Sample</string>
+    <string name="second_sample">Second Sample</string>
 
-    <string name="azimuth">Azmiuth:</string>
+    <string name="azimuth">Azimuth:</string>
     <string name="pitch">Pitch:</string>
     <string name="roll">Roll:</string>
 
