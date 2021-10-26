@@ -8,12 +8,14 @@ import android.content.IntentFilter
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
+import android.view.Display
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.syrf.location.configs.SYRFRotationConfig
 import com.syrf.location.data.SYRFRotationSensorData
+import com.syrf.location.data.SYRFRotationData
 import com.syrf.location.interfaces.SYRFRotationSensor
 import com.syrf.location.utils.Constants.ACTION_ROTATION_SENSOR_BROADCAST
 import com.syrf.location.utils.Constants.EXTRA_ROTATION_SENSOR_DATA
@@ -22,6 +24,7 @@ import com.syrf.testapp.databinding.ActivitySecondSampleBinding
 import com.syrf.time.configs.SYRFTimeConfig
 import com.syrf.time.interfaces.SYRFTime
 import kotlin.math.abs
+import android.view.Surface
 
 /**
  * This is a sample that using data provided by [SYRFRotationSensor] and device's rotation
@@ -34,10 +37,11 @@ class SecondSampleActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySecondSampleBinding
     private var isUpdateEnabled = false
 
-    private var rotationSensorData: SYRFRotationSensorData? = null
-
     private var lastUpdatedTime: Long = 0
     private var currentAzimuthDegree: Float = 0f
+
+    private val rotationMatrix = FloatArray(9)
+    private val orientation = FloatArray(3)
 
     companion object {
 
@@ -122,17 +126,18 @@ class SecondSampleActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateResult() {
+    private fun updateResult(data: FloatArray) {
         val currentTime = SYRFTime.getCurrentTimeMS()
         if (currentTime - lastUpdatedTime < UPDATE_TIME) {
             return
         }
 
         lastUpdatedTime = currentTime
-        val orientationValues = calculateOrientations()
 
-        updateCompass(azimuth = orientationValues[0])
-        updateSpots(pitch = orientationValues[1], roll = orientationValues[2])
+        val orientationValues = calculateOrientations(data)
+
+        updateCompass(azimuth = orientationValues.azimuth)
+        updateSpots(pitch = orientationValues.pitch, roll = orientationValues.roll)
     }
 
     /**
@@ -196,67 +201,58 @@ class SecondSampleActivity : AppCompatActivity() {
         }
     }
 
-    private fun calculateOrientations(): FloatArray {
+    private fun activityDisplay() : Display? {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            return this.display
+        }
+        @Suppress("DEPRECATION")
+        return this.windowManager.defaultDisplay
+    }
 
-//        val rotationValues = rotationSensorData?.values ?: FloatArray(3)
-//
-//        // Compute the rotation matrix: merges and translates the data
-//        // from the accelerometer and magnetometer, in the device coordinate
-//        // system, into a matrix in the world's coordinate system.
-//        //
-//        // The second argument is an inclination matrix, which isn't
-//        // used in this example.
-//        val rotationMatrix = FloatArray(9)
-//        val rotationOK = SensorManager.getRotationMatrix(
-//            rotationMatrix, null, acceleroValues, magneticValues
-//        )
-//
-//        if (!rotationOK) {
-//            return orientationValues
-//        }
-//
-//        // Remap the matrix based on current device/activity rotation.
-//        var rotationMatrixAdjusted = FloatArray(9)
-//        // Get the display from context (for rotation).
-//        when (display?.rotation) {
-//            Surface.ROTATION_0 -> rotationMatrixAdjusted = rotationMatrix.clone()
-//            Surface.ROTATION_90 -> SensorManager.remapCoordinateSystem(
-//                rotationMatrix,
-//                SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X,
-//                rotationMatrixAdjusted
-//            )
-//            Surface.ROTATION_180 -> SensorManager.remapCoordinateSystem(
-//                rotationMatrix,
-//                SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y,
-//                rotationMatrixAdjusted
-//            )
-//            Surface.ROTATION_270 -> SensorManager.remapCoordinateSystem(
-//                rotationMatrix,
-//                SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X,
-//                rotationMatrixAdjusted
-//            )
-//        }
-//
-//        // Get the orientation of the device (azimuth, pitch, roll) based
-//        // on the rotation matrix. Output units are radians.
-//        SensorManager.getOrientation(
-//            rotationMatrixAdjusted,
-//            orientationValues
-//        )
+    private fun calculateOrientations(rotationValues: FloatArray): SYRFRotationData {
+        SensorManager.getRotationMatrixFromVector(rotationMatrix, rotationValues)
+        val (matrixColumn, sense) = when (val rotation =
+            activityDisplay()?.rotation
+        ) {
+            Surface.ROTATION_0 -> Pair(0, 1)
+            Surface.ROTATION_90 -> Pair(1, -1)
+            Surface.ROTATION_180 -> Pair(0, -1)
+            Surface.ROTATION_270 -> Pair(1, 1)
+            else -> error("Invalid screen rotation value: $rotation")
+        }
+        val x = sense * rotationMatrix[matrixColumn]
+        val y = sense * rotationMatrix[matrixColumn + 3]
+        val azimuth = (-kotlin.math.atan2(y.toDouble(), x.toDouble()))
 
-        return rotationSensorData!!.values
+        SensorManager.getOrientation(rotationMatrix, orientation)
+
+        val sensorRotationData = SYRFRotationData(
+            azimuth = azimuth.toFloat(),
+            pitch = orientation[1],
+            roll = orientation[2],
+            timestamp = System.currentTimeMillis())
+
+        return sensorRotationData
     }
 
     private inner class SecondExampleBroadcastReceiver : BroadcastReceiver() {
 
         override fun onReceive(context: Context, intent: Intent) {
+            var rotationSensorData: FloatArray? = null
             when (intent.action) {
                 ACTION_ROTATION_SENSOR_BROADCAST -> {
-                    rotationSensorData = intent.getParcelableExtra(EXTRA_ROTATION_SENSOR_DATA)
+                    val data: SYRFRotationSensorData? =
+                        intent.getParcelableExtra(EXTRA_ROTATION_SENSOR_DATA)
+                    rotationSensorData =
+                        if (data != null) floatArrayOf(data.x, data.y, data.z, data.s) else {
+                            null
+                        }
                 }
             }
 
-            updateResult()
+            if (rotationSensorData != null) {
+                updateResult(rotationSensorData)
+            }
         }
     }
 }
