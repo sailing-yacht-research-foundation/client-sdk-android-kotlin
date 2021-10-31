@@ -139,14 +139,24 @@ class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferen
             getString(R.string.start_location_updates_button_text)
         }
     }
+    
+    private fun requestCurrentPosition() {
+        SYRFLocation.getCurrentPosition(this) { location, error ->
+            if (location != null) {
+                logResultsToScreen("${TimeService.currentTime()} - ${location.toText()}")
+            }
+            if (error is MissingLocationException) {
+                successOnPermissionsRequest = {
+                    requestCurrentPosition()
+                }
+                requestLocationPermission()
+            }
+        }
+    }
 
     private fun setupBtn() {
         binding.getCurrentPositionBtn.setOnClickListener {
-            SYRFLocation.getCurrentPosition(this) { location, error ->
-                if (location != null) {
-                    logResultsToScreen("${TimeService.currentTime()} - ${location.toText()}")
-                }
-            }
+            requestCurrentPosition()
         }
         binding.subscribeToPositionUpdateBtn.setOnClickListener {
             val enabled = sharedPreferences.getBoolean(

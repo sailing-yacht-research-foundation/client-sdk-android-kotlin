@@ -40,9 +40,6 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
 
     private val localBinder = LocalBinder()
 
-    private val rotationMatrix = FloatArray(9)
-    private val orientation = FloatArray(3)
-
     override fun onCreate() {
         super.onCreate()
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -99,28 +96,14 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onSensorChanged(event: SensorEvent?) {
         val rotationValues = event?.values ?: return
-        SensorManager.getRotationMatrixFromVector(rotationMatrix, rotationValues)
-        val (matrixColumn, sense) = when (val rotation =
-            this.display?.rotation
-        ) {
-            Surface.ROTATION_0 -> Pair(0, 1)
-            Surface.ROTATION_90 -> Pair(1, -1)
-            Surface.ROTATION_180 -> Pair(0, -1)
-            Surface.ROTATION_270 -> Pair(1, 1)
-            else -> error("Invalid screen rotation value: $rotation")
-        }
-        val x = sense * rotationMatrix[matrixColumn]
-        val y = sense * rotationMatrix[matrixColumn + 3]
-        val azimuth = (-atan2(y.toDouble(), x.toDouble()))
-
-        SensorManager.getOrientation(rotationMatrix, orientation)
 
         val sensorRotationData =
             SYRFRotationSensorData(
-                x = azimuth.toFloat(),
-                y = orientation[1],
-                z = orientation[2],
-                timestamp = System.currentTimeMillis()
+                x = rotationValues[0],
+                y = rotationValues[1],
+                z = rotationValues[2],
+                s = rotationValues[3],
+                timestamp = System.currentTimeMillis(),
             )
 
         currentSensorData = sensorRotationData
