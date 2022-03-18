@@ -10,18 +10,17 @@ import android.hardware.SensorManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.view.Surface
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.syrf.location.R
 import com.syrf.location.data.SYRFRotationSensorData
+import com.syrf.location.interfaces.SYRFRotationSensor
 import com.syrf.location.utils.Constants
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_ROTATION_SENSOR_TRACKING_FROM_NOTIFICATION
 import com.syrf.location.utils.Constants.ROTATION_NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.ROTATION_NOTIFICATION_ID
-import androidx.annotation.RequiresApi
-import com.syrf.location.interfaces.SYRFRotationSensor
-import java.lang.Math.atan2
+import com.syrf.location.utils.serviceIsRunningInForeground
 
 
 /**
@@ -35,8 +34,6 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
     private lateinit var notificationManager: NotificationManager
     private lateinit var sensorManager: SensorManager
     private var sensorRotation: Sensor? = null
-
-    private var serviceRunningInForeground = false
 
     private val localBinder = LocalBinder()
 
@@ -66,7 +63,6 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
 
     override fun onBind(intent: Intent?): IBinder? {
         stopForeground(true)
-        serviceRunningInForeground = false
         return localBinder
     }
 
@@ -74,7 +70,6 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
         // Activity (client) returns to the foreground and rebinds to service, so the service
         // can become a background services.
         stopForeground(true)
-        serviceRunningInForeground = false
         super.onRebind(intent)
     }
 
@@ -82,7 +77,6 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
         generateNotification(currentSensorData)?.let {
             startForeground(ROTATION_NOTIFICATION_ID, it)
         }
-        serviceRunningInForeground = true
         return true
     }
 
@@ -112,7 +106,7 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
         intent.putExtra(Constants.EXTRA_ROTATION_SENSOR_DATA, sensorRotationData)
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
-        if (serviceRunningInForeground) {
+        if (serviceIsRunningInForeground(this::class.java)) {
             notificationManager.notify(
                 ROTATION_NOTIFICATION_ID,
                 generateNotification(sensorRotationData)
@@ -124,7 +118,7 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
         context: Context,
         noRotationSensorCallback: () -> Unit
     ) {
-        val notNullSensorRotation = sensorRotation ?: run{
+        val notNullSensorRotation = sensorRotation ?: run {
             noRotationSensorCallback.invoke()
             return
         }
@@ -154,7 +148,7 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
             val notificationChannel = NotificationChannel(
                 ROTATION_NOTIFICATION_CHANNEL_ID,
                 "Rotation data update",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_LOW
             )
             notificationManager.createNotificationChannel(notificationChannel)
         }
@@ -190,9 +184,9 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
             .setContentTitle(titleText)
             .setContentText(mainNotificationText)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOngoing(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setVisibility(NotificationCompat.VISIBILITY_SECRET)
+            .setNotificationSilent()
             .addAction(
                 0,
                 getString(R.string.launch_activity),

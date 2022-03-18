@@ -19,6 +19,7 @@ import com.syrf.location.utils.Constants
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_MAGNETIC_SENSOR_TRACKING_FROM_NOTIFICATION
 import com.syrf.location.utils.Constants.MAGNETIC_NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.MAGNETIC_NOTIFICATION_ID
+import com.syrf.location.utils.serviceIsRunningInForeground
 
 /**
  * The service using to request magnetic sensor data update. It running in two modes:
@@ -34,8 +35,6 @@ open class SYRFMagneticTrackingService : Service(), SensorEventListener {
     private var sensorMagnetic: Sensor? = null
 
     private val config = SYRFMagneticSensor.getConfig()
-
-    private var serviceRunningInForeground = false
 
     private val localBinder = LocalBinder()
 
@@ -66,7 +65,6 @@ open class SYRFMagneticTrackingService : Service(), SensorEventListener {
     override fun onBind(intent: Intent?): IBinder? {
         if (config.usingForegroundService) {
             stopForeground(true)
-            serviceRunningInForeground = false
         }
 
         return localBinder
@@ -77,7 +75,6 @@ open class SYRFMagneticTrackingService : Service(), SensorEventListener {
             // Activity (client) returns to the foreground and rebinds to service, so the service
             // can become a background services.
             stopForeground(true)
-            serviceRunningInForeground = false
         }
 
         super.onRebind(intent)
@@ -88,7 +85,6 @@ open class SYRFMagneticTrackingService : Service(), SensorEventListener {
             generateNotification(currentSensorData)?.let {
                 startForeground(MAGNETIC_NOTIFICATION_ID, it)
             }
-            serviceRunningInForeground = true
         } else {
             unsubscribeToSensorDataUpdates()
         }
@@ -119,7 +115,7 @@ open class SYRFMagneticTrackingService : Service(), SensorEventListener {
         intent.putExtra(Constants.EXTRA_MAGNETIC_SENSOR_DATA, sensorSensorData)
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
-        if (serviceRunningInForeground) {
+        if (serviceIsRunningInForeground(this::class.java)) {
             notificationManager.notify(
                 MAGNETIC_NOTIFICATION_ID,
                 generateNotification(sensorSensorData)
@@ -161,7 +157,7 @@ open class SYRFMagneticTrackingService : Service(), SensorEventListener {
             val notificationChannel = NotificationChannel(
                 MAGNETIC_NOTIFICATION_CHANNEL_ID,
                 "Magnetic data update",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_LOW
             )
             notificationManager.createNotificationChannel(notificationChannel)
         }
@@ -197,9 +193,9 @@ open class SYRFMagneticTrackingService : Service(), SensorEventListener {
             .setContentTitle(titleText)
             .setContentText(mainNotificationText)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOngoing(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setVisibility(NotificationCompat.VISIBILITY_SECRET)
+            .setNotificationSilent()
             .addAction(
                 0,
                 getString(R.string.launch_activity),
