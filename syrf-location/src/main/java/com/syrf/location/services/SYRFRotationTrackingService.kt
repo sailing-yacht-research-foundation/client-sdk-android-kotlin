@@ -10,18 +10,16 @@ import android.hardware.SensorManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.view.Surface
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.syrf.location.R
 import com.syrf.location.data.SYRFRotationSensorData
+import com.syrf.location.interfaces.SYRFRotationSensor
 import com.syrf.location.utils.Constants
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_ROTATION_SENSOR_TRACKING_FROM_NOTIFICATION
 import com.syrf.location.utils.Constants.ROTATION_NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.ROTATION_NOTIFICATION_ID
-import androidx.annotation.RequiresApi
-import com.syrf.location.interfaces.SYRFRotationSensor
-import java.lang.Math.atan2
 
 
 /**
@@ -154,7 +152,7 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
             val notificationChannel = NotificationChannel(
                 ROTATION_NOTIFICATION_CHANNEL_ID,
                 "Rotation data update",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_LOW
             )
             notificationManager.createNotificationChannel(notificationChannel)
         }
@@ -190,9 +188,9 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
             .setContentTitle(titleText)
             .setContentText(mainNotificationText)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOngoing(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setVisibility(NotificationCompat.VISIBILITY_SECRET)
+            .setNotificationSilent()
             .addAction(
                 0,
                 getString(R.string.launch_activity),

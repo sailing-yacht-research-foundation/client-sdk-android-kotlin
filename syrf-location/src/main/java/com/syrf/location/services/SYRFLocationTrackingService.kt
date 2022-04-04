@@ -13,20 +13,20 @@ import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationTokenSource
-import com.syrf.location.interfaces.SYRFTimber
 import com.syrf.location.R
 import com.syrf.location.data.SYRFLocationData
 import com.syrf.location.interfaces.SYRFLocation
+import com.syrf.location.interfaces.SYRFTimber
 import com.syrf.location.utils.Constants.ACTION_LOCATION_BROADCAST
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION
 import com.syrf.location.utils.Constants.EXTRA_LOCATION
-import com.syrf.location.utils.Constants.NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.LOCATION_NOTIFICATION_ID
+import com.syrf.location.utils.Constants.NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.CurrentPositionUpdateCallback
 import com.syrf.location.utils.SubscribeToLocationUpdateCallback
 import com.syrf.location.utils.toText
-import java.lang.Exception
 import java.util.concurrent.TimeUnit
+
 
 @SuppressLint("MissingPermission")
 open class SYRFLocationTrackingService : Service() {
@@ -124,7 +124,7 @@ open class SYRFLocationTrackingService : Service() {
         }
 
         fusedLocationProviderClient.lastLocation
-            .addOnSuccessListener { location : Location? ->
+            .addOnSuccessListener { location: Location? ->
                 if (location != null) {
                     callback.invoke(SYRFLocationData(location), null)
                 }
@@ -133,8 +133,7 @@ open class SYRFLocationTrackingService : Service() {
         fusedLocationProviderClient.getCurrentLocation(
             SYRFLocation.getLocationConfig().maximumLocationAccuracy,
             cancellationToken
-        ).addOnSuccessListener {
-                location -> callback.invoke(SYRFLocationData(location), null) }
+        ).addOnSuccessListener { location -> callback.invoke(SYRFLocationData(location), null) }
             .addOnFailureListener { exception -> callback.invoke(null, exception) }
     }
 
@@ -175,7 +174,9 @@ open class SYRFLocationTrackingService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             val notificationChannel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID, "Location update", NotificationManager.IMPORTANCE_DEFAULT
+                NOTIFICATION_CHANNEL_ID,
+                "Location update",
+                NotificationManager.IMPORTANCE_LOW
             )
             notificationManager.createNotificationChannel(notificationChannel)
         }
@@ -211,9 +212,9 @@ open class SYRFLocationTrackingService : Service() {
             .setContentTitle(titleText)
             .setContentText(mainNotificationText)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOngoing(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setVisibility(NotificationCompat.VISIBILITY_SECRET)
+            .setNotificationSilent()
             .addAction(
                 0,
                 getString(R.string.launch_activity),

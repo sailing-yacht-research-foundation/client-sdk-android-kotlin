@@ -147,7 +147,7 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
             val notificationChannel = NotificationChannel(
                 ACCELERO_NOTIFICATION_CHANNEL_ID,
                 "Accelerometer data update",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_LOW
             )
             notificationManager.createNotificationChannel(notificationChannel)
         }
@@ -183,9 +183,9 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
             .setContentTitle(titleText)
             .setContentText(mainNotificationText)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setVisibility(NotificationCompat.VISIBILITY_SECRET)
+            .setNotificationSilent()
             .setOngoing(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .addAction(
                 0,
                 getString(R.string.launch_activity),
