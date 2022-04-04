@@ -30,9 +30,9 @@
  # Path to exported gpg key
  signing.key=/Path/to/your/gpg_key.gpg
  # Please dont update below values
- sonatypeStagingProfileId=27d283eebe1a26
- ossrhUsername=jweisbaum
- ossrhPassword=SailYachtRS2021!
+ sonatypeStagingProfileId=
+ ossrhUsername=
+ ossrhPassword=
  ```
 
  # Distribution
