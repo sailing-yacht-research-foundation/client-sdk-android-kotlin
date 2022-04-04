@@ -19,7 +19,6 @@ import com.syrf.location.utils.Constants
 import com.syrf.location.utils.Constants.ACCELERO_NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.ACCELERO_NOTIFICATION_ID
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_ACCELERO_SENSOR_TRACKING_FROM_NOTIFICATION
-import com.syrf.location.utils.serviceIsRunningInForeground
 
 /**
  * The service using to request accelerometer sensor data update. It running in two modes:
@@ -32,6 +31,8 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
     private lateinit var notificationManager: NotificationManager
     private lateinit var sensorManager: SensorManager
     private var sensorAccelerometer: Sensor? = null
+
+    private var serviceRunningInForeground = false
 
     private val localBinder = LocalBinder()
 
@@ -61,6 +62,7 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
 
     override fun onBind(intent: Intent?): IBinder? {
         stopForeground(true)
+        serviceRunningInForeground = false
         return localBinder
     }
 
@@ -68,6 +70,7 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
         // Activity (client) returns to the foreground and rebinds to service, so the service
         // can become a background services.
         stopForeground(true)
+        serviceRunningInForeground = false
         super.onRebind(intent)
     }
 
@@ -75,6 +78,7 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
         generateNotification(currentSensorData)?.let {
             startForeground(ACCELERO_NOTIFICATION_ID, it)
         }
+        serviceRunningInForeground = true
         return true
     }
 
@@ -101,7 +105,7 @@ open class SYRFAcceleroTrackingService : Service(), SensorEventListener {
         intent.putExtra(Constants.EXTRA_ACCELERO_SENSOR_DATA, sensorAcceleroData)
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
-        if (serviceIsRunningInForeground(this::class.java)) {
+        if (serviceRunningInForeground) {
             notificationManager.notify(
                 ACCELERO_NOTIFICATION_ID,
                 generateNotification(sensorAcceleroData)

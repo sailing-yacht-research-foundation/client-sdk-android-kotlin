@@ -20,7 +20,6 @@ import com.syrf.location.utils.Constants
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_ROTATION_SENSOR_TRACKING_FROM_NOTIFICATION
 import com.syrf.location.utils.Constants.ROTATION_NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.Constants.ROTATION_NOTIFICATION_ID
-import com.syrf.location.utils.serviceIsRunningInForeground
 
 
 /**
@@ -34,6 +33,8 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
     private lateinit var notificationManager: NotificationManager
     private lateinit var sensorManager: SensorManager
     private var sensorRotation: Sensor? = null
+
+    private var serviceRunningInForeground = false
 
     private val localBinder = LocalBinder()
 
@@ -63,6 +64,7 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
 
     override fun onBind(intent: Intent?): IBinder? {
         stopForeground(true)
+        serviceRunningInForeground = false
         return localBinder
     }
 
@@ -70,6 +72,7 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
         // Activity (client) returns to the foreground and rebinds to service, so the service
         // can become a background services.
         stopForeground(true)
+        serviceRunningInForeground = false
         super.onRebind(intent)
     }
 
@@ -77,6 +80,7 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
         generateNotification(currentSensorData)?.let {
             startForeground(ROTATION_NOTIFICATION_ID, it)
         }
+        serviceRunningInForeground = true
         return true
     }
 
@@ -106,7 +110,7 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
         intent.putExtra(Constants.EXTRA_ROTATION_SENSOR_DATA, sensorRotationData)
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
-        if (serviceIsRunningInForeground(this::class.java)) {
+        if (serviceRunningInForeground) {
             notificationManager.notify(
                 ROTATION_NOTIFICATION_ID,
                 generateNotification(sensorRotationData)
@@ -118,7 +122,7 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
         context: Context,
         noRotationSensorCallback: () -> Unit
     ) {
-        val notNullSensorRotation = sensorRotation ?: run {
+        val notNullSensorRotation = sensorRotation ?: run{
             noRotationSensorCallback.invoke()
             return
         }

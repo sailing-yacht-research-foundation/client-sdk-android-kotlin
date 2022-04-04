@@ -24,7 +24,6 @@ import com.syrf.location.utils.Constants.LOCATION_NOTIFICATION_ID
 import com.syrf.location.utils.Constants.NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.CurrentPositionUpdateCallback
 import com.syrf.location.utils.SubscribeToLocationUpdateCallback
-import com.syrf.location.utils.serviceIsRunningInForeground
 import com.syrf.location.utils.toText
 import java.util.concurrent.TimeUnit
 
@@ -37,6 +36,8 @@ open class SYRFLocationTrackingService : Service() {
     private lateinit var locationCallback: LocationCallback
     private var currentLocation: Location? = null
     private lateinit var notificationManager: NotificationManager
+
+    private var serviceRunningInForeground = false
 
     private val localBinder = LocalBinder()
 
@@ -79,7 +80,7 @@ open class SYRFLocationTrackingService : Service() {
                     intent.putExtra(EXTRA_LOCATION, SYRFLocationData(location))
                     LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
-                    if (serviceIsRunningInForeground(this::class.java)) {
+                    if (serviceRunningInForeground) {
                         notificationManager.notify(
                             LOCATION_NOTIFICATION_ID,
                             generateNotification(location)
@@ -94,6 +95,7 @@ open class SYRFLocationTrackingService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? {
         stopForeground(true)
+        serviceRunningInForeground = false
         return localBinder
     }
 
@@ -101,12 +103,14 @@ open class SYRFLocationTrackingService : Service() {
         // LocationActivity (client) returns to the foreground and rebinds to service, so the service
         // can become a background services.
         stopForeground(true)
+        serviceRunningInForeground = false
         super.onRebind(intent)
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
         val notification = generateNotification(currentLocation)
         startForeground(LOCATION_NOTIFICATION_ID, notification)
+        serviceRunningInForeground = true
         return true
     }
 
