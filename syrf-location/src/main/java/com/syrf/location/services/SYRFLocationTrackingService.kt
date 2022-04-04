@@ -133,7 +133,13 @@ open class SYRFLocationTrackingService : Service() {
         fusedLocationProviderClient.getCurrentLocation(
             SYRFLocation.getLocationConfig().maximumLocationAccuracy,
             cancellationToken
-        ).addOnSuccessListener { location -> callback.invoke(SYRFLocationData(location), null) }
+        )
+            .addOnSuccessListener {
+                    location : Location? ->
+                if (location != null) {
+                    callback.invoke(SYRFLocationData(location), null)
+                }
+            }
             .addOnFailureListener { exception -> callback.invoke(null, exception) }
     }
 
