@@ -161,7 +161,7 @@ open class SYRFGyroscopeTrackingService : Service(), SensorEventListener {
             val notificationChannel = NotificationChannel(
                 GYROSCOPE_NOTIFICATION_CHANNEL_ID,
                 "Gyroscope data update",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_LOW
             )
             notificationManager.createNotificationChannel(notificationChannel)
         }
@@ -197,9 +197,9 @@ open class SYRFGyroscopeTrackingService : Service(), SensorEventListener {
             .setContentTitle(titleText)
             .setContentText(mainNotificationText)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOngoing(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setVisibility(NotificationCompat.VISIBILITY_SECRET)
+            .setNotificationSilent()
             .addAction(
                 0,
                 getString(R.string.launch_activity),
