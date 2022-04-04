@@ -50,5 +50,5 @@
  ```
 
  - After publish process is finished. Please open this url https://s01.oss.sonatype.org/#welcome
- and login with credential: jweisbaum/SailYachtRS2021! -> Open Staging repositories -> Select just uploaded artifact -> Close -> Release\
+ and login with credential: username/password -> Open Staging repositories -> Select just uploaded artifact -> Close -> Release\
  The time this process takes can vary a bit. If you get lucky, your artifact will show up on MavenCentral in 10–15 minutes, but it could also take an hour or more in other cases. You can check whether your artifact is available by going to https://repo1.maven.org/maven2/io/syrf/ and browsing for it.
