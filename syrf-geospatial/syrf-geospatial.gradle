@@ -9,7 +9,7 @@ group = 'sailing-yacht-research-foundation'
 
 ext {
     PUBLISH_GROUP_ID = 'io.syrf'
-    PUBLISH_VERSION = '1.0.4'
+    PUBLISH_VERSION = '1.0.5'
     PUBLISH_ARTIFACT_ID = 'syrf-geospatial'
 }
 
