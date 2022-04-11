@@ -200,14 +200,14 @@ open class SYRFLocationTrackingService : Service() {
             this,
             0,
             cancelIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val activityPendingIntent = PendingIntent.getActivity(
             this,
             0,
             launchActivityIntent,
-            0
+            PendingIntent.FLAG_IMMUTABLE
         )
 
         val notificationCompatBuilder =
