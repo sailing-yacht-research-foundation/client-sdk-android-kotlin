@@ -5,14 +5,16 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.gms.location.*
-import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.gms.location.LocationRequest
 import com.syrf.location.R
 import com.syrf.location.data.SYRFLocationData
 import com.syrf.location.interfaces.SYRFLocation
@@ -27,15 +29,15 @@ import com.syrf.location.utils.SubscribeToLocationUpdateCallback
 import com.syrf.location.utils.toText
 import java.util.concurrent.TimeUnit
 
-
 @SuppressLint("MissingPermission")
 open class SYRFLocationTrackingService : Service() {
 
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var locationRequest: LocationRequest
-    private lateinit var locationCallback: LocationCallback
-    private var currentLocation: Location? = null
     private lateinit var notificationManager: NotificationManager
+    private lateinit var locationManager: LocationManager
+    private lateinit var locationListener: LocationListener
+    private lateinit var locationRequest: LocationRequest
+
+    private var currentLocation: Location? = null
 
     private var serviceRunningInForeground = false
 
@@ -62,7 +64,19 @@ open class SYRFLocationTrackingService : Service() {
         super.onCreate()
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        locationListener = LocationListener { location ->
+            val intent = Intent(ACTION_LOCATION_BROADCAST)
+            intent.putExtra(EXTRA_LOCATION, SYRFLocationData(location))
+            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+
+            if (serviceRunningInForeground) {
+                notificationManager.notify(LOCATION_NOTIFICATION_ID, generateNotification(location))
+            }
+
+            currentLocation = location
+        }
 
         locationRequest = LocationRequest.create().apply {
             val config = SYRFLocation.getLocationConfig()
@@ -70,26 +84,7 @@ open class SYRFLocationTrackingService : Service() {
             interval = TimeUnit.SECONDS.toMillis(config.updateInterval)
             fastestInterval = TimeUnit.SECONDS.toMillis(config.updateInterval / 2)
             priority = config.maximumLocationAccuracy
-
-            locationCallback = object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    super.onLocationResult(locationResult)
-                    val location = locationResult.lastLocation
-
-                    val intent = Intent(ACTION_LOCATION_BROADCAST)
-                    intent.putExtra(EXTRA_LOCATION, SYRFLocationData(location))
-                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
-
-                    if (serviceRunningInForeground) {
-                        notificationManager.notify(
-                            LOCATION_NOTIFICATION_ID,
-                            generateNotification(location)
-                        )
-                    }
-
-                    currentLocation = location
-                }
-            }
+            smallestDisplacement = MINIMUM_DISPLACEMENT_IN_METERS
         }
     }
 
@@ -114,60 +109,66 @@ open class SYRFLocationTrackingService : Service() {
         return true
     }
 
-    fun getCurrentPosition(context: Context, callback: CurrentPositionUpdateCallback) {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+    fun getCurrentPosition(callback: CurrentPositionUpdateCallback) {
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        val cts = CancellationTokenSource()
-        val cancellationToken = cts.token
-        cancellationToken.onCanceledRequested {
-            // TODO: Add handler
+        try {
+            locationManager.getLastKnownLocation(PROVIDER)?.let { location ->
+                callback.invoke(SYRFLocationData(location), null)
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                locationManager.getCurrentLocation(
+                    PROVIDER,
+                    null,
+                    ContextCompat.getMainExecutor(this)
+                ) { location ->
+                    callback.invoke(SYRFLocationData(location), null)
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                locationManager.requestSingleUpdate(
+                    PROVIDER,
+                    locationListener,
+                    Looper.getMainLooper()
+                )
+            }
+        } catch (ex: Exception) {
+            callback.invoke(null, ex)
         }
-
-        fusedLocationProviderClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                if (location != null) {
-                    callback.invoke(SYRFLocationData(location), null)
-                }
-            }
-
-        fusedLocationProviderClient.getCurrentLocation(
-            SYRFLocation.getLocationConfig().maximumLocationAccuracy,
-            cancellationToken
-        )
-            .addOnSuccessListener {
-                    location : Location? ->
-                if (location != null) {
-                    callback.invoke(SYRFLocationData(location), null)
-                }
-            }
-            .addOnFailureListener { exception -> callback.invoke(null, exception) }
     }
 
-    fun subscribeToLocationUpdates(context: Context, callback: SubscribeToLocationUpdateCallback?) {
-        startService(Intent(context, SYRFLocationTrackingService::class.java))
+    fun subscribeToLocationUpdates(callback: SubscribeToLocationUpdateCallback?) {
+        startService(Intent(this, SYRFLocationTrackingService::class.java))
 
-        fusedLocationProviderClient.requestLocationUpdates(
-            locationRequest, locationCallback, Looper.getMainLooper()
-        ).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                callback?.invoke(Unit, null)
-            } else {
-                callback?.invoke(null, task.exception)
-            }
+        try {
+            locationManager.requestLocationUpdates(
+                PROVIDER,
+                locationRequest.interval,
+                MINIMUM_DISPLACEMENT_IN_METERS,
+                locationListener,
+                Looper.getMainLooper()
+            )
+            callback?.invoke(Unit, null)
+        } catch (ex: Exception) {
+            callback?.invoke(null, ex)
         }
     }
 
     fun unsubscribeToLocationUpdates() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    stopSelf()
-                } else {
-                    val exception = task.exception
-                        ?: Exception("Unknown error when unsubscribe location update")
-                    SYRFTimber.e(exception)
-                }
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                locationManager.requestFlush(
+                    PROVIDER,
+                    locationListener,
+                    FLUSH_COMPLETED
+                )
             }
+            locationManager.removeUpdates(locationListener)
+            stopSelf()
+        } catch (ex: Exception) {
+            SYRFTimber.e(ex)
+        }
     }
 
     private fun generateNotification(location: Location?): Notification {
@@ -237,5 +238,11 @@ open class SYRFLocationTrackingService : Service() {
     inner class LocalBinder : Binder() {
         internal val service: SYRFLocationTrackingService
             get() = this@SYRFLocationTrackingService
+    }
+
+    companion object {
+        const val FLUSH_COMPLETED = 0
+        const val PROVIDER = LocationManager.GPS_PROVIDER
+        const val MINIMUM_DISPLACEMENT_IN_METERS = 0f
     }
 }
