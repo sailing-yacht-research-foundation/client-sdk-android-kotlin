@@ -73,4 +73,19 @@ class SYRFLocationData constructor(private val location: Location) : Parcelable 
      */
     val timestamp: Long
         get() = location.time
+
+
+    /**
+     * Name of the provider, which provides location data.
+     */
+    val provider: String
+        get() = location.provider
+
+
+    /**
+     * Get the estimated bearing accuracy of this location, in degrees.
+     */
+    val bearingAccuracy: Float
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            location.bearingAccuracyDegrees else 0F
 }

@@ -29,6 +29,7 @@ import com.syrf.location.utils.SubscribeToLocationUpdateCallback
 import com.syrf.location.utils.toText
 import java.util.concurrent.TimeUnit
 
+
 @SuppressLint("MissingPermission")
 open class SYRFLocationTrackingService : Service() {
 
@@ -140,7 +141,6 @@ open class SYRFLocationTrackingService : Service() {
 
     fun subscribeToLocationUpdates(callback: SubscribeToLocationUpdateCallback?) {
         startService(Intent(this, SYRFLocationTrackingService::class.java))
-
         try {
             locationManager.requestLocationUpdates(
                 PROVIDER,
