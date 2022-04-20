@@ -2,15 +2,14 @@ package com.syrf.location.services
 
 import android.annotation.SuppressLint
 import android.app.*
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Binder
-import android.os.Build
-import android.os.IBinder
-import android.os.Looper
+import android.os.*
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -29,6 +28,7 @@ import com.syrf.location.utils.SubscribeToLocationUpdateCallback
 import com.syrf.location.utils.toText
 import java.util.concurrent.TimeUnit
 
+
 @SuppressLint("MissingPermission")
 open class SYRFLocationTrackingService : Service() {
 
@@ -42,6 +42,19 @@ open class SYRFLocationTrackingService : Service() {
     private var serviceRunningInForeground = false
 
     private val localBinder = LocalBinder()
+
+    private var currentBatteryLevel: Float = -1f // -1 means unavailable
+    private var didRegisterBatteryReceiver = false
+
+    private val batteryReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            intent?.let {
+                val level = it.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+                val scale = it.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+                currentBatteryLevel = level / scale.toFloat()
+            }
+        }
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
@@ -68,7 +81,7 @@ open class SYRFLocationTrackingService : Service() {
 
         locationListener = LocationListener { location ->
             val intent = Intent(ACTION_LOCATION_BROADCAST)
-            intent.putExtra(EXTRA_LOCATION, SYRFLocationData(location))
+            intent.putExtra(EXTRA_LOCATION, SYRFLocationData(location, currentBatteryLevel))
             LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
             if (serviceRunningInForeground) {
@@ -114,7 +127,7 @@ open class SYRFLocationTrackingService : Service() {
 
         try {
             locationManager.getLastKnownLocation(PROVIDER)?.let { location ->
-                callback.invoke(SYRFLocationData(location), null)
+                callback.invoke(SYRFLocationData(location, currentBatteryLevel), null)
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -123,7 +136,7 @@ open class SYRFLocationTrackingService : Service() {
                     null,
                     ContextCompat.getMainExecutor(this)
                 ) { location ->
-                    callback.invoke(SYRFLocationData(location), null)
+                    callback.invoke(SYRFLocationData(location, currentBatteryLevel), null)
                 }
             } else {
                 @Suppress("DEPRECATION")
@@ -140,6 +153,10 @@ open class SYRFLocationTrackingService : Service() {
 
     fun subscribeToLocationUpdates(callback: SubscribeToLocationUpdateCallback?) {
         startService(Intent(this, SYRFLocationTrackingService::class.java))
+        if (!didRegisterBatteryReceiver) {
+            registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+            didRegisterBatteryReceiver = true
+        }
 
         try {
             locationManager.requestLocationUpdates(
@@ -157,6 +174,11 @@ open class SYRFLocationTrackingService : Service() {
 
     fun unsubscribeToLocationUpdates() {
         try {
+            if (didRegisterBatteryReceiver) {
+                unregisterReceiver(batteryReceiver)
+                didRegisterBatteryReceiver = false
+                currentBatteryLevel = -1f
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 locationManager.requestFlush(
                     PROVIDER,

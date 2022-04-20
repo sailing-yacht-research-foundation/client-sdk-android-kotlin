@@ -139,7 +139,7 @@ class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferen
             getString(R.string.start_location_updates_button_text)
         }
     }
-    
+
     private fun requestCurrentPosition() {
         SYRFLocation.getCurrentPosition(this) { location, error ->
             if (location != null) {
@@ -207,7 +207,7 @@ class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferen
             )
 
             if (location != null) {
-                logResultsToScreen("${TimeService.currentTime()} - ${location.toText()}")
+                logResultsToScreen("${TimeService.currentTime()} - Battery level: ${location.batteryLevel} - ${location.toText()}")
             }
         }
     }
