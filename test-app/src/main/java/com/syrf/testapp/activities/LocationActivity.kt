@@ -3,25 +3,24 @@ package com.syrf.testapp.activities
 import android.Manifest
 import android.app.Activity
 import android.content.*
-import android.location.Location
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.syrf.testapp.services.TimeService
 import com.syrf.location.configs.SYRFLocationConfig
 import com.syrf.location.configs.SYRFPermissionRequestConfig
 import com.syrf.location.data.SYRFLocationData
 import com.syrf.location.interfaces.SYRFLocation
 import com.syrf.location.permissions.PermissionsManager
-import com.syrf.time.configs.SYRFTimeConfig
 import com.syrf.location.utils.Constants.ACTION_LOCATION_BROADCAST
 import com.syrf.location.utils.Constants.EXTRA_LOCATION
 import com.syrf.location.utils.MissingLocationException
 import com.syrf.testapp.R
 import com.syrf.testapp.SharedPreferenceUtil
 import com.syrf.testapp.databinding.ActivityLocationBinding
+import com.syrf.testapp.services.TimeService
 import com.syrf.testapp.toText
+import com.syrf.time.configs.SYRFTimeConfig
 import com.syrf.time.interfaces.SYRFTime
 
 class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -139,7 +138,7 @@ class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferen
             getString(R.string.start_location_updates_button_text)
         }
     }
-    
+
     private fun requestCurrentPosition() {
         SYRFLocation.getCurrentPosition(this) { location, error ->
             if (location != null) {

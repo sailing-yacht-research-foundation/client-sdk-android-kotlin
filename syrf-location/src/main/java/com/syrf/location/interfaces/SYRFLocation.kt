@@ -6,9 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import com.syrf.location.services.SYRFLocationTrackingService
 import com.syrf.location.configs.SYRFLocationConfig
 import com.syrf.location.permissions.PermissionsManager
+import com.syrf.location.services.SYRFLocationTrackingService
 import com.syrf.location.utils.*
 import java.lang.Exception
 import kotlin.jvm.Throws
@@ -86,7 +86,7 @@ object SYRFLocation : SYRFLocationInterface {
     override fun getCurrentPosition(context: Activity, callback: CurrentPositionUpdateCallback) {
         checkConfig()
         if (areLocationPermissionsGranted(context)) {
-            locationTrackingService?.getCurrentPosition(context, callback)
+            locationTrackingService?.getCurrentPosition(callback)
         } else {
             callback.invoke(null, MissingLocationException())
         }
@@ -103,7 +103,7 @@ object SYRFLocation : SYRFLocationInterface {
     ) {
         checkConfig()
         if (areLocationPermissionsGranted(context)) {
-            locationTrackingService?.subscribeToLocationUpdates(context, callback)
+            locationTrackingService?.subscribeToLocationUpdates(callback)
         } else {
             callback?.invoke(null, MissingLocationException())
         }
@@ -154,7 +154,7 @@ object SYRFLocation : SYRFLocationInterface {
         val accessCoarseLocationGranted =
             permissionsManager.isPermissionGranted(android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
-        return accessFineLocationGranted && accessCoarseLocationGranted;
+        return accessFineLocationGranted && accessCoarseLocationGranted
     }
 
     /**
