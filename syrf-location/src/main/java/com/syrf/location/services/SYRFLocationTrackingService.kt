@@ -124,7 +124,9 @@ open class SYRFLocationTrackingService : Service() {
                     null,
                     ContextCompat.getMainExecutor(this)
                 ) { location ->
-                    callback.invoke(SYRFLocationData(location), null)
+                    if (location != null) {
+                        callback.invoke(SYRFLocationData(location), null)
+                    }
                 }
             } else {
                 @Suppress("DEPRECATION")
