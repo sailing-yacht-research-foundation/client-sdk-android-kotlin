@@ -7,12 +7,10 @@ import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Binder
-import android.os.Build
-import android.os.IBinder
-import android.os.Looper
+import android.os.*
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.location.LocationListenerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.LocationRequest
 import com.syrf.location.R
@@ -41,6 +39,7 @@ open class SYRFLocationTrackingService : Service() {
     private var currentLocation: Location? = null
 
     private var serviceRunningInForeground = false
+    private var didRequestLocationUpdate = false
 
     private val localBinder = LocalBinder()
 
@@ -67,13 +66,16 @@ open class SYRFLocationTrackingService : Service() {
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        locationListener = LocationListener { location ->
+        locationListener = LocationListenerCompat { location ->
             val intent = Intent(ACTION_LOCATION_BROADCAST)
             intent.putExtra(EXTRA_LOCATION, SYRFLocationData(location))
             LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
             if (serviceRunningInForeground) {
-                notificationManager.notify(LOCATION_NOTIFICATION_ID, generateNotification(location))
+                notificationManager.notify(
+                    LOCATION_NOTIFICATION_ID,
+                    generateNotification(location)
+                )
             }
 
             currentLocation = location
@@ -142,6 +144,7 @@ open class SYRFLocationTrackingService : Service() {
     }
 
     fun subscribeToLocationUpdates(callback: SubscribeToLocationUpdateCallback?) {
+        if (didRequestLocationUpdate) return
         startService(Intent(this, SYRFLocationTrackingService::class.java))
         try {
             locationManager.requestLocationUpdates(
@@ -151,6 +154,7 @@ open class SYRFLocationTrackingService : Service() {
                 locationListener,
                 Looper.getMainLooper()
             )
+            didRequestLocationUpdate = true
             callback?.invoke(Unit, null)
         } catch (ex: Exception) {
             callback?.invoke(null, ex)
@@ -158,6 +162,7 @@ open class SYRFLocationTrackingService : Service() {
     }
 
     fun unsubscribeToLocationUpdates() {
+        if (!didRequestLocationUpdate) return
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 locationManager.requestFlush(
@@ -167,6 +172,7 @@ open class SYRFLocationTrackingService : Service() {
                 )
             }
             locationManager.removeUpdates(locationListener)
+            didRequestLocationUpdate = false
             stopSelf()
         } catch (ex: Exception) {
             SYRFTimber.e(ex)
@@ -174,7 +180,6 @@ open class SYRFLocationTrackingService : Service() {
     }
 
     private fun generateNotification(location: Location?): Notification {
-
         val mainNotificationText = location?.toText() ?: getString(R.string.no_location_text)
 
         val titleText = getString(R.string.app_name)
