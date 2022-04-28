@@ -25,7 +25,7 @@ import com.syrf.location.data.SYRFLocationData
  */
 fun SYRFLocationData?.toText(): String {
     return if (this != null) {
-        "($latitude, $longitude)"
+        "($latitude, $longitude, heading: $trueHeading, horz accu: ${horizontalAccuracy})"
     } else {
         "Unknown location"
     }

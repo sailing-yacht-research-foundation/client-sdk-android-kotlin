@@ -3,7 +3,7 @@ package com.syrf.location.data
 import android.location.Location
 import android.os.Build
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 /**
  * Represents the data that will be exported to client from an instance of location.
