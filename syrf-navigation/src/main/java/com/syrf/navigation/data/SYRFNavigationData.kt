@@ -1,42 +1,42 @@
-package com.syrf.location.data
+package com.syrf.navigation.data
 
 import android.location.Location
 import android.os.Build
 import android.os.Parcelable
+import com.syrf.location.data.SYRFRotationSensorData
 import kotlinx.parcelize.Parcelize
 
-/**
- * Represents the data that will be exported to client from an instance of location.
- * @property location The location
- */
 @Parcelize
-class SYRFLocationData constructor(private val location: Location) : Parcelable {
-
+data class SYRFNavigationData constructor(
+    private val location: Location?,
+    val sensorData: SYRFRotationSensorData?,
+    val batteryLevel: Float,
+) : Parcelable {
     /**
      * The latitude, in degrees.
      */
     val latitude: Double
-        get() = location.latitude
+        get() = location?.latitude ?: -1.0
 
     /**
      * The longitude, in degrees.
      */
     val longitude: Double
-        get() = location.longitude
+        get() = location?.longitude ?: -1.0
 
     /**
      * The altitude if available, in meters above the WGS 84 reference ellipsoid.
      * If this location does not have an altitude then 0.0 is returned.
      */
     val altitude: Double
-        get() = location.altitude
+        get() = location?.altitude ?: -1.0
 
     /**
      * The speed if it is available, in meters/second over ground.
      * If this location does not have a speed then 0.0 is returned.
      */
     val speed: Float
-        get() = location.speed
+        get() = location?.speed ?: -1f
 
     /**
      * The estimated speed accuracy of this location, in meters per second.
@@ -44,20 +44,20 @@ class SYRFLocationData constructor(private val location: Location) : Parcelable 
      */
     val speedAccuracy: Float
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            location.speedAccuracyMetersPerSecond else 0F
+            location?.speedAccuracyMetersPerSecond ?: -1f else 0F
 
     /**
      * The estimated horizontal accuracy of this location, radial, in meters.
      */
     val horizontalAccuracy: Float
-        get() = location.accuracy
+        get() = location?.accuracy ?: -1f
 
     /**
      * The estimated vertical accuracy of this location, radial, in meters.
      */
     val verticalAccuracy: Float
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            location.verticalAccuracyMeters else 0F
+            location?.verticalAccuracyMeters ?: -1f else 0F
 
 
     /**
@@ -66,20 +66,21 @@ class SYRFLocationData constructor(private val location: Location) : Parcelable 
      * https://stackoverflow.com/questions/4308262/calculate-compass-bearing-heading-to-location-in-android
      */
     val trueHeading: Float
-        get() = location.bearing
+        get() = location?.bearing ?: -1f
+
 
     /**
      * The UTC time of this fix, in milliseconds since January 1, 1970.
      */
     val timestamp: Long
-        get() = location.time
+        get() = location?.time ?: -1
 
 
     /**
      * Name of the provider, which provides location data.
      */
     val provider: String
-        get() = location.provider
+        get() = location?.provider ?: ""
 
 
     /**
@@ -87,8 +88,7 @@ class SYRFLocationData constructor(private val location: Location) : Parcelable 
      */
     val bearingAccuracy: Float
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            location.bearingAccuracyDegrees else 0F
+            location?.bearingAccuracyDegrees ?: -1f else 0F
 
-    val pureLocation: Location
-        get() = location
+    public fun getLocation() = location
 }

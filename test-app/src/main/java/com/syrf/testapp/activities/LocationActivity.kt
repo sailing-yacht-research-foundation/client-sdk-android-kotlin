@@ -25,39 +25,28 @@ import com.syrf.time.interfaces.SYRFTime
 
 class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var locationBroadcastReceiver: LocationBroadcastReceiver
-    private lateinit var binding: ActivityLocationBinding
+    private val locationBroadcastReceiver = LocationBroadcastReceiver()
 
-    private val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ) { result: Map<String, Boolean> ->
-            val isAllGranted = result.entries.any { it.value }
-            if (isAllGranted) {
-                successOnPermissionsRequest.invoke()
-            } else {
-                failOnPermissionsRequest.invoke()
-            }
-        }
-
-    private var successOnPermissionsRequest: () -> Unit = {}
-    private var failOnPermissionsRequest: () -> Unit = {}
-
-    companion object {
-        fun start(activity: Activity) {
-            val intent = Intent(activity, LocationActivity::class.java)
-            activity.startActivity(intent)
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { result: Map<String, Boolean> ->
+        val isAllGranted = result.entries.any { it.value }
+        if (isAllGranted) {
+            successOnPermissionsRequest.invoke()
+        } else {
+            failOnPermissionsRequest.invoke()
         }
     }
+
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var binding: ActivityLocationBinding
+    private var successOnPermissionsRequest: () -> Unit = {}
+    private var failOnPermissionsRequest: () -> Unit = {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLocationBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
-
-        locationBroadcastReceiver = LocationBroadcastReceiver()
+        setContentView(binding.root)
 
         sharedPreferences =
             getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
@@ -77,8 +66,7 @@ class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferen
             .set()
         SYRFLocation.configure(config, this)
 
-        val timeConfig = SYRFTimeConfig.Builder()
-            .set()
+        val timeConfig = SYRFTimeConfig.Builder().set()
 
         SYRFTime.configure(timeConfig, this)
 
@@ -97,9 +85,7 @@ class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferen
         super.onResume()
         LocalBroadcastManager.getInstance(this).registerReceiver(
             locationBroadcastReceiver,
-            IntentFilter(
-                ACTION_LOCATION_BROADCAST
-            )
+            IntentFilter(ACTION_LOCATION_BROADCAST)
         )
     }
 
@@ -109,24 +95,13 @@ class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferen
         super.onStop()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-    }
-
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         // Updates button states if new while in use location is added to SharedPreferences.
         if (key == SharedPreferenceUtil.KEY_FOREGROUND_ENABLED) {
             sharedPreferences?.getBoolean(
                 SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false
             )?.let {
-                updateButtonState(
-                    it
-                )
+                updateButtonState(it)
             }
         }
     }
@@ -199,15 +174,17 @@ class LocationActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferen
     }
 
     private inner class LocationBroadcastReceiver : BroadcastReceiver() {
-
         override fun onReceive(context: Context, intent: Intent) {
-            val location = intent.getParcelableExtra<SYRFLocationData>(
-                EXTRA_LOCATION
-            )
-
-            if (location != null) {
+            intent.getParcelableExtra<SYRFLocationData>(EXTRA_LOCATION)?.let { location ->
                 logResultsToScreen("${TimeService.currentTime()} - ${location.toText()}")
             }
+        }
+    }
+
+    companion object {
+        fun start(activity: Activity) {
+            val intent = Intent(activity, LocationActivity::class.java)
+            activity.startActivity(intent)
         }
     }
 }

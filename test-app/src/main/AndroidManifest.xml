@@ -10,6 +10,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TestApp">
+        <activity
+            android:name=".activities.NavigationTestActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="io.syrf.sdk.API_KEY"
@@ -17,8 +20,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,28 +29,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:label="@string/location"
-            android:name=".activities.LocationActivity" />
-
+            android:name=".activities.LocationActivity"
+            android:label="@string/location" />
         <activity
-            android:label="@string/accelerometer_sensor"
-            android:name=".activities.AcceleroSensorActivity" />
-
+            android:name=".activities.AcceleroSensorActivity"
+            android:label="@string/accelerometer_sensor" />
         <activity
-            android:label="@string/magnetic_sensor"
-            android:name=".activities.MagneticSensorActivity" />
-
+            android:name=".activities.MagneticSensorActivity"
+            android:label="@string/magnetic_sensor" />
         <activity
-            android:label="@string/gyroscope_sensor"
-            android:name=".activities.GyroscopeSensorActivity" />
-
+            android:name=".activities.GyroscopeSensorActivity"
+            android:label="@string/gyroscope_sensor" />
         <activity
-            android:label="@string/first_sample"
-            android:name=".activities.FirstSampleActivity" />
-
+            android:name=".activities.FirstSampleActivity"
+            android:label="@string/first_sample" />
         <activity
-            android:label="@string/second_sample"
-            android:name=".activities.SecondSampleActivity" />
+            android:name=".activities.SecondSampleActivity"
+            android:label="@string/second_sample" />
     </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 package com.syrf.testapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.syrf.geospatial.data.SYRFLine
@@ -112,7 +113,13 @@ class MainActivity : AppCompatActivity() {
             GyroscopeSensorActivity.start(this)
         }
 
-        binding.btnShowFirstSample.setOnClickListener { SecondSampleActivity.start(this)
+        binding.btnShowFirstSample.setOnClickListener {
+            SecondSampleActivity.start(this)
+        }
+
+        binding.btnNavigation.setOnClickListener {
+            val intent = Intent(this, NavigationTestActivity::class.java)
+            startActivity(intent)
         }
     }
 }

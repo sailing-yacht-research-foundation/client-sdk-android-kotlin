@@ -76,7 +76,7 @@ class GyroscopeSensorActivity : AppCompatActivity() {
     }
 
     private fun setupBtn() {
-        binding.subscribeToGyroscopeDataUpdateBtn.setOnClickListener() {
+        binding.subscribeToGyroscopeDataUpdateBtn.setOnClickListener {
             isUpdateEnabled = !isUpdateEnabled
             if (isUpdateEnabled) {
                 SYRFGyroscopeSensor.subscribeToSensorDataUpdates(this) {
