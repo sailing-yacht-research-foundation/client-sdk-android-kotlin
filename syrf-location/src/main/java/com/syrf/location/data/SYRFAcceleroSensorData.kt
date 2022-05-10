@@ -1,7 +1,7 @@
 package com.syrf.location.data
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 /**
  * Represents a data return from Accelerometer sensor.

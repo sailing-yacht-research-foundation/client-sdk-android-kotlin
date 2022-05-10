@@ -11,6 +11,7 @@ class SYRFLocationConfig private constructor(
     val updateInterval: Long,
     val maximumLocationAccuracy: Int,
     val provider: String = "network",
+    val enabled: Boolean = false,
 ) {
 
     companion object {
@@ -29,6 +30,8 @@ class SYRFLocationConfig private constructor(
             SYRFLocationConfig(
                 DEFAULT_UPDATE_INTERVAL,
                 PRIORITY_HIGH_ACCURACY,
+                provider = "gps",
+                enabled = true,
             )
     }
 

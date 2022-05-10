@@ -15,6 +15,7 @@ import android.hardware.SensorManager
 class SYRFRotationConfig private constructor(
     val sensorDelay: Int,
     val usingForegroundService: Boolean,
+    val enabled: Boolean = false,
 ) {
 
     companion object {
@@ -24,7 +25,8 @@ class SYRFRotationConfig private constructor(
          */
         val DEFAULT: SYRFRotationConfig = SYRFRotationConfig(
             sensorDelay = SensorManager.SENSOR_DELAY_NORMAL,
-            usingForegroundService = false
+            usingForegroundService = false,
+            enabled = true
         )
     }
 

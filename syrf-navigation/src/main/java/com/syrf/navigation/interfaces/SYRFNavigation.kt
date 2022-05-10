@@ -29,23 +29,18 @@ import kotlinx.coroutines.launch
 interface SYRFNavigationInterface {
     fun configure(config: SYRFNavigationConfig, activity: Activity)
 
-    fun subscribeToLocationUpdates(
+    fun subscribeToNavigationUpdates(
         activity: Activity,
         callback: SubscribeToLocationUpdateCallback?
     )
 
-    fun unsubscribeToLocationUpdates(activity: Activity)
-
-    fun subscribeToSensorDataUpdates(
-        activity: Activity,
-        noRotationSensorCallback: () -> Unit
-    )
-
-    fun unsubscribeToSensorDataUpdates(activity: Activity)
+    fun unsubscribeToNavigationUpdates(activity: Activity)
 
     fun getCurrentPosition(activity: Activity, callback: CurrentPositionUpdateCallback)
 
     fun onAppMoveToBackground(activity: Activity)
+
+    fun updateThrottle(throttle: Long)
 }
 
 object SYRFNavigation : SYRFNavigationInterface {
@@ -59,19 +54,48 @@ object SYRFNavigation : SYRFNavigationInterface {
     var sensorData: SYRFRotationSensorData? = null
 
     private var throttleTime: Long = 1_000
+    private var throttleTimeBackground: Long = 2_000
     private var job: Job? = null
 
     private var localBroadcastManager: LocalBroadcastManager? = null
     private var batteryService: BatteryManager? = null
 
+    private var config: SYRFNavigationConfig? = null
+
     @Override
     override fun configure(config: SYRFNavigationConfig, activity: Activity) {
+        this.config = config
         configureLocation(config.locationConfig, activity)
         configureRotation(config.headingConfig, activity)
+
         batteryService = activity.getSystemService(BATTERY_SERVICE) as BatteryManager
         throttleTime = config.throttleForegroundDelay.toLong()
+        throttleTimeBackground = config.throttleBackgroundDelay.toLong()
         localBroadcastManager = LocalBroadcastManager.getInstance(activity.applicationContext)
         startEventLoop()
+    }
+
+    @Override
+    override fun subscribeToNavigationUpdates(
+        activity: Activity,
+        callback: SubscribeToLocationUpdateCallback?
+    ) {
+        if (config?.locationConfig?.enabled == true) {
+            subscribeToLocationUpdates(activity, callback)
+        }
+        if (config?.headingConfig?.enabled == true) {
+            subscribeToSensorDataUpdates(activity)
+        }
+    }
+
+    @Override
+    override fun unsubscribeToNavigationUpdates(activity: Activity) {
+        if (config?.locationConfig?.enabled == true) {
+            unsubscribeToLocationUpdates(activity)
+        }
+        if (config?.headingConfig?.enabled == true) {
+            unsubscribeToSensorDataUpdates(activity)
+        }
     }
 
     private fun configureLocation(config: SYRFLocationConfig?, activity: Activity) {
@@ -94,23 +118,36 @@ object SYRFNavigation : SYRFNavigationInterface {
         job = GlobalScope.launch {
             while (true) {
                 delay(throttleTime)
-                if (location != null && sensorData != null) {
+                if (!isRegisterLocationReceiver && !isRegisterRotationReceiver) {
+                    continue
+                }
+
+                val deviceInfo = if (config?.deviceInfoConfig?.enabled == true) {
                     val batteryLevel = batteryService?.let {
                         return@let it.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
                             .toDouble() / 100
                     } ?: -1.0
-                    val deviceInfo = SYRFDeviceInfoData(
+                    SYRFDeviceInfoData(
                         batteryInfo = batteryLevel,
                         osVersion = SYRFDeviceInfo.getOsVersion(),
                         deviceModel = SYRFDeviceInfo.getPhoneModel(),
                     )
-                    val intent = Intent(Constants.ACTION_NAVIGATION_BROADCAST)
-                    intent.putExtra(
-                        Constants.EXTRA_NAVIGATION,
-                        SYRFNavigationData(location, sensorData, deviceInfo)
-                    )
-                    localBroadcastManager?.sendBroadcast(intent)
+                } else null
+
+                val locationInfo = if (config?.locationConfig?.enabled == true) location else null
+                val sensorInfo = if (config?.headingConfig?.enabled == true) sensorData else null
+
+                // if all the data is null then we are not sending anything.
+                if (locationInfo == null && sensorInfo == null && deviceInfo == null) {
+                    continue
                 }
+
+                val intent = Intent(Constants.ACTION_NAVIGATION_BROADCAST)
+                intent.putExtra(
+                    Constants.EXTRA_NAVIGATION,
+                    SYRFNavigationData(locationInfo, sensorInfo, deviceInfo)
+                )
+                localBroadcastManager?.sendBroadcast(intent)
             }
         }
     }
@@ -125,14 +162,14 @@ object SYRFNavigation : SYRFNavigationInterface {
         SYRFLocation.onStop(activity)
     }
 
-    fun updateThrottle(throttle: Long) {
+    @Override
+    override fun updateThrottle(throttle: Long) {
         if (throttle != throttleTime) {
             throttleTime = throttle
         }
     }
 
-    @Override
-    override fun subscribeToLocationUpdates(
+    private fun subscribeToLocationUpdates(
         activity: Activity,
         callback: SubscribeToLocationUpdateCallback?
     ) {
@@ -148,8 +185,7 @@ object SYRFNavigation : SYRFNavigationInterface {
         }
     }
 
-    @Override
-    override fun unsubscribeToLocationUpdates(activity: Activity) {
+    private fun unsubscribeToLocationUpdates(activity: Activity) {
         SYRFLocation.unsubscribeToLocationUpdates()
         if (isRegisterLocationReceiver) {
             LocalBroadcastManager.getInstance(activity)
@@ -158,12 +194,8 @@ object SYRFNavigation : SYRFNavigationInterface {
         }
     }
 
-    @Override
-    override fun subscribeToSensorDataUpdates(
-        activity: Activity,
-        noRotationSensorCallback: () -> Unit
-    ) {
-        SYRFRotationSensor.subscribeToSensorDataUpdates(activity, noRotationSensorCallback)
+    private fun subscribeToSensorDataUpdates(activity: Activity) {
+        SYRFRotationSensor.subscribeToSensorDataUpdates(activity) {}
         if (!isRegisterRotationReceiver) {
             activity.let {
                 LocalBroadcastManager.getInstance(it).registerReceiver(
@@ -175,8 +207,7 @@ object SYRFNavigation : SYRFNavigationInterface {
         }
     }
 
-    @Override
-    override fun unsubscribeToSensorDataUpdates(activity: Activity) {
+    private fun unsubscribeToSensorDataUpdates(activity: Activity) {
         SYRFRotationSensor.unsubscribeToSensorDataUpdates()
         if (isRegisterRotationReceiver) {
             LocalBroadcastManager.getInstance(activity)

@@ -10,5 +10,5 @@ import kotlinx.parcelize.Parcelize
 data class SYRFNavigationData constructor(
     val location: SYRFLocationData?,
     val sensorData: SYRFRotationSensorData?,
-    val deviceInfo: SYRFDeviceInfoData,
+    val deviceInfo: SYRFDeviceInfoData?,
 ) : Parcelable

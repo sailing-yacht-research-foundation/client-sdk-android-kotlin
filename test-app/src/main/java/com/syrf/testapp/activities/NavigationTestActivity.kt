@@ -12,7 +12,10 @@ import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.syrf.device_info.data.SYRFDeviceInfoConfig
+import com.syrf.location.configs.SYRFLocationConfig
 import com.syrf.location.configs.SYRFPermissionRequestConfig
+import com.syrf.location.configs.SYRFRotationConfig
 import com.syrf.location.interfaces.SYRFLocation
 import com.syrf.location.permissions.PermissionsManager
 import com.syrf.location.utils.Constants
@@ -45,7 +48,7 @@ class NavigationTestActivity : AppCompatActivity() {
         setContentView(R.layout.activity_navigation_test)
 
         findViewById<Button>(R.id.start_subscribe).setOnClickListener {
-            SYRFNavigation.subscribeToLocationUpdates(this) { _, error ->
+            SYRFNavigation.subscribeToNavigationUpdates(this) { _, error ->
                 if (error is MissingLocationException) {
                     successOnPermissionsRequest = {
                         SYRFLocation.subscribeToLocationUpdates(this)
@@ -53,7 +56,6 @@ class NavigationTestActivity : AppCompatActivity() {
                     requestLocationPermission()
                 }
             }
-            SYRFNavigation.subscribeToSensorDataUpdates(this) {}
         }
         findViewById<Button>(R.id.update_throttle).setOnClickListener {
             val textView = findViewById<EditText>(R.id.throttle_time)
@@ -73,7 +75,11 @@ class NavigationTestActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val config = SYRFNavigationConfig()
+        val config = SYRFNavigationConfig(
+            locationConfig = SYRFLocationConfig.DEFAULT,
+            headingConfig = SYRFRotationConfig.DEFAULT,
+            deviceInfoConfig = SYRFDeviceInfoConfig(true)
+        )
         // configure
         SYRFNavigation.configure(config, this)
         LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -83,8 +89,7 @@ class NavigationTestActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        SYRFNavigation.unsubscribeToLocationUpdates(this)
-        SYRFNavigation.unsubscribeToSensorDataUpdates(this)
+        SYRFNavigation.unsubscribeToNavigationUpdates(this)
         SYRFNavigation.onAppMoveToBackground(this)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(navigationBroadcastReceiver)
         super.onStop()
@@ -109,7 +114,7 @@ class NavigationTestActivity : AppCompatActivity() {
     private inner class NavigationBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             intent.getParcelableExtra<SYRFNavigationData>(Constants.EXTRA_NAVIGATION)?.let {
-                Log.d("NamH", "Receive: ${it}")
+                Log.d("NavigationTestActivity", "Receive: $it")
             }
         }
     }

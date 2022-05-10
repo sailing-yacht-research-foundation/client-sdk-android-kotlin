@@ -88,7 +88,4 @@ class SYRFLocationData constructor(private val location: Location) : Parcelable 
     val bearingAccuracy: Float
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             location.bearingAccuracyDegrees else 0F
-
-    val pureLocation: Location
-        get() = location
 }
