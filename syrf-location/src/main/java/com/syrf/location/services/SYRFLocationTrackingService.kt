@@ -30,7 +30,6 @@ import com.syrf.location.utils.SubscribeToLocationUpdateCallback
 import com.syrf.location.utils.toText
 import java.util.concurrent.TimeUnit
 
-
 @SuppressLint("MissingPermission")
 open class SYRFLocationTrackingService : Service() {
 
@@ -38,6 +37,7 @@ open class SYRFLocationTrackingService : Service() {
     private lateinit var locationManager: LocationManager
     private lateinit var locationListener: LocationListener
     private lateinit var locationRequest: LocationRequest
+    private lateinit var provider: String
 
     private var currentLocation: Location? = null
 
@@ -48,7 +48,7 @@ open class SYRFLocationTrackingService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-
+        provider = SYRFLocation.getLocationConfig().provider
         val cancelLocationTrackingFromNotification =
             intent?.getBooleanExtra(EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION, false)
 
@@ -88,9 +88,7 @@ open class SYRFLocationTrackingService : Service() {
             val config = SYRFLocation.getLocationConfig()
 
             interval = TimeUnit.SECONDS.toMillis(config.updateInterval)
-            fastestInterval = TimeUnit.SECONDS.toMillis(config.updateInterval / 2)
             priority = config.maximumLocationAccuracy
-            smallestDisplacement = MINIMUM_DISPLACEMENT_IN_METERS
         }
     }
 
@@ -119,13 +117,13 @@ open class SYRFLocationTrackingService : Service() {
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         try {
-            locationManager.getLastKnownLocation(PROVIDER)?.let { location ->
+            locationManager.getLastKnownLocation(provider)?.let { location ->
                 callback.invoke(SYRFLocationData(location), null)
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 locationManager.getCurrentLocation(
-                    PROVIDER,
+                    provider,
                     null,
                     ContextCompat.getMainExecutor(this)
                 ) { location ->
@@ -136,7 +134,7 @@ open class SYRFLocationTrackingService : Service() {
             } else {
                 @Suppress("DEPRECATION")
                 locationManager.requestSingleUpdate(
-                    PROVIDER,
+                    provider,
                     locationListener,
                     Looper.getMainLooper()
                 )
@@ -151,7 +149,7 @@ open class SYRFLocationTrackingService : Service() {
         startService(Intent(this, SYRFLocationTrackingService::class.java))
         try {
             locationManager.requestLocationUpdates(
-                PROVIDER,
+                provider,
                 locationRequest.interval,
                 MINIMUM_DISPLACEMENT_IN_METERS,
                 locationListener,
@@ -169,7 +167,7 @@ open class SYRFLocationTrackingService : Service() {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 locationManager.requestFlush(
-                    PROVIDER,
+                    provider,
                     locationListener,
                     FLUSH_COMPLETED
                 )
@@ -252,7 +250,6 @@ open class SYRFLocationTrackingService : Service() {
 
     companion object {
         const val FLUSH_COMPLETED = 0
-        const val PROVIDER = LocationManager.NETWORK_PROVIDER
         const val MINIMUM_DISPLACEMENT_IN_METERS = 0f
     }
 }

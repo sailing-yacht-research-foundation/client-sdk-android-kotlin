@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".activities.NavigationTestActivity">
 
     <Button
@@ -11,5 +12,19 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Start subscribe" />
+
+    <EditText
+        android:id="@+id/throttle_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Throttle time (millis)"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/update_throttle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Update throttle time" />
 
 </LinearLayout>

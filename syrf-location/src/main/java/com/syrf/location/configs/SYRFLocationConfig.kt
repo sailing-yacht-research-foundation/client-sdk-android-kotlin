@@ -10,6 +10,7 @@ import com.google.android.gms.location.LocationRequest
 class SYRFLocationConfig private constructor(
     val updateInterval: Long,
     val maximumLocationAccuracy: Int,
+    val provider: String = "network",
 ) {
 
     companion object {

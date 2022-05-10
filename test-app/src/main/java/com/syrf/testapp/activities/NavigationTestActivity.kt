@@ -8,21 +8,20 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.syrf.location.configs.SYRFPermissionRequestConfig
-import com.syrf.location.data.SYRFLocationData
-import com.syrf.location.data.SYRFRotationSensorData
 import com.syrf.location.interfaces.SYRFLocation
 import com.syrf.location.permissions.PermissionsManager
 import com.syrf.location.utils.Constants
 import com.syrf.location.utils.MissingLocationException
+import com.syrf.navigation.data.SYRFNavigationConfig
 import com.syrf.navigation.data.SYRFNavigationData
 import com.syrf.navigation.interfaces.SYRFNavigation
 import com.syrf.testapp.R
-import com.syrf.testapp.services.TimeService
-import com.syrf.testapp.toText
+import java.lang.NumberFormatException
 
 class NavigationTestActivity : AppCompatActivity() {
     private var successOnPermissionsRequest: () -> Unit = {}
@@ -54,18 +53,29 @@ class NavigationTestActivity : AppCompatActivity() {
                     requestLocationPermission()
                 }
             }
-            SYRFNavigation.subscribeToSensorDataUpdates(this) {
-                Log.d("NamH", "No sensor found")
+            SYRFNavigation.subscribeToSensorDataUpdates(this) {}
+        }
+        findViewById<Button>(R.id.update_throttle).setOnClickListener {
+            val textView = findViewById<EditText>(R.id.throttle_time)
+            val text = textView.text.toString()
+            if (text.isNotEmpty()) {
+                try {
+                    val throttleValue = text.toLong()
+                    SYRFNavigation.updateThrottle(throttleValue)
+                } catch (ex: NumberFormatException) {
+                    Log.e("NavigationTestActivity", "Cannot convert to number: $text")
+                } finally {
+                    textView.setText("")
+                }
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        Log.d("NamH", "onResume")
-
+        val config = SYRFNavigationConfig()
         // configure
-        SYRFNavigation.configure(this)
+        SYRFNavigation.configure(config, this)
         LocalBroadcastManager.getInstance(this).registerReceiver(
             navigationBroadcastReceiver,
             IntentFilter(Constants.ACTION_NAVIGATION_BROADCAST)
@@ -73,10 +83,9 @@ class NavigationTestActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        Log.d("NamH", "onStop")
         SYRFNavigation.unsubscribeToLocationUpdates(this)
         SYRFNavigation.unsubscribeToSensorDataUpdates(this)
-        SYRFNavigation.onStop(this)
+        SYRFNavigation.onAppMoveToBackground(this)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(navigationBroadcastReceiver)
         super.onStop()
     }
@@ -100,7 +109,7 @@ class NavigationTestActivity : AppCompatActivity() {
     private inner class NavigationBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             intent.getParcelableExtra<SYRFNavigationData>(Constants.EXTRA_NAVIGATION)?.let {
-                Log.d("NamH", "Receive: $it")
+                Log.d("NamH", "Receive: ${it}")
             }
         }
     }
