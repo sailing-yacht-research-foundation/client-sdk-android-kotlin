@@ -84,7 +84,7 @@ class NavigationTestActivity : AppCompatActivity() {
             val enableDeviceInfo = binding.deviceToggle.isChecked
 
             val toggler = SYRFToggler(enableLocation, enableHeading, enableDeviceInfo)
-            SYRFNavigation.enableUpdating(toggler, this, null)
+            SYRFNavigation.updateNavigationSettings(toggler, this, null)
         }
     }
 

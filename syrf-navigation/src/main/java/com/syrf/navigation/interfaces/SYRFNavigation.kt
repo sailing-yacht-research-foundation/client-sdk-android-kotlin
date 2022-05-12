@@ -41,7 +41,7 @@ interface SYRFNavigationInterface {
 
     fun onAppMoveToBackground(activity: Activity)
 
-    fun enableUpdating(
+    fun updateNavigationSettings(
         toggler: SYRFToggler,
         activity: Activity,
         callback: SubscribeToLocationUpdateCallback?
@@ -174,7 +174,7 @@ object SYRFNavigation : SYRFNavigationInterface {
     }
 
     @Override
-    override fun enableUpdating(
+    override fun updateNavigationSettings(
         toggler: SYRFToggler,
         activity: Activity,
         callback: SubscribeToLocationUpdateCallback?
