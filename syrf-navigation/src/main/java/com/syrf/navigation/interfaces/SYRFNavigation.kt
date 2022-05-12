@@ -19,6 +19,7 @@ import com.syrf.location.utils.CurrentPositionUpdateCallback
 import com.syrf.location.utils.SubscribeToLocationUpdateCallback
 import com.syrf.navigation.data.SYRFNavigationConfig
 import com.syrf.navigation.data.SYRFNavigationData
+import com.syrf.navigation.data.SYRFToggler
 import com.syrf.navigation.receivers.LocationBroadcastReceiver
 import com.syrf.navigation.receivers.RotationBroadcastReceiver
 import kotlinx.coroutines.GlobalScope
@@ -39,6 +40,12 @@ interface SYRFNavigationInterface {
     fun getCurrentPosition(activity: Activity, callback: CurrentPositionUpdateCallback)
 
     fun onAppMoveToBackground(activity: Activity)
+
+    fun updateNavigationSettings(
+        toggler: SYRFToggler,
+        activity: Activity,
+        callback: SubscribeToLocationUpdateCallback?
+    )
 
     fun updateThrottle(throttle: Long)
 }
@@ -61,6 +68,7 @@ object SYRFNavigation : SYRFNavigationInterface {
     private var batteryService: BatteryManager? = null
 
     private var config: SYRFNavigationConfig? = null
+    private var toggler: SYRFToggler? = null
 
     @Override
     override fun configure(config: SYRFNavigationConfig, activity: Activity) {
@@ -72,6 +80,7 @@ object SYRFNavigation : SYRFNavigationInterface {
         throttleTime = config.throttleForegroundDelay.toLong()
         throttleTimeBackground = config.throttleBackgroundDelay.toLong()
         localBroadcastManager = LocalBroadcastManager.getInstance(activity.applicationContext)
+
         startEventLoop()
     }
 
@@ -90,12 +99,8 @@ object SYRFNavigation : SYRFNavigationInterface {
 
     @Override
     override fun unsubscribeToNavigationUpdates(activity: Activity) {
-        if (config?.locationConfig?.enabled == true) {
-            unsubscribeToLocationUpdates(activity)
-        }
-        if (config?.headingConfig?.enabled == true) {
-            unsubscribeToSensorDataUpdates(activity)
-        }
+        unsubscribeToLocationUpdates(activity)
+        unsubscribeToSensorDataUpdates(activity)
     }
 
     private fun configureLocation(config: SYRFLocationConfig?, activity: Activity) {
@@ -122,7 +127,8 @@ object SYRFNavigation : SYRFNavigationInterface {
                     continue
                 }
 
-                val deviceInfo = if (config?.deviceInfoConfig?.enabled == true) {
+                val deviceInfo = if (toggler?.deviceInfo == false) null
+                else if (toggler?.deviceInfo == true || config?.deviceInfoConfig?.enabled == true) {
                     val batteryLevel = batteryService?.let {
                         return@let it.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
                             .toDouble() / 100
@@ -134,11 +140,16 @@ object SYRFNavigation : SYRFNavigationInterface {
                     )
                 } else null
 
-                val locationInfo = if (config?.locationConfig?.enabled == true) location else null
-                val sensorInfo = if (config?.headingConfig?.enabled == true) sensorData else null
+                val locationInfo = if (toggler?.location == false) null
+                else if (toggler?.location == true || config?.locationConfig?.enabled == true) location
+                else null
+
+                val sensorInfo = if (toggler?.heading == false) null
+                else if (toggler?.heading == true || config?.headingConfig?.enabled == true) sensorData
+                else null
 
                 // if all the data is null then we are not sending anything.
-                if (locationInfo == null && sensorInfo == null && deviceInfo == null) {
+                if (locationInfo == null && sensorInfo == null) {
                     continue
                 }
 
@@ -160,6 +171,26 @@ object SYRFNavigation : SYRFNavigationInterface {
     @Override
     override fun onAppMoveToBackground(activity: Activity) {
         SYRFLocation.onStop(activity)
+    }
+
+    @Override
+    override fun updateNavigationSettings(
+        toggler: SYRFToggler,
+        activity: Activity,
+        callback: SubscribeToLocationUpdateCallback?
+    ) {
+        this.toggler = toggler
+        if (toggler.location == true) {
+            subscribeToLocationUpdates(activity, callback)
+        } else {
+            unsubscribeToLocationUpdates(activity)
+        }
+
+        if (toggler.heading == true) {
+            subscribeToSensorDataUpdates(activity)
+        } else {
+            unsubscribeToSensorDataUpdates(activity)
+        }
     }
 
     @Override

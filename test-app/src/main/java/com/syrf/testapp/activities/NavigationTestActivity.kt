@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -22,9 +21,10 @@ import com.syrf.location.utils.Constants
 import com.syrf.location.utils.MissingLocationException
 import com.syrf.navigation.data.SYRFNavigationConfig
 import com.syrf.navigation.data.SYRFNavigationData
+import com.syrf.navigation.data.SYRFToggler
 import com.syrf.navigation.interfaces.SYRFNavigation
 import com.syrf.testapp.R
-import java.lang.NumberFormatException
+import com.syrf.testapp.databinding.ActivityNavigationTestBinding
 
 class NavigationTestActivity : AppCompatActivity() {
     private var successOnPermissionsRequest: () -> Unit = {}
@@ -42,12 +42,19 @@ class NavigationTestActivity : AppCompatActivity() {
     }
 
     private val navigationBroadcastReceiver = NavigationBroadcastReceiver()
+    private lateinit var binding: ActivityNavigationTestBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_navigation_test)
+        binding = ActivityNavigationTestBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        findViewById<Button>(R.id.start_subscribe).setOnClickListener {
+        configViews()
+    }
+
+    private fun configViews() {
+        binding.startSubscribe.setOnClickListener {
             SYRFNavigation.subscribeToNavigationUpdates(this) { _, error ->
                 if (error is MissingLocationException) {
                     successOnPermissionsRequest = {
@@ -57,7 +64,7 @@ class NavigationTestActivity : AppCompatActivity() {
                 }
             }
         }
-        findViewById<Button>(R.id.update_throttle).setOnClickListener {
+        binding.updateThrottle.setOnClickListener {
             val textView = findViewById<EditText>(R.id.throttle_time)
             val text = textView.text.toString()
             if (text.isNotEmpty()) {
@@ -65,11 +72,19 @@ class NavigationTestActivity : AppCompatActivity() {
                     val throttleValue = text.toLong()
                     SYRFNavigation.updateThrottle(throttleValue)
                 } catch (ex: NumberFormatException) {
-                    Log.e("NavigationTestActivity", "Cannot convert to number: $text")
+                    Log.e(TAG, "Cannot convert to number: $text")
                 } finally {
                     textView.setText("")
                 }
             }
+        }
+        binding.updateSetting.setOnClickListener {
+            val enableLocation = binding.locationToggle.isChecked
+            val enableHeading = binding.headingToggle.isChecked
+            val enableDeviceInfo = binding.deviceToggle.isChecked
+
+            val toggler = SYRFToggler(enableLocation, enableHeading, enableDeviceInfo)
+            SYRFNavigation.updateNavigationSettings(toggler, this, null)
         }
     }
 
@@ -114,8 +129,12 @@ class NavigationTestActivity : AppCompatActivity() {
     private inner class NavigationBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             intent.getParcelableExtra<SYRFNavigationData>(Constants.EXTRA_NAVIGATION)?.let {
-                Log.d("NavigationTestActivity", "Receive: $it")
+                Log.d(TAG, "Receive: $it")
             }
         }
+    }
+
+    companion object {
+        const val TAG = "NavigationTestActivity"
     }
 }
