@@ -30,7 +30,7 @@ class SYRFLocationConfig private constructor(
             SYRFLocationConfig(
                 DEFAULT_UPDATE_INTERVAL,
                 PRIORITY_HIGH_ACCURACY,
-                provider = "gps",
+                provider = "network",
                 enabled = true,
             )
     }
