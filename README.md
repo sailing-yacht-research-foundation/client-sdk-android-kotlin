@@ -48,6 +48,7 @@
  ./gradlew syrf-location:publishReleasePublicationToSonatypeRepository
  ./gradlew syrf-time:publishReleasePublicationToSonatypeRepository
  ./gradlew syrf-device-info:publishReleasePublicationToSonatypeRepository
+ ./gradlew syrf-navigation:publishReleasePublicationToSonatypeRepository
  ```
 
  - After publish process is finished. Please open this url https://s01.oss.sonatype.org/#welcome
