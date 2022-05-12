@@ -27,4 +27,28 @@
         android:layout_gravity="center"
         android:text="Update throttle time" />
 
+    <CheckBox
+        android:id="@+id/location_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location" />
+
+    <CheckBox
+        android:id="@+id/heading_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Heading" />
+
+    <CheckBox
+        android:id="@+id/device_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Device" />
+
+    <Button
+        android:id="@+id/update_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update settings" />
+
 </LinearLayout>
