@@ -12,6 +12,7 @@ class LocationBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         intent.getParcelableExtra<SYRFLocationData>(Constants.EXTRA_LOCATION)?.let {
             SYRFNavigation.location = it
+            SYRFNavigation.processUpdate()
         }
     }
 }

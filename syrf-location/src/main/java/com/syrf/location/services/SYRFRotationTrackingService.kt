@@ -14,6 +14,7 @@ import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.syrf.location.R
 import com.syrf.location.data.SYRFRotationSensorData
+import com.syrf.location.interfaces.NotificationCreator
 import com.syrf.location.interfaces.SYRFRotationSensor
 import com.syrf.location.utils.Constants
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_ROTATION_SENSOR_TRACKING_FROM_NOTIFICATION
@@ -77,9 +78,8 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        generateNotification(currentSensorData)?.let {
-            startForeground(ROTATION_NOTIFICATION_ID, it)
-        }
+        val notification = NotificationCreator.getNotification(null, currentSensorData, this)
+        startForeground(NotificationCreator.notificationId, notification)
         serviceRunningInForeground = true
         return true
     }
@@ -111,8 +111,8 @@ open class SYRFRotationTrackingService : Service(), SensorEventListener {
 
             if (serviceRunningInForeground) {
                 notificationManager.notify(
-                    ROTATION_NOTIFICATION_ID,
-                    generateNotification(sensorRotationData)
+                    NotificationCreator.notificationId,
+                    NotificationCreator.getNotification(null, sensorRotationData, this)
                 )
             }
         }

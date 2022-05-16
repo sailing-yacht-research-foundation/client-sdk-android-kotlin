@@ -22,10 +22,7 @@ import com.syrf.navigation.data.SYRFNavigationData
 import com.syrf.navigation.data.SYRFToggler
 import com.syrf.navigation.receivers.LocationBroadcastReceiver
 import com.syrf.navigation.receivers.RotationBroadcastReceiver
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 interface SYRFNavigationInterface {
     fun configure(config: SYRFNavigationConfig, activity: Activity)
@@ -40,6 +37,7 @@ interface SYRFNavigationInterface {
     fun getCurrentPosition(activity: Activity, callback: CurrentPositionUpdateCallback)
 
     fun onAppMoveToBackground(activity: Activity)
+    fun onAppMoveToForeground(activity: Activity)
 
     fun updateNavigationSettings(
         toggler: SYRFToggler,
@@ -60,9 +58,10 @@ object SYRFNavigation : SYRFNavigationInterface {
     var location: SYRFLocationData? = null
     var sensorData: SYRFRotationSensorData? = null
 
-    private var throttleTime: Long = 1_000
+    private var throttleTimeForeground: Long = 1_000
     private var throttleTimeBackground: Long = 2_000
-    private var job: Job? = null
+    private var throttleTime: Long = 1_000
+    var throttleJob: Job? = null
 
     private var localBroadcastManager: LocalBroadcastManager? = null
     private var batteryService: BatteryManager? = null
@@ -77,11 +76,9 @@ object SYRFNavigation : SYRFNavigationInterface {
         configureRotation(config.headingConfig, activity)
 
         batteryService = activity.getSystemService(BATTERY_SERVICE) as BatteryManager
-        throttleTime = config.throttleForegroundDelay.toLong()
+        throttleTimeForeground = config.throttleForegroundDelay.toLong()
         throttleTimeBackground = config.throttleBackgroundDelay.toLong()
         localBroadcastManager = LocalBroadcastManager.getInstance(activity.applicationContext)
-
-        startEventLoop()
     }
 
     @Override
@@ -119,48 +116,54 @@ object SYRFNavigation : SYRFNavigationInterface {
         }
     }
 
-    private fun startEventLoop() {
-        job = GlobalScope.launch {
-            while (true) {
-                delay(throttleTime)
-                if (!isRegisterLocationReceiver && !isRegisterRotationReceiver) {
-                    continue
-                }
+    fun processUpdate() {
+        if (location !== null && sensorData === null && toggler?.heading == true) {
+            return
+        }
+        if (location === null && sensorData !== null && toggler?.location == true) {
+            return
+        }
 
-                val deviceInfo = if (toggler?.deviceInfo == false) null
-                else if (toggler?.deviceInfo == true || config?.deviceInfoConfig?.enabled == true) {
-                    val batteryLevel = batteryService?.let {
-                        return@let it.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-                            .toDouble() / 100
-                    } ?: -1.0
-                    SYRFDeviceInfoData(
-                        batteryInfo = batteryLevel,
-                        osVersion = SYRFDeviceInfo.getOsVersion(),
-                        deviceModel = SYRFDeviceInfo.getPhoneModel(),
-                    )
-                } else null
+        throttleFirst(throttleTime, GlobalScope, ::fireUpdate)
+    }
 
-                val locationInfo = if (toggler?.location == false) null
-                else if (toggler?.location == true || config?.locationConfig?.enabled == true) location
-                else null
+    private fun fireUpdate() {
+        val intent = Intent(Constants.ACTION_NAVIGATION_BROADCAST)
+        intent.putExtra(Constants.EXTRA_NAVIGATION, prepareData())
+        localBroadcastManager?.sendBroadcast(intent)
+    }
 
-                val sensorInfo = if (toggler?.heading == false) null
-                else if (toggler?.heading == true || config?.headingConfig?.enabled == true) sensorData
-                else null
+    private fun prepareData(): SYRFNavigationData {
+        val deviceInfo = if (this.config?.deviceInfoConfig === null) null
+        else {
+            val batteryLevel = batteryService?.let {
+                return@let it.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+                    .toDouble() / 100
+            } ?: -1.0
+            SYRFDeviceInfoData(
+                batteryInfo = batteryLevel,
+                osVersion = SYRFDeviceInfo.getOsVersion(),
+                deviceModel = SYRFDeviceInfo.getPhoneModel(),
+            )
+        }
+        return SYRFNavigationData(location, sensorData, deviceInfo)
+    }
 
-                // if all the data is null then we are not sending anything.
-                if (locationInfo == null && sensorInfo == null) {
-                    continue
-                }
-
-                val intent = Intent(Constants.ACTION_NAVIGATION_BROADCAST)
-                intent.putExtra(
-                    Constants.EXTRA_NAVIGATION,
-                    SYRFNavigationData(locationInfo, sensorInfo, deviceInfo)
-                )
-                localBroadcastManager?.sendBroadcast(intent)
+    fun throttleFirst(
+        skipMs: Long = 300L,
+        coroutineScope: CoroutineScope,
+        destinationFunction: () -> Unit
+    ) {
+        if (throttleJob?.isCompleted != false) {
+            throttleJob = coroutineScope.launch {
+                destinationFunction()
+                delay(skipMs)
             }
         }
+    }
+
+    private fun updateThrottleTime(isBackground: Boolean) {
+        throttleTime = if (isBackground) throttleTimeBackground else throttleTimeForeground
     }
 
     @Override
@@ -170,7 +173,14 @@ object SYRFNavigation : SYRFNavigationInterface {
 
     @Override
     override fun onAppMoveToBackground(activity: Activity) {
+        updateThrottleTime(true)
         SYRFLocation.onStop(activity)
+        SYRFRotationSensor.onStop(activity)
+    }
+
+    @Override
+    override fun onAppMoveToForeground(activity: Activity) {
+        updateThrottleTime(false)
     }
 
     @Override

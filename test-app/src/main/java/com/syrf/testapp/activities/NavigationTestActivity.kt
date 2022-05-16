@@ -53,6 +53,19 @@ class NavigationTestActivity : AppCompatActivity() {
         configViews()
     }
 
+    override fun onStart() {
+        super.onStart()
+        val config = SYRFNavigationConfig(
+            locationConfig = SYRFLocationConfig.DEFAULT,
+            headingConfig = SYRFRotationConfig.DEFAULT,
+            deviceInfoConfig = SYRFDeviceInfoConfig(true),
+            throttleBackgroundDelay = 5000,
+            throttleForegroundDelay = 2000
+        )
+        // configure
+        SYRFNavigation.configure(config, this)
+    }
+
     private fun configViews() {
         binding.startSubscribe.setOnClickListener {
             SYRFNavigation.subscribeToNavigationUpdates(this) { _, error ->
@@ -90,13 +103,7 @@ class NavigationTestActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val config = SYRFNavigationConfig(
-            locationConfig = SYRFLocationConfig.DEFAULT,
-            headingConfig = SYRFRotationConfig.DEFAULT,
-            deviceInfoConfig = SYRFDeviceInfoConfig(true)
-        )
-        // configure
-        SYRFNavigation.configure(config, this)
+        SYRFNavigation.onAppMoveToForeground(this)
         LocalBroadcastManager.getInstance(this).registerReceiver(
             navigationBroadcastReceiver,
             IntentFilter(Constants.ACTION_NAVIGATION_BROADCAST)
@@ -104,7 +111,6 @@ class NavigationTestActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        SYRFNavigation.unsubscribeToNavigationUpdates(this)
         SYRFNavigation.onAppMoveToBackground(this)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(navigationBroadcastReceiver)
         super.onStop()

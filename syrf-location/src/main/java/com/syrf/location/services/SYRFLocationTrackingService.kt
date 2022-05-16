@@ -18,12 +18,14 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.LocationRequest
 import com.syrf.location.R
 import com.syrf.location.data.SYRFLocationData
+import com.syrf.location.interfaces.NotificationCreator
 import com.syrf.location.interfaces.SYRFLocation
 import com.syrf.location.interfaces.SYRFTimber
 import com.syrf.location.utils.Constants.ACTION_LOCATION_BROADCAST
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION
 import com.syrf.location.utils.Constants.EXTRA_LOCATION
 import com.syrf.location.utils.Constants.LOCATION_NOTIFICATION_ID
+import com.syrf.location.utils.Constants.NAVIGATION_NOTIFICATION_ID
 import com.syrf.location.utils.Constants.NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.CurrentPositionUpdateCallback
 import com.syrf.location.utils.SubscribeToLocationUpdateCallback
@@ -73,8 +75,8 @@ open class SYRFLocationTrackingService : Service() {
 
             if (serviceRunningInForeground) {
                 notificationManager.notify(
-                    LOCATION_NOTIFICATION_ID,
-                    generateNotification(location)
+                    NotificationCreator.notificationId,
+                    NotificationCreator.getNotification(location, null, this)
                 )
             }
 
@@ -104,8 +106,8 @@ open class SYRFLocationTrackingService : Service() {
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        val notification = generateNotification(currentLocation)
-        startForeground(LOCATION_NOTIFICATION_ID, notification)
+        val notification = NotificationCreator.getNotification(currentLocation, null, this)
+        startForeground(NotificationCreator.notificationId, notification)
         serviceRunningInForeground = true
         return true
     }

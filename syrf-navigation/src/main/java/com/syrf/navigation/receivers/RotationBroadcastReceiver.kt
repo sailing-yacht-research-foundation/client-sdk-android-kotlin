@@ -13,6 +13,7 @@ class RotationBroadcastReceiver : BroadcastReceiver() {
         intent.getParcelableExtra<SYRFRotationSensorData>(Constants.EXTRA_ROTATION_SENSOR_DATA)
             ?.let {
                 SYRFNavigation.sensorData = it
+                SYRFNavigation.processUpdate()
             }
     }
 }

@@ -5,6 +5,9 @@ object Constants {
     const val SDK_KEY_NAME = "io.syrf.sdk.API_KEY"
 
     // Location
+    const val NAVIGATION_CHANNEL_ID = "SyrfNavigationService"
+    const val NAVIGATION_NOTIFICATION_ID = 1006
+
     const val NOTIFICATION_CHANNEL_ID = "SyrfLocationService"
     const val LOCATION_NOTIFICATION_ID = 1001
     const val ACTION_LOCATION_BROADCAST = "$PACKAGE_NAME.action.LOCATION_BROADCAST"
