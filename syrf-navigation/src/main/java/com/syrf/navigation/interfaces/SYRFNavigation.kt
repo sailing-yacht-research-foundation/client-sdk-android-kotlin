@@ -190,11 +190,19 @@ object SYRFNavigation : SYRFNavigationInterface {
         callback: SubscribeToLocationUpdateCallback?
     ) {
         this.toggler = toggler
+
+        val locationConfigBuilder = SYRFLocationConfig.Builder()
+        locationConfigBuilder.enable(toggler.location ?: false)
+        configureLocation(locationConfigBuilder.set(), activity)
+
         if (toggler.location == true) {
             subscribeToLocationUpdates(activity, callback)
         } else {
             unsubscribeToLocationUpdates(activity)
         }
+        val rotationConfigBuilder = SYRFRotationConfig.Builder()
+        rotationConfigBuilder.enable(toggler.heading ?: false)
+        configureRotation(rotationConfigBuilder.set(), activity)
 
         if (toggler.heading == true) {
             subscribeToSensorDataUpdates(activity)

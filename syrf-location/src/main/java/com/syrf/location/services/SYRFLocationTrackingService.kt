@@ -15,7 +15,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationListenerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.*
 import com.syrf.location.R
 import com.syrf.location.data.SYRFLocationData
 import com.syrf.location.interfaces.NotificationCreator
@@ -64,23 +64,13 @@ open class SYRFLocationTrackingService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         locationListener = LocationListenerCompat { location ->
-            val intent = Intent(ACTION_LOCATION_BROADCAST)
-            intent.putExtra(EXTRA_LOCATION, SYRFLocationData(location))
-            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
-
-            if (serviceRunningInForeground) {
-                notificationManager.notify(
-                    NotificationCreator.notificationId,
-                    NotificationCreator.getNotification(location, null, this)
-                )
-            }
-
-            currentLocation = location
+            handleLocationUpdate(location)
         }
 
         locationRequest = LocationRequest.create().apply {
@@ -89,6 +79,21 @@ open class SYRFLocationTrackingService : Service() {
             interval = TimeUnit.SECONDS.toMillis(config.updateInterval)
             priority = config.maximumLocationAccuracy
         }
+    }
+
+    fun handleLocationUpdate(location: Location) {
+        val intent = Intent(ACTION_LOCATION_BROADCAST)
+        intent.putExtra(EXTRA_LOCATION, SYRFLocationData(location))
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+
+        if (serviceRunningInForeground) {
+            notificationManager.notify(
+                NotificationCreator.notificationId,
+                NotificationCreator.getNotification(location, null, this)
+            )
+        }
+
+        currentLocation = location
     }
 
     override fun onBind(intent: Intent?): IBinder? {

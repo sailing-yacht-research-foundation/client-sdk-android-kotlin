@@ -35,12 +35,14 @@ class SYRFRotationConfig private constructor(
      */
     data class Builder(
         var sensorDelay: Int = DEFAULT.sensorDelay,
-        var usingForegroundService: Boolean = DEFAULT.usingForegroundService
+        var usingForegroundService: Boolean = DEFAULT.usingForegroundService,
+        var enabled: Boolean = DEFAULT.enabled
     ) {
         fun sensorDelay(sensorDelay: Int) = apply { this.sensorDelay = sensorDelay }
         fun usingForegroundService(usingForegroundService: Boolean) =
             apply { this.usingForegroundService = usingForegroundService }
+        fun enable(isEnabled: Boolean) = apply { this.enabled = isEnabled }
 
-        fun set() = SYRFRotationConfig(sensorDelay, usingForegroundService)
+        fun set() = SYRFRotationConfig(sensorDelay, usingForegroundService, enabled)
     }
 }

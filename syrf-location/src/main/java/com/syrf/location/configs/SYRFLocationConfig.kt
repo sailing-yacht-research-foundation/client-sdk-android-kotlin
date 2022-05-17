@@ -41,14 +41,19 @@ class SYRFLocationConfig private constructor(
     data class Builder(
         var updateInterval: Long? = null,
         var maximumLocationAccuracy: Int? = null,
+        var provider: String? =  null,
+        var enabled: Boolean = DEFAULT.enabled
     ) {
         fun updateInterval(updateInterval: Long) = apply { this.updateInterval = updateInterval }
         fun maximumLocationAccuracy(maximumLocationAccuracy: Int) =
             apply { this.maximumLocationAccuracy = maximumLocationAccuracy }
+        fun enable(isEnabled: Boolean) = apply { this.enabled = isEnabled }
 
         fun set() = SYRFLocationConfig(
             updateInterval ?: DEFAULT.updateInterval,
             maximumLocationAccuracy ?: DEFAULT.maximumLocationAccuracy,
+            provider ?: DEFAULT.provider,
+            enabled
         )
     }
 }
