@@ -15,7 +15,6 @@ import com.syrf.location.data.SYRFRotationSensorData
 import com.syrf.location.interfaces.SYRFLocation
 import com.syrf.location.interfaces.SYRFRotationSensor
 import com.syrf.location.utils.Constants
-import com.syrf.location.utils.CurrentPositionUpdateCallback
 import com.syrf.location.utils.SubscribeToLocationUpdateCallback
 import com.syrf.navigation.data.SYRFNavigationConfig
 import com.syrf.navigation.data.SYRFNavigationData
@@ -23,6 +22,8 @@ import com.syrf.navigation.data.SYRFToggler
 import com.syrf.navigation.receivers.LocationBroadcastReceiver
 import com.syrf.navigation.receivers.RotationBroadcastReceiver
 import kotlinx.coroutines.*
+
+typealias CurrentNavigationUpdateCallback = (SYRFNavigationData?, Throwable?) -> Unit
 
 interface SYRFNavigationInterface {
     fun configure(config: SYRFNavigationConfig, activity: Activity)
@@ -34,7 +35,7 @@ interface SYRFNavigationInterface {
 
     fun unsubscribeToNavigationUpdates(activity: Activity)
 
-    fun getCurrentPosition(activity: Activity, callback: CurrentPositionUpdateCallback)
+    fun getCurrentNavigation(toggler: SYRFToggler, activity: Activity, callback: CurrentNavigationUpdateCallback)
 
     fun onAppMoveToBackground(activity: Activity)
     fun onAppMoveToForeground(activity: Activity)
@@ -166,9 +167,23 @@ object SYRFNavigation : SYRFNavigationInterface {
         throttleTime = if (isBackground) throttleTimeBackground else throttleTimeForeground
     }
 
-    @Override
-    override fun getCurrentPosition(activity: Activity, callback: CurrentPositionUpdateCallback) {
-        SYRFLocation.getCurrentPosition(activity, callback)
+    override fun getCurrentNavigation(
+        toggler: SYRFToggler,
+        activity: Activity,
+        callback: CurrentNavigationUpdateCallback
+    ) {
+        if (toggler.location == false) {
+            callback(prepareData(), null)
+            return
+        }
+        SYRFLocation.getCurrentPosition(activity) { currentLocation, error ->
+            if (error != null) {
+                callback(null, error)
+            } else {
+                location = currentLocation
+                callback(prepareData(), error)
+            }
+        }
     }
 
     @Override

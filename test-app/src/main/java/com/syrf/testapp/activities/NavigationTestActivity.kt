@@ -99,6 +99,24 @@ class NavigationTestActivity : AppCompatActivity() {
             val toggler = SYRFToggler(enableLocation, enableHeading, enableDeviceInfo)
             SYRFNavigation.updateNavigationSettings(toggler, this, null)
         }
+        binding.getCurrentNavigation.setOnClickListener {
+            requestCurrentNavigation()
+        }
+    }
+
+    private fun requestCurrentNavigation() {
+        val toggler = SYRFToggler(location = true, heading = true, deviceInfo = true)
+        SYRFNavigation.getCurrentNavigation(toggler, this) { navigationData, error ->
+            if (error is MissingLocationException) {
+                successOnPermissionsRequest = {
+                    requestCurrentNavigation()
+                }
+                requestLocationPermission()
+            }
+            if (error === null) {
+                Log.e(TAG, "Current Navigation: ${navigationData?.location?.latitude}")
+            }
+        }
     }
 
     override fun onResume() {
