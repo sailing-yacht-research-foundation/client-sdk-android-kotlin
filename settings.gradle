@@ -2,6 +2,7 @@ include ':syrf-geospatial'
 include ':syrf-time'
 include ':syrf-authentication'
 include ':syrf-device-info'
+include ':syrf-navigation'
 rootProject.name = 'com.syrf-clientsdk'
 
 apply from: 'gradle/projectSettings.gradle'

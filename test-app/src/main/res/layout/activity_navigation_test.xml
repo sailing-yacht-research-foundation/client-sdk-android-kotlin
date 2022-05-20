@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.NavigationTestActivity">
+
+    <Button
+        android:id="@+id/start_subscribe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Start subscribe" />
+
+    <EditText
+        android:id="@+id/throttle_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Throttle time (millis)"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/update_throttle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Update throttle time" />
+
+    <CheckBox
+        android:id="@+id/location_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location" />
+
+    <CheckBox
+        android:id="@+id/heading_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Heading" />
+
+    <CheckBox
+        android:id="@+id/device_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Device" />
+
+    <Button
+        android:id="@+id/update_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update settings" />
+
+    <Button
+        android:id="@+id/get_current_navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Get current navigation" />
+
+</LinearLayout>

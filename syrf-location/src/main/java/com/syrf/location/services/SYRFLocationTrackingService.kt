@@ -7,26 +7,30 @@ import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.*
+import android.os.Binder
+import android.os.Build
+import android.os.IBinder
+import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationListenerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.*
 import com.syrf.location.R
 import com.syrf.location.data.SYRFLocationData
+import com.syrf.location.interfaces.NotificationCreator
 import com.syrf.location.interfaces.SYRFLocation
 import com.syrf.location.interfaces.SYRFTimber
 import com.syrf.location.utils.Constants.ACTION_LOCATION_BROADCAST
 import com.syrf.location.utils.Constants.EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION
 import com.syrf.location.utils.Constants.EXTRA_LOCATION
 import com.syrf.location.utils.Constants.LOCATION_NOTIFICATION_ID
+import com.syrf.location.utils.Constants.NAVIGATION_NOTIFICATION_ID
 import com.syrf.location.utils.Constants.NOTIFICATION_CHANNEL_ID
 import com.syrf.location.utils.CurrentPositionUpdateCallback
 import com.syrf.location.utils.SubscribeToLocationUpdateCallback
 import com.syrf.location.utils.toText
 import java.util.concurrent.TimeUnit
-
 
 @SuppressLint("MissingPermission")
 open class SYRFLocationTrackingService : Service() {
@@ -45,7 +49,6 @@ open class SYRFLocationTrackingService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-
         val cancelLocationTrackingFromNotification =
             intent?.getBooleanExtra(EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION, false)
 
@@ -56,39 +59,41 @@ open class SYRFLocationTrackingService : Service() {
         }
 
         // Tells the system not to recreate the service after it's been killed.
-
         return START_NOT_STICKY
     }
 
     override fun onCreate() {
         super.onCreate()
+
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         locationListener = LocationListenerCompat { location ->
-            val intent = Intent(ACTION_LOCATION_BROADCAST)
-            intent.putExtra(EXTRA_LOCATION, SYRFLocationData(location))
-            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
-
-            if (serviceRunningInForeground) {
-                notificationManager.notify(
-                    LOCATION_NOTIFICATION_ID,
-                    generateNotification(location)
-                )
-            }
-
-            currentLocation = location
+            handleLocationUpdate(location)
         }
 
         locationRequest = LocationRequest.create().apply {
             val config = SYRFLocation.getLocationConfig()
 
             interval = TimeUnit.SECONDS.toMillis(config.updateInterval)
-            fastestInterval = TimeUnit.SECONDS.toMillis(config.updateInterval / 2)
             priority = config.maximumLocationAccuracy
-            smallestDisplacement = MINIMUM_DISPLACEMENT_IN_METERS
         }
+    }
+
+    fun handleLocationUpdate(location: Location) {
+        val intent = Intent(ACTION_LOCATION_BROADCAST)
+        intent.putExtra(EXTRA_LOCATION, SYRFLocationData(location))
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+
+        if (serviceRunningInForeground) {
+            notificationManager.notify(
+                NotificationCreator.notificationId,
+                NotificationCreator.getNotification(location, null, this)
+            )
+        }
+
+        currentLocation = location
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -106,8 +111,8 @@ open class SYRFLocationTrackingService : Service() {
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        val notification = generateNotification(currentLocation)
-        startForeground(LOCATION_NOTIFICATION_ID, notification)
+        val notification = NotificationCreator.getNotification(currentLocation, null, this)
+        startForeground(NotificationCreator.notificationId, notification)
         serviceRunningInForeground = true
         return true
     }
@@ -116,13 +121,13 @@ open class SYRFLocationTrackingService : Service() {
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         try {
-            locationManager.getLastKnownLocation(PROVIDER)?.let { location ->
+            locationManager.getLastKnownLocation(SYRFLocation.getLocationConfig().provider)?.let { location ->
                 callback.invoke(SYRFLocationData(location), null)
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 locationManager.getCurrentLocation(
-                    PROVIDER,
+                    SYRFLocation.getLocationConfig().provider,
                     null,
                     ContextCompat.getMainExecutor(this)
                 ) { location ->
@@ -133,7 +138,7 @@ open class SYRFLocationTrackingService : Service() {
             } else {
                 @Suppress("DEPRECATION")
                 locationManager.requestSingleUpdate(
-                    PROVIDER,
+                    SYRFLocation.getLocationConfig().provider,
                     locationListener,
                     Looper.getMainLooper()
                 )
@@ -148,7 +153,7 @@ open class SYRFLocationTrackingService : Service() {
         startService(Intent(this, SYRFLocationTrackingService::class.java))
         try {
             locationManager.requestLocationUpdates(
-                PROVIDER,
+                SYRFLocation.getLocationConfig().provider,
                 locationRequest.interval,
                 MINIMUM_DISPLACEMENT_IN_METERS,
                 locationListener,
@@ -166,7 +171,7 @@ open class SYRFLocationTrackingService : Service() {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 locationManager.requestFlush(
-                    PROVIDER,
+                    SYRFLocation.getLocationConfig().provider,
                     locationListener,
                     FLUSH_COMPLETED
                 )
@@ -249,7 +254,6 @@ open class SYRFLocationTrackingService : Service() {
 
     companion object {
         const val FLUSH_COMPLETED = 0
-        const val PROVIDER = LocationManager.GPS_PROVIDER
         const val MINIMUM_DISPLACEMENT_IN_METERS = 0f
     }
 }

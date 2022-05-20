@@ -25,6 +25,7 @@ import com.syrf.time.configs.SYRFTimeConfig
 import com.syrf.time.interfaces.SYRFTime
 import kotlin.math.abs
 import android.view.Surface
+import com.syrf.navigation.interfaces.SYRFNavigation
 
 /**
  * This is a sample that using data provided by [SYRFRotationSensor] and device's rotation
@@ -90,6 +91,7 @@ class SecondSampleActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        SYRFNavigation.onAppMoveToForeground(this)
         val intentFilter = IntentFilter()
         intentFilter.addAction(ACTION_ROTATION_SENSOR_BROADCAST)
         LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -99,6 +101,7 @@ class SecondSampleActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
+        SYRFNavigation.onAppMoveToBackground(this)
         SYRFRotationSensor.onStop(this)
         super.onStop()
     }

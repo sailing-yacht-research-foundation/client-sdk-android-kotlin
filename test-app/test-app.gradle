@@ -3,7 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'com.github.dcendents.android-maven'
 }
-group='sailing-yacht-research-foundation'
+group = 'sailing-yacht-research-foundation'
 
 android {
     compileSdkVersion 31
@@ -57,6 +57,7 @@ dependencies {
     implementation project(':syrf-time')
     implementation project(':syrf-geospatial')
     implementation project(':syrf-device-info')
+    implementation project(':syrf-navigation')
 
     // Import as distribution modules. Used for distribution testing only
     // Do not forget to rebuild project and change version accordingly when enable it
