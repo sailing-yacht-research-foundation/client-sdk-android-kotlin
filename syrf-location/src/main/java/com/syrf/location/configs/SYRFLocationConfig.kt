@@ -10,7 +10,7 @@ import com.google.android.gms.location.LocationRequest
 class SYRFLocationConfig private constructor(
     val updateInterval: Long,
     val maximumLocationAccuracy: Int,
-    val provider: String = "network",
+    val provider: String = "gps",
     val enabled: Boolean = false,
 ) {
 
@@ -30,7 +30,7 @@ class SYRFLocationConfig private constructor(
             SYRFLocationConfig(
                 DEFAULT_UPDATE_INTERVAL,
                 PRIORITY_HIGH_ACCURACY,
-                provider = "network",
+                provider = "gps",
                 enabled = true,
             )
     }
@@ -48,6 +48,8 @@ class SYRFLocationConfig private constructor(
         fun maximumLocationAccuracy(maximumLocationAccuracy: Int) =
             apply { this.maximumLocationAccuracy = maximumLocationAccuracy }
         fun enable(isEnabled: Boolean) = apply { this.enabled = isEnabled }
+
+        fun provider(provider: String) = apply { this.provider = provider }
 
         fun set() = SYRFLocationConfig(
             updateInterval ?: DEFAULT.updateInterval,
