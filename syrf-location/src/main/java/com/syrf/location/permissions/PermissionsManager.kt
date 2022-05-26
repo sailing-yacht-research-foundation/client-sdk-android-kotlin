@@ -59,6 +59,7 @@ class PermissionsManager(val context: Activity) {
     fun handleResults(
         permissions: Array<out String>,
         successCallback: () -> Unit,
+        showRequestPermissionRationale: (String) -> Unit,
         exceptionCallback: () -> Unit
     ) {
 
@@ -73,6 +74,7 @@ class PermissionsManager(val context: Activity) {
                 exceptionCallback()
                 if (isUserCheckNeverAskAgain(permission)) {
                     SYRFTimber.i("User checked never ask again for $permission")
+                    showRequestPermissionRationale(permission)
                 }
                 SYRFTimber.e("Permission: $permission denied")
                 return
