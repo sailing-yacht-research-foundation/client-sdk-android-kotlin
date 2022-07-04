@@ -4,6 +4,7 @@ import android.location.Location
 import android.os.Build
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.util.*
 
 /**
  * Represents the data that will be exported to client from an instance of location.
@@ -72,7 +73,7 @@ class SYRFLocationData constructor(private val location: Location) : Parcelable 
      * The UTC time of this fix, in milliseconds since January 1, 1970.
      */
     val timestamp: Long
-        get() = location.time
+        get() = Date().time
 
 
     /**
